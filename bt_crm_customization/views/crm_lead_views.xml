@@ -1,0 +1,67 @@
+<odoo>
+    <record id="view_crm_lead_form_custom" model="ir.ui.view">
+        <field name="name">crm.lead.form.custom.fields.v18</field>
+        <field name="model">crm.lead</field>
+        <field name="priority">1</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='tag_ids']" position="after">
+
+<!--                <field name="account_id"  invisible="type != 'opportunity'"/>-->
+<!--                <field name="expected_revenue"  invisible="type != 'opportunity'" />-->
+                <field name="profit" invisible="type != 'opportunity'"/>
+                <field name="rating" invisible="type != 'opportunity'"/>
+                <field name="revenue" invisible="type != 'opportunity'"/>
+                <field name="source_amount" invisible="type != 'opportunity'"/>
+                <field name="date_closed" invisible="type != 'opportunity'" />
+                <field name="create_uid" invisible="type != 'opportunity'" />
+
+            </xpath>
+
+            <xpath expr="//field[@name='lost_reason_id']" position="after">
+
+<!--                <field name="account_id"  invisible="type != 'opportunity'"/>-->
+<!--                <field name="expected_revenue"  invisible="type != 'opportunity'" />-->
+
+                <field name="features_id" invisible="type != 'opportunity'" />
+<!--                <field name="lead_source" invisible="type != 'opportunity'"/>-->
+                <field name="owner_id" invisible="type != 'opportunity'" />
+
+                <field name="technology_id" invisible="type != 'opportunity'" />
+<!--                <field name="cus_type" invisible="type != 'opportunity'" />-->
+                <field name="use_case" invisible="type != 'opportunity'"/>
+                <field name="cus_type" invisible="type != 'opportunity'"/>
+
+            </xpath>
+
+<!--            <xpath expr="//sheet/notebook/page[1]" position="before">-->
+<!--                <xpath expr="//sheet/notebook/page[@name='lead']" position="replace"/>-->
+<!--            </xpath>-->
+
+
+        </field>
+    </record>
+
+<!--    <record id="view_crm_lead_form_reorder_notebook" model="ir.ui.view">-->
+<!--        <field name="name">crm.lead.form.reorder.notebook</field>-->
+<!--        <field name="model">crm.lead</field>-->
+<!--        <field name="inherit_id" ref="crm.crm_lead_view_form"/>-->
+<!--        <field name="arch" type="xml">-->
+<!--            &lt;!&ndash; Move Extra Information page before Internal Notes page &ndash;&gt;-->
+<!--            <xpath expr="//page[@name='internal_notes']" position="before">-->
+<!--                <page string="Extra Information" name="extra_information">-->
+<!--                    <group>-->
+<!--                        <field name="x_studio_company_name"/>-->
+<!--                        <field name="x_studio_address"/>-->
+<!--                        <field name="x_studio_contact_name"/>-->
+<!--                        <field name="x_studio_job_position"/>-->
+<!--                        <field name="x_studio_mobile"/>-->
+<!--                    </group>-->
+<!--                </page>-->
+<!--            </xpath>-->
+
+<!--            &lt;!&ndash; Remove the original Extra Information page &ndash;&gt;-->
+<!--            <xpath expr="//page[@name='extra_information']" position="replace"/>-->
+<!--        </field>-->
+<!--    </record>-->
+</odoo>

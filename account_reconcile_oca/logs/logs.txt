@@ -1,0 +1,3 @@
+V1.0.12 Downloaded from Odoo Apps
+V1.1.0 By Basil Khan AH (Currently unused on any server or project; changes were added per Anoop’s request.)
+    1. Added a new field to flag if an invoice or bill has been reconciled.
