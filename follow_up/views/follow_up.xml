@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+   <!-- form view -->
+    <record id="view_follow_up_form" model="ir.ui.view">
+        <field name="name">follow.up.form</field>
+        <field name="model">follow.up</field>
+        <field name="arch" type="xml">
+            <form string="Follow up">
+
+                <!-- HEADER -->
+                <header>
+                    <button name="action_done" string="completed"
+                            type="object" class="btn-primary"
+                            invisible="status != 'scheduled'"/>
+                    <field name="status" widget="statusbar"/>
+                </header>
+                <sheet>
+
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+
+                    <group string="Details" col="2">
+
+                        <group>
+                            <field name="name" string="Follow up Id" readonly="1"/>
+                            <field name="scheduled_date"/>
+                            <field name="subject"/>
+                            <field name="lead_id"/>
+                            <field name="create_uid" string="Created By" readonly="1"/>
+                            <field name="create_date" readonly="1"/>
+                        </group>
+
+                        <group>
+                            <field name="owner_id"/>
+                            <field name="status" />
+                            <field name="description"/>
+                            <field name="write_uid" string="Last Modified By" readonly="1"/>
+                            <field name="write_date" readonly="1"/>
+                        </group>
+
+                    </group>
+
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+  <!-- tree view -->
+    <record id="view_follow_up_list" model="ir.ui.view">
+        <field name="name">follow.up.list</field>
+        <field name="model">follow.up</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="lead_id"/>
+                <field name="owner_id"/>
+                <field name="scheduled_date"/>
+                <field name="status"/>
+            </list>
+        </field>
+    </record>
+
+
+    <record id="action_follow_up" model="ir.actions.act_window">
+        <field name="name">Follow Ups</field>
+        <field name="res_model">follow.up</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_follow_up"
+        name="Follow Ups"
+        parent="crm.crm_menu_root"
+        action="action_follow_up"/>
+
+
+<!-- view_related_source -->
+
+    <record id="action_related_source" model="ir.actions.act_window">
+        <field name="name">Related Sources</field>
+        <field name="res_model">related.source</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_related_source_form" model="ir.ui.view">
+        <field name="name">related.source.form</field>
+        <field name="model">related.source</field>
+        <field name="arch" type="xml">
+            <form string="Related Source">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" placeholder="Related Source"/>
+                            <field name="lead_type"/>
+                            <field name="submission_date"/>
+                            <field name="lead_id"/>
+                        </group>
+                        <group>
+                            <field name="source_id" />
+                            <field name="owner_id"/>
+                            <field name="status"/>
+                        </group>
+                    </group>
+
+                    <!-- Created/Modified Info -->
+                    <group>
+                        <group>
+                            <field name="create_uid" string="Created By" readonly="1"/>
+                            <field name="create_date" string="Created On" />
+                        </group>
+                        <group>
+                            <field name="write_uid" string="Last Modified By" readonly="1"/>
+                            <field name="write_date" string="Modified On" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- List View -->
+    <record id="view_related_source_list" model="ir.ui.view">
+        <field name="name">related.source.list</field>
+        <field name="model">related.source</field>
+        <field name="arch" type="xml">
+            <list string="Related Sources">
+                <field name="name"/>
+                <field name="source_id" />
+                <field name="lead_type"/>
+                <field name="submission_date"/>
+                <field name="owner_id"/>
+                <field name="status"/>
+            </list>
+        </field>
+    </record>
+
+    <menuitem id="menu_related_source_root" 
+    name="Related Sources"
+    parent= "crm.crm_menu_root"
+    action="action_related_source"
+    />
+
+
+   <!-- SiteVisit- -->
+    <record id="view_site_visit_form" model="ir.ui.view">
+        <field name="name">site.visit.form</field>
+        <field name="model">site.visit</field>
+        <field name="arch" type="xml">
+            <form string="Site Visit">
+                <sheet>
+                    <group>
+                    
+                        <group>
+                            <field name="lead_id"/>
+                            <field name="site_visit_number" readonly="1"/>
+                            <field name="scheduled_date"/>
+                            <field name="status"/>
+                            <field name="source"/>
+                            <field name="canceled_reason"/>
+                            <field name="reschedule_date"/>
+                            <field name="create_date"/>
+                        </group>
+                        <group>
+                            <field name="owner_id"/>
+                            <field name="project_id"/>
+                            <field name="feedback"/>
+                            <field name="visit_type"/>
+                            <field name="visit_notes"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="view_site_visit_list" model="ir.ui.view">
+        <field name="name">site.visit.list</field>
+        <field name="model">site.visit</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="site_visit_number"/>
+                <field name="lead_id"/>
+                <field name="scheduled_date"/>
+                <field name="status"/>
+                <field name="owner_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Optional action -->
+    <record id="action_site_visit_form" model="ir.actions.act_window">
+        <field name="name">Site Visits</field>
+        <field name="res_model">site.visit</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Optional menu item -->
+    <menuitem id="menu_site_visit" 
+    name="Site Visits"
+    parent="crm.crm_menu_root"
+    action="action_site_visit_form"/>
+
+
+
+    <record id="crm_lead_form_add_followup_page" model="ir.ui.view">
+        <field name="name">crm.lead.form.followup.page</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+ 
+            <!-- Insert Follow Ups page in crm -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Follow Ups">
+                    <field name="follow_up_ids">
+                        <list>
+                            <field name="name"/>
+                            <field name="lead_id"/>
+                            <field name="owner_id"/>
+                            <field name="scheduled_date"/>
+                            <field name="status"/>
+                        </list>
+                    </field>
+                </page>
+                <!-- Site Visits -->
+                <page string="Site Visits">
+                    <field name="site_visit_ids">
+                        <list >
+                            <field name="site_visit_number"/>
+                            <field name="lead_id"/>
+                            <field name="scheduled_date"/>
+                            <field name="status"/>
+                            <field name="owner_id"/>
+                        </list>
+                    </field>
+                </page>
+                 <!-- Related Sources -->
+                <page string="Related Sources">
+                    <field name="related_source_ids">
+                        <list>
+                            <field name="name"/>
+                            <field name="source_id" />
+                            <field name="lead_type"/>
+                            <field name="submission_date"/>
+                            <field name="owner_id"/>
+                            <field name="status"/>
+                        
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+ 
+        </field>
+    </record>
+
+</odoo>
+        

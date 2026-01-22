@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+   
+    <record id="seq_follow_up" model="ir.sequence">
+        <field name="name">Follow Up</field>
+        <field name="code">follow.up</field>
+        <field name="prefix">F-</field>
+        <field name="padding">3</field>
+
+    </record>
+
+    <record id="seq_site_visit" model="ir.sequence">
+        <field name="name">Site Visit Sequence</field>
+        <field name="code">site.visit</field>
+        <field name="prefix">SiteVisit-</field>
+        <field name="padding">4</field>
+
+    </record>
+
+
+     <record id="seq_related_source" model="ir.sequence">
+        <field name="name">Related Source Sequence</field>
+        <field name="code">related.source</field>
+        <field name="prefix">RS/</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+    </record>
+    
+</odoo>
