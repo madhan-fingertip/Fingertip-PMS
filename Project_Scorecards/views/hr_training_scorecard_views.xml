@@ -7,9 +7,9 @@
             <field name="model">hr.training.scorecard</field>
             <field name="arch" type="xml">
                 <list>
-                    <field name="department"/>
+                 <field name="date"/>
+                    <field name="department_id"/>
                     <field name="subject"/>
-                    <field name="date"/>
                 </list>
             </field>
         </record>
@@ -22,7 +22,7 @@
                     <sheet>
                         <group><field name="date" /></group>
                         <group>
-                            <field name="department"/>
+                            <field name="department_id"/>
                             <field name="subject"/>
                             <field name="description"/>
                         </group>
@@ -36,7 +36,7 @@
             <field name="model">hr.training.scorecard</field>
             <field name="arch" type="xml">
                 <pivot>
-                    <field name="department" type="row"/>
+                    <field name="department_id" type="row"/>
                     <field name="date" type="row"/>
                 </pivot>
             </field>

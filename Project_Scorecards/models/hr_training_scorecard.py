@@ -15,20 +15,20 @@ class HRTrainingScorecard(models.Model):
         default=fields.Date.context_today
     )
 
-    department = fields.Selection([
-        ('marketing', 'Marketing'),
-        ('sales', 'Sales'),
-        ('operations', 'Operations'),
-        ('hr', 'HR'),
-        ('finance', 'Finance'),
-    ], string="Department", required=True)
-
+    department_id = fields.Many2one(
+        'hr.department',
+        string='Department',
+        required=False,
+        ondelete='restrict', 
+        index=True,
+        tracking=True, 
+    )
     subject = fields.Char(string="Subject")
     description = fields.Text(string="Description")
 
+    @api.depends('department_id', 'subject')
     def _compute_name(self):
-        dept_labels = dict(self.fields_get(allfields=['department'])['department']['selection'])
         for record in self:
-            dept = dept_labels.get(record.department, '')
-            subject = record.subject or ''
-            record.name = f"HR Training - {dept} - {subject}".strip(' -')
+            dept = record.department_id.name if record.department_id else 'No Department'
+            subject = record.subject or 'No Subject'
+            record.name = f"HR Training - {dept} - {subject}"

@@ -9,7 +9,7 @@
             <field name="name">finance.scorecard.list</field>
             <field name="model">finance.scorecard</field>
             <field name="arch" type="xml">
-                <list string="Finance Scorecards">
+                <list   editable="bottom" string="Finance Scorecards">
                     <field name="date"/>
                     <field name="invoice_raised"/>
                     <field name="raised_amount"
@@ -23,7 +23,7 @@
         </record>
 
         <!-- Form View -->
-        <record id="view_finance_scorecard_form" model="ir.ui.view">
+        <!-- <record id="view_finance_scorecard_form" model="ir.ui.view">
             <field name="name">finance.scorecard.form</field>
             <field name="model">finance.scorecard</field>
             <field name="arch" type="xml">
@@ -45,7 +45,7 @@
                     </sheet>
                 </form>
             </field>
-        </record>
+        </record> -->
 
         <!-- Pivot View -->
         <record id="view_finance_scorecard_pivot" model="ir.ui.view">
@@ -65,7 +65,7 @@
         <record id="action_finance_scorecard" model="ir.actions.act_window">
             <field name="name">Finance Scorecard</field>
             <field name="res_model">finance.scorecard</field>
-            <field name="view_mode">list,form,pivot</field>
+            <field name="view_mode">list,pivot</field>
         </record>
 
         <!-- Menu -->

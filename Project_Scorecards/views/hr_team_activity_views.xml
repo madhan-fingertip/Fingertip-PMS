@@ -7,12 +7,12 @@
             <field name="model">hr.team.activity</field>
             <field name="arch" type="xml">
                 <list>
+                 <field name="date"/>
                     <field name="educational"/>
                     <field name="fun_activity"/>
                     <field name="special_announcement"/>
                     <field name="training"/>
                     <field name="award_reward"/>
-                    <field name="date"/>
                 </list>
             </field>
         </record>
