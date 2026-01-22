@@ -18,7 +18,12 @@ class MarketingScorecard(models.Model):
     videos = fields.Integer(string="Videos")
     posts = fields.Integer(string="Posts")
     leads = fields.Integer(string="Leads")
-
+    
+    @api.depends('date')
     def _compute_name(self):
         for record in self:
-            record.name = "Marketing Scorecard"
+            if record.date:
+                record.name = f"Marketing Scorecard - {record.date}"
+            else:
+                record.name = "Marketing Scorecard"
+

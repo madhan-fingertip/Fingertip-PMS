@@ -6,8 +6,8 @@
             <field name="name">marketing.scorecard.list</field>
             <field name="model">marketing.scorecard</field>
             <field name="arch" type="xml">
-                <list editable="bottom">
-                 <field name="date"/>
+                <list>
+                    <field name="date"/>
                     <field name="videos"/>
                     <field name="posts"/>
                     <field name="leads"/>
@@ -15,7 +15,7 @@
             </field>
         </record>
 
-        <!-- <record id="view_marketing_scorecard_form" model="ir.ui.view">
+        <record id="view_marketing_scorecard_form" model="ir.ui.view">
             <field name="name">marketing.scorecard.form</field>
             <field name="model">marketing.scorecard</field>
             <field name="arch" type="xml">
@@ -30,7 +30,7 @@
                     </sheet>
                 </form>
             </field>
-        </record> -->
+        </record>
 
         <record id="view_marketing_scorecard_pivot" model="ir.ui.view">
             <field name="name">marketing.scorecard.pivot</field>
@@ -48,7 +48,7 @@
         <record id="action_marketing_scorecard" model="ir.actions.act_window">
             <field name="name">Marketing Scorecards</field>
             <field name="res_model">marketing.scorecard</field>
-            <field name="view_mode">list,pivot</field>
+            <field name="view_mode">list,form,pivot</field>
         </record>
 
         <menuitem id="menu_marketing_scorecard"

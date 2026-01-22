@@ -21,6 +21,12 @@ class HRTeamActivity(models.Model):
     training = fields.Text(string="Training")
     award_reward = fields.Text(string="Award / Reward")
 
+    @api.depends('date')
     def _compute_name(self):
         for record in self:
-            record.name = "HR Team Activity"
+            if record.date:
+                record.name = f"HR Team Activity - {record.date}"
+            else:
+                record.name = "HR Team Activity"
+
+

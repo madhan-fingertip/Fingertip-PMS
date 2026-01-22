@@ -20,6 +20,13 @@ class SalesScorecard(models.Model):
     closed = fields.Integer(string="Closed")
     closed_amount = fields.Float(string="Closed Amount")
 
+
+
+    @api.depends('date')
     def _compute_name(self):
         for record in self:
-            record.name = "Sales Scorecard"
+            if record.date:
+                record.name = f"Sales Scorecard - {record.date}"
+            else:
+                record.name = "Sales Scorecard"
+

@@ -34,6 +34,11 @@ class FinanceScorecard(models.Model):
         currency_field='currency_id'
     )
 
+    @api.depends('date')
     def _compute_name(self):
         for record in self:
-            record.name = "Finance Scorecard"
+            if record.date:
+                record.name = f"Finance Scorecard - {record.date}"
+            else:
+                record.name = "Finance Scorecard"
+
