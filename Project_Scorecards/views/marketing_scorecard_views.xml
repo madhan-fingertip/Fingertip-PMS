@@ -11,6 +11,12 @@
                     <field name="videos"/>
                     <field name="posts"/>
                     <field name="leads"/>
+                    <field name="fb_campaigns"/>
+                    <field name="email_campaigns"/>
+                    <field name="linkedin_campaigns"/>
+                    <field name="fb_leads"/>
+                    <field name="linkedin_leads"/>
+                    <field name="email_leads"/>
                 </list>
             </field>
         </record>
@@ -21,12 +27,30 @@
             <field name="arch" type="xml">
                 <form>
                     <sheet>
-                        <group><field name="date" /></group>
+
                         <group>
+                            <field name="date"/>
+                        </group>
+
+                        <group string="Content Activity" >
                             <field name="videos"/>
                             <field name="posts"/>
+                            <field name="seo_activity"/>
+                        </group>
+
+                        <group string="Campaigns" >
+                            <field name="fb_campaigns"/>
+                            <field name="email_campaigns"/>
+                            <field name="linkedin_campaigns"/>
+                        </group>
+
+                        <group string="Leads" >
+                            <field name="fb_leads"/>
+                            <field name="linkedin_leads"/>
+                            <field name="email_leads"/>
                             <field name="leads"/>
                         </group>
+
                     </sheet>
                 </form>
             </field>
@@ -41,6 +65,13 @@
                     <field name="videos" type="measure"/>
                     <field name="posts" type="measure"/>
                     <field name="leads" type="measure"/>
+                     <field name="fb_campaigns" type="measure"/>
+                    <field name="email_campaigns" type="measure"/>
+                    <field name="linkedin_campaigns" type="measure"/>
+
+                    <field name="fb_leads" type="measure"/>
+                    <field name="linkedin_leads" type="measure"/>
+                    <field name="email_leads" type="measure"/>
                 </pivot>
             </field>
         </record>

@@ -21,6 +21,10 @@ class SalesScorecard(models.Model):
     closed_amount = fields.Float(string="Closed Amount")
 
 
+    emails = fields.Integer(string="Emails")
+    whatsapp = fields.Integer(string="WhatsApp")
+    connected_calls = fields.Integer(string="Connected Calls")
+    call_duration = fields.Float(string="Call Duration (Hours)")
 
     @api.depends('date')
     def _compute_name(self):

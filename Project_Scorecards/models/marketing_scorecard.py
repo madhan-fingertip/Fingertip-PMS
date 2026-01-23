@@ -18,6 +18,15 @@ class MarketingScorecard(models.Model):
     videos = fields.Integer(string="Videos")
     posts = fields.Integer(string="Posts")
     leads = fields.Integer(string="Leads")
+
+    seo_activity = fields.Text(string="SEO Activity")
+    fb_campaigns = fields.Integer(string="FB Campaigns")
+    email_campaigns = fields.Integer(string="Email Campaigns")
+    linkedin_campaigns = fields.Integer(string="Email Campaigns")
+
+    fb_leads = fields.Integer(string="FB Leads")
+    linkedin_leads = fields.Integer(string="LinkedIn Leads")
+    email_leads = fields.Integer(string="Email Leads")
     
     @api.depends('date')
     def _compute_name(self):
