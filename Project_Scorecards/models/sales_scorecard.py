@@ -26,6 +26,9 @@ class SalesScorecard(models.Model):
     connected_calls = fields.Integer(string="Connected Calls")
     call_duration = fields.Float(string="Call Duration (Hours)")
 
+    source_commission = fields.Float(string="Source Commission")
+
+
     @api.depends('date')
     def _compute_name(self):
         for record in self:

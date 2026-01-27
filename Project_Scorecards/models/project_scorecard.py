@@ -25,10 +25,46 @@ class ProjectScorecard(models.Model):
 
     meetings = fields.Integer(string="Meetings")
 
-    # ONLY TIME FIELD
     time_spent = fields.Float(
         string="Time",
         help="Time in hours"
+    )
+
+    stage_id = fields.Many2one(
+        "project.project.stage",
+        string="Status",
+        related="project_id.stage_id",
+        store=True,
+        readonly=True
+    )
+    
+    start_date = fields.Date(
+        string="Start Date",
+        related="project_id.date_start",
+        store=True,
+        readonly=True
+    )
+    
+    end_date = fields.Date(
+        string="End Date",
+        related="project_id.date",
+        store=True,
+        readonly=True
+    )
+    
+
+    uat_date = fields.Date(
+        string="UAT Date",
+        related="project_id.uat_date",
+        store=True,
+        readonly=True
+    )
+    
+    go_live_date = fields.Date(
+        string="Go Live Date",
+        related="project_id.go_live_date",
+        store=True,
+        readonly=True
     )
 
     @api.depends("project_id")
@@ -39,3 +75,9 @@ class ProjectScorecard(models.Model):
                 if record.project_id else
                 "Project Scorecard"
             )
+
+class ProjectProject(models.Model):
+    _inherit = 'project.project'
+    
+    uat_date = fields.Date(string="UAT Date")
+    go_live_date = fields.Date(string="Go Live Date")

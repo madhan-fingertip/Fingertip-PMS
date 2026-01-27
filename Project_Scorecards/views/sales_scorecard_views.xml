@@ -11,6 +11,7 @@
                 <field name="proposals"/>
                 <field name="closed"/>
                 <field name="closed_amount"/>
+                <field name="source_commission"/>
                 <field name="emails"/>
                 <field name="whatsapp"/>
                 <field name="connected_calls"/>
@@ -33,6 +34,7 @@
                         <field name="proposals"/>
                         <field name="closed"/>
                         <field name="closed_amount"/>
+                        <field name="source_commission"/>
                         <field name="emails"/>
                         <field name="whatsapp"/>
                         <field name="connected_calls"/>

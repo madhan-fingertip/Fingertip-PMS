@@ -18,6 +18,8 @@
                     <field name="collected_amount"
                            widget="monetary"
                            options="{'currency_field': 'currency_id'}"/>
+                        <field name="outstanding" widget="monetary"/>
+                    <field name="currency_id" column_invisible="1"/>
                 </list>
             </field>
         </record>
@@ -41,6 +43,8 @@
                             <field name="collected_amount"
                                    widget="monetary"
                                    options="{'currency_field': 'currency_id'}"/>
+                                   <field name="outstanding" widget="monetary"/>
+                    <field name="currency_id" invisible="1"/>
                         </group>
                     </sheet>
                 </form>
@@ -57,6 +61,8 @@
                     <field name="invoice_raised" type="measure"/>
                     <field name="raised_amount" type="measure"/>
                     <field name="collected_amount" type="measure"/>
+                    <field name="outstanding" widget="monetary"/>
+                    <field name="currency_id" invisible="1"/>
                 </pivot>
             </field>
         </record>
