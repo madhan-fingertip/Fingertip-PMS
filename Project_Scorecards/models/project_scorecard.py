@@ -55,7 +55,7 @@ class ProjectScorecard(models.Model):
 
     uat_date = fields.Date(
         string="UAT Date",
-        related="project_id.uat_date",
+        related="project_id.uat_start_date",
         store=True,
         readonly=True
     )

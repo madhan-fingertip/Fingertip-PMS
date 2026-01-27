@@ -3,7 +3,7 @@
     "version": "1.0",
     "category": "Project",
     "summary": "Project Scorecard for tracking meetings and hours",
-    "depends": ["project"],
+    "depends": ["project","bt_project_customization"],
     "data": [
         "security/scorecard_security.xml",
         "security/ir.model.access.csv",
