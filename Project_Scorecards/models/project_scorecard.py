@@ -75,9 +75,3 @@ class ProjectScorecard(models.Model):
                 if record.project_id else
                 "Project Scorecard"
             )
-
-class ProjectProject(models.Model):
-    _inherit = 'project.project'
-    
-    uat_date = fields.Date(string="UAT Date")
-    go_live_date = fields.Date(string="Go Live Date")
