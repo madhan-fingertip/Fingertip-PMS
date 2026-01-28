@@ -15,6 +15,10 @@ class SalesScorecard(models.Model):
         default=fields.Date.context_today
     )
 
+    discovery_booked = fields.Integer(string="Discovery Booked")
+    discovery_done = fields.Integer(string="Discovery Done")
+    demos = fields.Integer(string="Demos")
+
     new_leads = fields.Integer(string="New Leads")
     proposals = fields.Integer(string="Proposals")
     closed = fields.Integer(string="Closed")
@@ -27,6 +31,19 @@ class SalesScorecard(models.Model):
     call_duration = fields.Float(string="Call Duration (Hours)")
 
     source_commission = fields.Float(string="Source Commission")
+    description = fields.Text(string="Description")
+
+    currency_id = fields.Many2one(
+    'res.currency',
+    default=lambda self: self.env.company.currency_id,
+    readonly=True
+)
+
+    proposal_value = fields.Monetary(
+        string="Proposal Value",
+        currency_field='currency_id'
+    )
+
 
 
     @api.depends('date')

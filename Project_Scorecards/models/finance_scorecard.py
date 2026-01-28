@@ -39,6 +39,10 @@ class FinanceScorecard(models.Model):
         currency_field='currency_id'
     )
 
+    description = fields.Text(
+        string="Description"
+    )
+
     @api.depends('date')
     def _compute_name(self):
         for record in self:

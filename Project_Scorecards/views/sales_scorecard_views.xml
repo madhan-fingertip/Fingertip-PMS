@@ -16,6 +16,11 @@
                 <field name="whatsapp"/>
                 <field name="connected_calls"/>
                 <field name="call_duration"/>
+                <field name="discovery_booked"/>
+                <field name="discovery_done"/>
+                <field name="demos"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="proposal_value"/>
             </list>
         </field>
     </record>
@@ -39,6 +44,14 @@
                         <field name="whatsapp"/>
                         <field name="connected_calls"/>
                         <field name="call_duration"/>
+                        <field name="discovery_booked"/>
+                        <field name="discovery_done"/>
+                        <field name="demos"/>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="proposal_value"
+                                widget="monetary"
+                                options="{'currency_field': 'currency_id'}"/>
+                         <field name="description"/>
                     </group>
                 </sheet>
             </form>
@@ -59,6 +72,7 @@
                 <field name="whatsapp" type="measure"/>
                 <field name="connected_calls" type="measure"/>
                 <field name="call_duration" type="measure"/>
+                <field name="proposal_value" type="measure"/>
             </pivot>
         </field>
     </record>

@@ -67,6 +67,10 @@ class ProjectScorecard(models.Model):
         readonly=True
     )
 
+    description = fields.Text(
+        string="Description"
+    )
+
     @api.depends("project_id")
     def _compute_name(self):
         for record in self:

@@ -20,6 +20,9 @@ class HRTeamActivity(models.Model):
     special_announcement = fields.Text(string="Special Announcement")
     training = fields.Text(string="Training")
     award_reward = fields.Text(string="Award / Reward")
+    description = fields.Text(
+        string="Description"
+    )
 
     @api.depends('date')
     def _compute_name(self):

@@ -27,6 +27,9 @@ class MarketingScorecard(models.Model):
     fb_leads = fields.Integer(string="FB Leads")
     linkedin_leads = fields.Integer(string="LinkedIn Leads")
     email_leads = fields.Integer(string="Email Leads")
+    description = fields.Text(
+        string="Description"
+    )
     
     @api.depends('date')
     def _compute_name(self):

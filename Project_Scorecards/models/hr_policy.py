@@ -11,3 +11,6 @@ class HRPolicy(models.Model):
     )
     version = fields.Integer(string="Version")
     policy_details = fields.Html(string="Policy Details")
+    description = fields.Text(
+        string="Description"
+    )

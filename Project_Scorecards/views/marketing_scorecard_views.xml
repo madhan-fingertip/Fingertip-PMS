@@ -49,8 +49,11 @@
                             <field name="linkedin_leads"/>
                             <field name="email_leads"/>
                             <field name="leads"/>
+                            
                         </group>
-
+                        <group>
+                        <field name="description"/>
+                        </group>
                     </sheet>
                 </form>
             </field>
