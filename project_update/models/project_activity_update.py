@@ -1,6 +1,5 @@
 from odoo import models, fields, api
 
-
 class ProjectActivityUpdate(models.Model):
     _name = 'project.activity.update'
     _description = 'Project Activity Update'
@@ -16,7 +15,10 @@ class ProjectActivityUpdate(models.Model):
         'project.project',
         string='Project',
         required=True,
-        ondelete='cascade'
+        ondelete='cascade',
+        domain=[('stage_id.fold', '=', False)],
+        context={'active_test': True}
+       
     )
     project_manager_id = fields.Many2one(
         'res.users',
@@ -25,7 +27,15 @@ class ProjectActivityUpdate(models.Model):
         store=True,
         readonly=True
     )
-    
+    stage_id = fields.Many2one(
+        'project.project.stage',
+        string='Project STATUS',
+        related='project_id.stage_id',
+        store=True,
+        readonly=True
+    )
+  
+
     def name_get(self):
         result = []
         for rec in self:
