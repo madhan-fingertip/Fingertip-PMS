@@ -84,6 +84,7 @@ class AccountAnalyticLine(models.Model):
         string="Job Position",
         readonly=False,
     )
+    module_id = fields.Many2one('cus.module',related='task_id.module_id',string='Module')
 
     @api.onchange('jobposition_id')
     def _onchange_jobposition_id(self):
