@@ -37,7 +37,8 @@
         'security/security.xml',
         'views/activity_tag_views.xml',
         'views/activity_dashbord_views.xml',
-        'views/mail_activity_views.xml'
+        'views/mail_activity_views.xml',
+        'views/crm_lead.xml',
     ],
     'assets': {
         'web.assets_backend': [
