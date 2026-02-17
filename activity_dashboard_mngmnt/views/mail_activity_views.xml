@@ -102,4 +102,7 @@
               parent="activity_menu_root"
               action="mail.mail_activity_action"
               sequence="2"/>
+    <record id="crm.crm_lead_menu_my_activities" model="ir.ui.menu">
+            <field name="active" eval="False"/>
+    </record>
 </odoo>
