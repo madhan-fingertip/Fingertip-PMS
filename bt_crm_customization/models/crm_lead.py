@@ -40,3 +40,10 @@ class InheritCrmLead(models.Model):
         string='Currency',
         default=lambda self: self.env.company.currency_id.id
     )
+
+
+    business_challenge = fields.Text(string="Business Challenge")
+
+    decision_maker = fields.Text(string="Decision Maker")
+
+    number_of_users = fields.Integer(string="Number of Users")

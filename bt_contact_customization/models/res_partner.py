@@ -12,8 +12,30 @@ class InheritResPartner(models.Model):
 
     ], string="Rating")
 
+
     #activity_count_custom = fields.Integer(string="Activity Count")
     activity_count_custom = fields.Integer(string="Activity Count",compute="_compute_activity_count_custom")
+
+    connected_contacts = fields.Many2many(
+        'res.partner',
+        'res_partner_connected_rel',
+        'partner_id',
+        'connected_partner_id',
+        string="Connected Contacts"
+    )
+
+    number_of_contacts = fields.Integer(
+        string="Number of Contacts",
+        compute="_compute_number_of_contacts"
+    )
+
+    @api.depends('connected_contacts')
+    def _compute_number_of_contacts(self):
+        for partner in self:
+            partner.number_of_contacts = len(partner.connected_contacts)
+
+   
+
 
     @api.depends('activity_ids')
     def _compute_activity_count_custom(self):
