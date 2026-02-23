@@ -99,7 +99,17 @@
                                                     <option value="3">Urgent</option>
                                                 </select>
                                             </div>
-                                            <div class="col-md-6" t-if="projects">
+                                            <!-- Portal user with exactly one project: show as read-only default -->
+                                            <div class="col-md-6" t-if="is_portal_user and projects and len(projects) == 1">
+                                                <label class="form-label fw-medium">Project</label>
+                                                <t t-set="single_project" t-value="projects[0]"/>
+                                                <input type="hidden" name="project_id" t-att-value="single_project.id"/>
+                                                <div class="form-control bg-light">
+                                                    <t t-out="single_project.name"/>
+                                                </div>
+                                            </div>
+                                            <!-- Multiple projects (portal or admin): show dropdown -->
+                                            <div class="col-md-6" t-elif="projects">
                                                 <label for="project_id" class="form-label fw-medium">Project</label>
                                                 <select name="project_id" id="project_id"
                                                         class="form-select">

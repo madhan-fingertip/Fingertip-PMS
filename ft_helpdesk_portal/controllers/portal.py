@@ -170,12 +170,14 @@ class HelpdeskPortal(CustomerPortal):
                 ('partner_id', '=', partner.commercial_partner_id.id),
             ], order='name')
 
+        is_portal_user = not user.has_group('base.group_user')
         values = {
             'page_name': 'ticket_create',
             'categories': categories,
             'ticket_types': ticket_types,
             'teams': teams,
             'projects': projects,
+            'is_portal_user': is_portal_user,
             'error': {},
             'error_message': [],
         }
@@ -215,12 +217,14 @@ class HelpdeskPortal(CustomerPortal):
                 projects = request.env['project.project'].sudo().search([
                     ('partner_id', '=', partner.commercial_partner_id.id),
                 ], order='name')
+            is_portal_user = not user.has_group('base.group_user')
             values = {
                 'page_name': 'ticket_create',
                 'categories': categories,
                 'ticket_types': ticket_types,
                 'teams': teams,
                 'projects': projects,
+                'is_portal_user': is_portal_user,
                 'error': error,
                 'error_message': error_message,
                 **post,
