@@ -24,7 +24,7 @@
     ],
     'assets': {
         'web.assets_frontend': [
-            # variables.scss is resolved via @import in components.scss and responsive.scss
+            'ft_helpdesk_ui/static/src/scss/variables.scss',
             'ft_helpdesk_ui/static/src/scss/components.scss',
             'ft_helpdesk_ui/static/src/scss/responsive.scss',
         ],

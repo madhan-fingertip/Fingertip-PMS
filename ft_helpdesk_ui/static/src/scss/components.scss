@@ -2,8 +2,6 @@
    FT Helpdesk Shared UI Components
    =================================== */
 
-@import 'variables';
-
 /* ---- Status Pills ---- */
 .ft-status-pill {
     display: inline-flex;
@@ -18,7 +16,7 @@
 
     &.status-new { background: rgba($ft-state-new, 0.12); color: $ft-state-new; }
     &.status-open { background: rgba($ft-state-open, 0.12); color: $ft-state-open; }
-    &.status-pending { background: rgba($ft-state-pending-customer, 0.12); color: darken($ft-state-pending-customer, 10%); }
+    &.status-pending { background: rgba($ft-state-pending-customer, 0.12); color: #c47d08; }
     &.status-resolved { background: rgba($ft-state-resolved, 0.12); color: $ft-state-resolved; }
     &.status-closed { background: rgba($ft-state-closed, 0.12); color: $ft-state-closed; }
     &.status-cancelled { background: rgba($ft-state-cancelled, 0.12); color: $ft-state-cancelled; }
