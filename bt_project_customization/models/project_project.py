@@ -85,6 +85,9 @@ class AccountAnalyticLine(models.Model):
         readonly=False,
     )
     module_id = fields.Many2one('cus.module',related='task_id.module_id',string='Module')
+    used_ai = fields.Boolean(string='Used AI')
+    chat_link = fields.Char(string='Chat Link')
+    reason = fields.Char(string='Reason')
 
     @api.onchange('jobposition_id')
     def _onchange_jobposition_id(self):

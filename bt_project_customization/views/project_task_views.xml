@@ -9,7 +9,7 @@
                     <field name="wc_id"/>
                     <field name="estimated"/>
                     <field name="actual"/>
-                    <field name="module_id"/>
+                    <field name="module_id" required="True"/>
                 </group>
             </field>
         </field>

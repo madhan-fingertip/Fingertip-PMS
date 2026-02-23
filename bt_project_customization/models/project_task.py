@@ -5,5 +5,5 @@ class ProjectTask(models.Model):
 
     estimated = fields.Float(string='Estimated')
     actual = fields.Float(string='Actual')
-    module_id = fields.Many2one('cus.module',string="Module")
+    module_id = fields.Many2one('cus.module',string="Module",required=True)
     wc_id = fields.Char(string='Wc Id')
