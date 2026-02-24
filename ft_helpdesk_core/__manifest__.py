@@ -32,6 +32,7 @@
         # Data
         'data/sequence.xml',
         'data/mail_subtypes.xml',
+        'data/mail_templates.xml',
         'data/ticket_stages.xml',
         'data/default_data.xml',
         # Wizard

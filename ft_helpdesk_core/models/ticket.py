@@ -284,6 +284,24 @@ class HelpdeskTicket(models.Model):
                 assignee = ticket.team_id._get_next_assignee()
                 if assignee:
                     ticket.assigned_user_id = assignee
+            # Subscribe customer as follower and send creation confirmation
+            if ticket.customer_id:
+                ticket.message_subscribe(partner_ids=ticket.customer_id.ids)
+                template = self.env.ref(
+                    'ft_helpdesk_core.mt_ticket_new_email_template',
+                    raise_if_not_found=False,
+                )
+                if template and ticket.customer_id.email:
+                    try:
+                        ticket.message_post_with_source(
+                            source_ref=template,
+                            subtype_xmlid='ft_helpdesk_core.mt_ticket_new',
+                        )
+                    except Exception:
+                        _logger.warning(
+                            'Failed to send new-ticket email for ticket %s',
+                            ticket.ticket_no, exc_info=True,
+                        )
         return tickets
 
     def write(self, vals):
