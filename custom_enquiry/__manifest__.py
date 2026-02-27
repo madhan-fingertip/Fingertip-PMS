@@ -5,8 +5,8 @@
     'author': 'Fingertip',
     'depends': ['base', 'website'],
     'data': [
-        'views/enquiry_views.xml',
         'security/ir.model.access.csv',
+        'views/enquiry_views.xml',
     ],
     'installable': True,
     'application': False,
