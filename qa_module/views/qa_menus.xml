@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Main QA Menu -->
+    <menuitem id="menu_qa_root"
+              name="QA"
+              sequence="10"
+              web_icon="qa_module,static/description/icon.png"/>
+
+    <!-- Test Plan Menu -->
+    <menuitem id="menu_qa_test_plan"
+              name="Test Plan"
+              parent="menu_qa_root"
+              action="action_qa_test_plan"
+              sequence="10"/>
+
+    <!-- Test Scenario Menu -->
+    <menuitem id="menu_qa_test_scenario"
+              name="Test Scenario"
+              parent="menu_qa_root"
+              action="action_qa_test_scenario"
+              sequence="20"/>
+
+    <!-- Test Case Menu -->
+    <menuitem id="menu_qa_test_case"
+              name="Test Case"
+              parent="menu_qa_root"
+              action="action_qa_test_case"
+              sequence="30"/>
+</odoo>

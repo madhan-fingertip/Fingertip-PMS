@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Test Scenario Tree View -->
+    <record id="view_qa_test_scenario_list" model="ir.ui.view">
+        <field name="name">qa.test.scenario.list</field>
+        <field name="model">qa.test.scenario</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="s_no"/>
+                <field name="date"/>
+                <field name="test_scenario_id"/>
+                <field name="module"/>
+                <field name="description"/>
+                <field name="status"/>
+                <field name="project_id"/>
+                
+                <field name="created_by"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Test Scenario Form View -->
+    <record id="view_qa_test_scenario_form" model="ir.ui.view">
+        <field name="name">qa.test.scenario.form</field>
+        <field name="model">qa.test.scenario</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="s_no"/>
+                            <field name="date"/>
+                            <field name="test_scenario_id"/>
+                            <field name="module"/>
+                            <field name="project_id"/>
+                            
+                        </group>
+                        <group>
+                            <field name="status"/>
+                            <field name="created_by"/>
+                            <field name="reviewed_by"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description" placeholder="Scenario description..."/>
+                    </group>
+                    <group>
+                        <field name="comments" placeholder="Comments needs to be filled by PM..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Test Scenario Search View -->
+    <record id="view_qa_test_scenario_search" model="ir.ui.view">
+        <field name="name">qa.test.scenario.search</field>
+        <field name="model">qa.test.scenario</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="test_scenario_id"/>
+                <field name="module"/>
+                <field name="project_id"/>
+                
+                <filter string="Pass" name="pass" domain="[('status', '=', 'pass')]"/>
+                <filter string="Fail" name="fail" domain="[('status', '=', 'fail')]"/>
+                <filter string="Invalid" name="invalid" domain="[('status', '=', 'invalid')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Status" name="group_status" context="{'group_by': 'status'}"/>
+                    <filter string="Module" name="group_module" context="{'group_by': 'module'}"/>
+                    <filter string="Project" name="group_project" context="{'group_by': 'project_id'}"/>
+                    
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Test Scenario Pivot View -->
+    <record id="view_qa_test_scenario_pivot" model="ir.ui.view">
+        <field name="name">qa.test.scenario.pivot</field>
+        <field name="model">qa.test.scenario</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="project_id" type="row"/>
+                
+                <field name="status" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Test Scenario Action -->
+    <record id="action_qa_test_scenario" model="ir.actions.act_window">
+        <field name="name">Test Scenarios</field>
+        <field name="res_model">qa.test.scenario</field>
+        <field name="view_mode">list,form,pivot</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Test Scenario
+            </p>
+        </field>
+    </record>
+</odoo>

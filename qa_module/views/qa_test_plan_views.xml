@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Test Plan Tree View -->
+    <record id="view_qa_test_plan_list" model="ir.ui.view">
+        <field name="name">qa.test.plan.list</field>
+        <field name="model">qa.test.plan</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                
+                <field name="project_org_id"/>
+                <field name="activity_start_date"/>
+                <field name="activity_end_date"/>
+                <field name="test_manager"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Test Plan Form View -->
+    <record id="view_qa_test_plan_form" model="ir.ui.view">
+        <field name="name">qa.test.plan.form</field>
+        <field name="model">qa.test.plan</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,approved,rejected"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                           
+                            <field name="project_org_id"/>
+                        </group>
+                        <group>
+                            <field name="activity_start_date"/>
+                            <field name="activity_end_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Overview">
+                            <group>
+                                <field name="introduction" placeholder="Purpose of this test plan..."/>
+                                <field name="test_objectives" placeholder="Quality goals..."/>
+                            </group>
+                        </page>
+                        <page string="Scope">
+                            <group>
+                                <field name="scope_in" placeholder="What is in scope..."/>
+                                <field name="scope_out" placeholder="What is out of scope..."/>
+                            </group>
+                        </page>
+                        <page string="Approach &amp; Environment">
+                            <group>
+                                <field name="test_approach" placeholder="Test types/Test level..."/>
+                                <field name="test_environment" placeholder="Test environment details..."/>
+                            </group>
+                        </page>
+                        <page string="Entry &amp; Exit Criteria">
+                            <group>
+                                <field name="entry_criteria" placeholder="Entry criteria..."/>
+                                <field name="exit_criteria" placeholder="Exit criteria..."/>
+                            </group>
+                        </page>
+                        <page string="Roles &amp; Responsibilities">
+                            <group>
+                                <field name="test_manager"/>
+                                <field name="test_engineer"/>
+                                <field name="developer"/>
+                            </group>
+                        </page>
+                        <page string="Defect Management">
+                            <group>
+                                <field name="defect_management" placeholder="Defect management process..."/>
+                            </group>
+                        </page>
+                        <page string="Assumptions &amp; Constraints">
+                            <group>
+                                <field name="assumptions" placeholder="Assumptions..."/>
+                                <field name="constraints" placeholder="Constraints..."/>
+                            </group>
+                        </page>
+                        <page string="Approval">
+                            <group>
+                                <field name="approval_authority"/>
+                                <field name="sign_off_details" placeholder="Sign off details..."/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Test Plan Search View -->
+    <record id="view_qa_test_plan_search" model="ir.ui.view">
+        <field name="name">qa.test.plan.search</field>
+        <field name="model">qa.test.plan</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+               
+                <field name="project_org_id"/>
+                <field name="test_manager"/>
+                <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Approved" name="approved" domain="[('state', '=', 'approved')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    
+                    <filter string="Project ORG ID" name="group_project_org" context="{'group_by': 'project_org_id'}"/>
+                    <filter string="Test Manager" name="group_test_manager" context="{'group_by': 'test_manager'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Test Plan Pivot View -->
+    <record id="view_qa_test_plan_pivot" model="ir.ui.view">
+        <field name="name">qa.test.plan.pivot</field>
+        <field name="model">qa.test.plan</field>
+        <field name="arch" type="xml">
+            <pivot>
+                
+                <field name="project_org_id" type="row"/>
+                <field name="state" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Test Plan Action -->
+    <record id="action_qa_test_plan" model="ir.actions.act_window">
+        <field name="name">Test Plans</field>
+        <field name="res_model">qa.test.plan</field>
+        <field name="view_mode">list,form,pivot</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Test Plan
+            </p>
+        </field>
+    </record>
+</odoo>

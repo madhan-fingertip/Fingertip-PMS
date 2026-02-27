@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Test Case Tree View -->
+    <record id="view_qa_test_case_list" model="ir.ui.view">
+        <field name="name">qa.test.case.list</field>
+        <field name="model">qa.test.case</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="s_no"/>
+                <field name="test_case_id"/>
+                <field name="test_case_title"/>
+                <field name="module"/>
+                
+                <field name="status"/>
+                <field name="severity"/>
+                <field name="test_type"/>
+                <field name="environment"/>
+                <field name="executed_date"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Test Case Form View -->
+    <record id="view_qa_test_case_form" model="ir.ui.view">
+        <field name="name">qa.test.case.form</field>
+        <field name="model">qa.test.case</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="s_no"/>
+                            <field name="test_case_id"/>
+                            <field name="test_case_title"/>
+                            <field name="module"/>
+                            
+                        </group>
+                        <group>
+                            <field name="status"/>
+                            <field name="severity"/>
+                            <field name="test_type"/>
+                            <field name="environment"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Test Details">
+                            <group>
+                                <field name="test_objective" placeholder="Test objective..."/>
+                                <field name="pre_conditions" placeholder="Pre conditions..."/>
+                            </group>
+                        </page>
+                        <page string="Test Data &amp; Steps">
+                            <group>
+                                <field name="test_data" placeholder="Input values..."/>
+                                <field name="test_steps" placeholder="Test steps..."/>
+                            </group>
+                        </page>
+                        <page string="Results">
+                            <group>
+                                <field name="expected_result" placeholder="Expected result..."/>
+                                <field name="actual_result" placeholder="Actual result..."/>
+                            </group>
+                        </page>
+                        <page string="Execution">
+                            <group>
+                                <field name="executed_date"/>
+                                <field name="executed_by"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Test Case Search View -->
+    <record id="view_qa_test_case_search" model="ir.ui.view">
+        <field name="name">qa.test.case.search</field>
+        <field name="model">qa.test.case</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="test_case_id"/>
+                <field name="test_case_title"/>
+                <field name="module"/>
+                
+                <filter string="Pass" name="pass" domain="[('status', '=', 'pass')]"/>
+                <filter string="Fail" name="fail" domain="[('status', '=', 'fail')]"/>
+                <filter string="Blocked" name="blocked" domain="[('status', '=', 'blocked')]"/>
+                <filter string="Not Executed" name="not_executed" domain="[('status', '=', 'not_executed')]"/>
+                <separator/>
+                <filter string="Critical" name="critical" domain="[('severity', '=', 'critical')]"/>
+                <filter string="High" name="high" domain="[('severity', '=', 'high')]"/>
+                <separator/>
+                <filter string="Smoke" name="smoke" domain="[('test_type', '=', 'smoke')]"/>
+                <filter string="UAT" name="uat" domain="[('test_type', '=', 'uat')]"/>
+                <filter string="Regression" name="regression" domain="[('test_type', '=', 'regression')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Status" name="group_status" context="{'group_by': 'status'}"/>
+                    <filter string="Severity" name="group_severity" context="{'group_by': 'severity'}"/>
+                    <filter string="Test Type" name="group_test_type" context="{'group_by': 'test_type'}"/>
+                    <filter string="Environment" name="group_environment" context="{'group_by': 'environment'}"/>
+                    <filter string="Module" name="group_module" context="{'group_by': 'module'}"/>
+                    
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Test Case Pivot View -->
+    <record id="view_qa_test_case_pivot" model="ir.ui.view">
+        <field name="name">qa.test.case.pivot</field>
+        <field name="model">qa.test.case</field>
+        <field name="arch" type="xml">
+            <pivot>
+                
+                <field name="status" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Test Case Action -->
+    <record id="action_qa_test_case" model="ir.actions.act_window">
+        <field name="name">Test Cases</field>
+        <field name="res_model">qa.test.case</field>
+        <field name="view_mode">list,form,pivot</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Test Case
+            </p>
+        </field>
+    </record>
+</odoo>

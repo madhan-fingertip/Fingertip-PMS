@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_qa_test_plan_user,access.qa.test.plan.user,model_qa_test_plan,base.group_user,1,1,1,1
+access_qa_test_scenario_user,access.qa.test.scenario.user,model_qa_test_scenario,base.group_user,1,1,1,1
+access_qa_test_case_user,access.qa.test.case.user,model_qa_test_case,base.group_user,1,1,1,1
