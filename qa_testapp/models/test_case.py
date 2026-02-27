@@ -1,8 +1,7 @@
-from odoo import models, fields, api
-
+from odoo import models, fields
 
 class QATestCase(models.Model):
-    _name = 'qa.test.case'
+    _name = 'qa_testapp.test_case'
     _description = 'QA Test Case'
     _order = 's_no'
 

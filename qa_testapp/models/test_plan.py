@@ -1,8 +1,7 @@
-from odoo import models, fields, api
-
+from odoo import models, fields
 
 class QATestPlan(models.Model):
-    _name = 'qa.test.plan'
+    _name = 'qa_testapp.test_plan'
     _description = 'QA Test Plan'
     _order = 'id desc'
 
@@ -13,7 +12,7 @@ class QATestPlan(models.Model):
     test_objectives = fields.Text(string='Test Objectives (Quality Goals)')
     scope_in = fields.Text(string='Scope - In Scope')
     scope_out = fields.Text(string='Scope - Out of Scope')
-    test_approach = fields.Text(string='Test Approach (Test types/Test Level)')
+    test_approach = fields.Text(string='Test Approach')
     test_environment = fields.Text(string='Test Environment')
     activity_start_date = fields.Date(string='Activity Start Date')
     activity_end_date = fields.Date(string='Activity End Date')

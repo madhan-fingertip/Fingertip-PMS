@@ -1,8 +1,7 @@
-from odoo import models, fields, api
-
+from odoo import models, fields
 
 class QATestScenario(models.Model):
-    _name = 'qa.test.scenario'
+    _name = 'qa_testapp.test_scenario'
     _description = 'QA Test Scenario'
     _order = 's_no'
 
@@ -16,7 +15,7 @@ class QATestScenario(models.Model):
         ('fail', 'Fail'),
         ('invalid', 'Invalid')
     ], string='Status', default='pass')
-    comments = fields.Text(string='Comments', help='Comments needs to be filled by PM')
+    comments = fields.Text(string='Comments', help='Comments by PM')
     created_by = fields.Many2one('res.users', string='Created By', default=lambda self: self.env.user)
     reviewed_by = fields.Many2one('res.users', string='Reviewed By')
     project_id = fields.Many2one('project.project', string='Project')
