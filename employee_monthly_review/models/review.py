@@ -35,148 +35,148 @@ class Review(models.Model):
     # COMMON (6) - rating + comment
     # -------------------------
     communication_clarity_rating = fields.Selection(RATING, required=False)
-    communication_clarity_comment = fields.Text()
+    communication_clarity_comment = fields.Char()
 
     accountability_ownership_rating = fields.Selection(RATING, required=False)
-    accountability_ownership_comment = fields.Text()
+    accountability_ownership_comment = fields.Char()
 
     deadline_discipline_rating = fields.Selection(RATING, required=False)
-    deadline_discipline_comment = fields.Text()
+    deadline_discipline_comment = fields.Char()
 
     work_quality_rating = fields.Selection(RATING, required=False)
-    work_quality_comment = fields.Text()
+    work_quality_comment = fields.Char()
 
     process_adherence_rating = fields.Selection(RATING, required=False)
-    process_adherence_comment = fields.Text()
+    process_adherence_comment = fields.Char()
 
     learning_improvement_rating = fields.Selection(RATING, required=False)
-    learning_improvement_comment = fields.Text()
+    learning_improvement_comment = fields.Char()
 
     # -------------------------
     # SALES (5)
     # -------------------------
     prospecting_pipeline_discipline_rating = fields.Selection(RATING)
-    prospecting_pipeline_discipline_comment = fields.Text()
+    prospecting_pipeline_discipline_comment = fields.Char()
 
     follow_up_deal_progression_rating = fields.Selection(RATING)
-    follow_up_deal_progression_comment = fields.Text()
+    follow_up_deal_progression_comment = fields.Char()
 
     discovery_questioning_quality_rating = fields.Selection(RATING)
-    discovery_questioning_quality_comment = fields.Text()
+    discovery_questioning_quality_comment = fields.Char()
 
     objection_handling_negotiation_rating = fields.Selection(RATING)
-    objection_handling_negotiation_comment = fields.Text()
+    objection_handling_negotiation_comment = fields.Char()
 
     forecast_accuracy_revenue_ownership_rating = fields.Selection(RATING)
-    forecast_accuracy_revenue_ownership_comment = fields.Text()
+    forecast_accuracy_revenue_ownership_comment = fields.Char()
 
     # -------------------------
     # MARKETING (5)
     # -------------------------
     campaign_planning_execution_rating = fields.Selection(RATING)
-    campaign_planning_execution_comment = fields.Text()
+    campaign_planning_execution_comment = fields.Char()
 
     lead_quality_contribution_rating = fields.Selection(RATING)
-    lead_quality_contribution_comment = fields.Text()
+    lead_quality_contribution_comment = fields.Char()
 
     performance_tracking_reporting_rating = fields.Selection(RATING)
-    performance_tracking_reporting_comment = fields.Text()
+    performance_tracking_reporting_comment = fields.Char()
 
     tool_proficiency_ads_automation_crm_rating = fields.Selection(RATING)
-    tool_proficiency_ads_automation_crm_comment = fields.Text()
+    tool_proficiency_ads_automation_crm_comment = fields.Char()
 
     creativity_experimentation_rating = fields.Selection(RATING)
-    creativity_experimentation_comment = fields.Text()
+    creativity_experimentation_comment = fields.Char()
 
     # -------------------------
     # DEVELOPER (5)
     # -------------------------
     technical_competency_rating = fields.Selection(RATING)
-    technical_competency_comment = fields.Text()
+    technical_competency_comment = fields.Char()
 
     code_quality_standards_rating = fields.Selection(RATING)
-    code_quality_standards_comment = fields.Text()
+    code_quality_standards_comment = fields.Char()
 
     debugging_root_cause_rating = fields.Selection(RATING)
-    debugging_root_cause_comment = fields.Text()
+    debugging_root_cause_comment = fields.Char()
 
     requirement_understanding_accuracy_rating = fields.Selection(RATING)
-    requirement_understanding_accuracy_comment = fields.Text()
+    requirement_understanding_accuracy_comment = fields.Char()
 
     estimation_accuracy_reliability_rating = fields.Selection(RATING)
-    estimation_accuracy_reliability_comment = fields.Text()
+    estimation_accuracy_reliability_comment = fields.Char()
 
     # -------------------------
     # TEAM LEAD (5)
     # -------------------------
     task_planning_allocation_rating = fields.Selection(RATING)
-    task_planning_allocation_comment = fields.Text()
+    task_planning_allocation_comment = fields.Char()
 
     delivery_predictability_rating = fields.Selection(RATING)
-    delivery_predictability_comment = fields.Text()
+    delivery_predictability_comment = fields.Char()
 
     mentoring_technical_guidance_rating = fields.Selection(RATING)
-    mentoring_technical_guidance_comment = fields.Text()
+    mentoring_technical_guidance_comment = fields.Char()
 
     risk_identification_escalation_rating = fields.Selection(RATING)
-    risk_identification_escalation_comment = fields.Text()
+    risk_identification_escalation_comment = fields.Char()
 
     stakeholder_client_communication_rating = fields.Selection(RATING)
-    stakeholder_client_communication_comment = fields.Text()
+    stakeholder_client_communication_comment = fields.Char()
 
     # -------------------------
     # PROJECT MANAGER (5)
     # -------------------------
     project_planning_timeline_control_rating = fields.Selection(RATING)
-    project_planning_timeline_control_comment = fields.Text()
+    project_planning_timeline_control_comment = fields.Char()
 
     scope_change_management_rating = fields.Selection(RATING)
-    scope_change_management_comment = fields.Text()
+    scope_change_management_comment = fields.Char()
 
     risk_dependency_management_rating = fields.Selection(RATING)
-    risk_dependency_management_comment = fields.Text()
+    risk_dependency_management_comment = fields.Char()
 
     stakeholder_communication_rating = fields.Selection(RATING)
-    stakeholder_communication_comment = fields.Text()
+    stakeholder_communication_comment = fields.Char()
 
     status_reporting_accuracy_rating = fields.Selection(RATING)
-    status_reporting_accuracy_comment = fields.Text()
+    status_reporting_accuracy_comment = fields.Char()
 
     # -------------------------
     # TESTER / QA (5)
     # -------------------------
     test_case_design_quality_rating = fields.Selection(RATING)
-    test_case_design_quality_comment = fields.Text()
+    test_case_design_quality_comment = fields.Char()
 
     bug_reporting_clarity_rating = fields.Selection(RATING)
-    bug_reporting_clarity_comment = fields.Text()
+    bug_reporting_clarity_comment = fields.Char()
 
     coverage_edge_case_thinking_rating = fields.Selection(RATING)
-    coverage_edge_case_thinking_comment = fields.Text()
+    coverage_edge_case_thinking_comment = fields.Char()
 
     regression_discipline_rating = fields.Selection(RATING)
-    regression_discipline_comment = fields.Text()
+    regression_discipline_comment = fields.Char()
 
     quality_ownership_rating = fields.Selection(RATING)
-    quality_ownership_comment = fields.Text()
+    quality_ownership_comment = fields.Char()
 
     # -------------------------
     # HR (5)
     # -------------------------
     hiring_pipeline_management_rating = fields.Selection(RATING)
-    hiring_pipeline_management_comment = fields.Text()
+    hiring_pipeline_management_comment = fields.Char()
 
     policy_compliance_documentation_rating = fields.Selection(RATING)
-    policy_compliance_documentation_comment = fields.Text()
+    policy_compliance_documentation_comment = fields.Char()
 
     employee_issue_handling_rating = fields.Selection(RATING)
-    employee_issue_handling_comment = fields.Text()
+    employee_issue_handling_comment = fields.Char()
 
     process_improvement_initiative_rating = fields.Selection(RATING)
-    process_improvement_initiative_comment = fields.Text()
+    process_improvement_initiative_comment = fields.Char()
 
     confidentiality_professionalism_rating = fields.Selection(RATING)
-    confidentiality_professionalism_comment = fields.Text()
+    confidentiality_professionalism_comment = fields.Char()
 
     # -------------------------
     # After section
