@@ -14,3 +14,4 @@ class MarketingEnquiry(models.Model):
     message = fields.Text()
     location = fields.Char()
     company = fields.Char()
+    subject = fields.Char()
