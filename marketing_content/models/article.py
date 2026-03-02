@@ -7,6 +7,7 @@ class MarketingArticle(models.Model):
     _description = "Marketing Article"
     _rec_name = "subject"
     _order = "create_date desc"
+    _inherit = ["mail.thread", "mail.activity.mixin", "analytic.mixin"]
 
     industry = fields.Selection(
         selection=[
