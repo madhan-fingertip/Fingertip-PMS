@@ -2,7 +2,7 @@
 <odoo>
 
     <!-- Root Menu -->
-    <menuitem id="menu_marketing_root" name="Marketing" sequence="10" groups="group_scorecard_marketing"/>
+    <menuitem id="menu_marketing_root" name="Marketing" sequence="10" groups="Project_Scorecards.group_scorecard_marketing"/>
 
     <!-- =========================
          ARTICLE
