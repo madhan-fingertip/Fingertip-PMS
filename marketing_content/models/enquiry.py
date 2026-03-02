@@ -13,3 +13,4 @@ class MarketingEnquiry(models.Model):
     phone = fields.Char(index=True)
     message = fields.Text()
     location = fields.Char()
+    company = fields.Char()
