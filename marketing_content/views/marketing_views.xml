@@ -176,6 +176,9 @@
                 <field name="email"/>
                 <field name="phone"/>
                 <field name="location"/>
+                <field name="company"/>
+                <field name="subject"/>
+                <field name="message"/>
                 <field name="create_date"/>
             </list>
         </field>
@@ -192,6 +195,8 @@
                         <field name="email"/>
                         <field name="phone"/>
                         <field name="location"/>
+                        <field name="company"/>
+                        <field name="subject"/>
                     </group>
                     <group>
                         <field name="message" placeholder="Customer message..."/>
