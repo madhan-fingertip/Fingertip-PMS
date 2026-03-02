@@ -6,7 +6,7 @@
     "summary": "Marketing app with Articles, Pageviews, and Enquiries",
     "author": "Your Company",
     "license": "LGPL-3",
-    "depends": ["base"],
+    "depends": ["base","mail"],
     "data": [
         "security/ir.model.access.csv",
         "views/marketing_views.xml",
