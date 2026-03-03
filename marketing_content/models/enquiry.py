@@ -15,3 +15,4 @@ class MarketingEnquiry(models.Model):
     location = fields.Char()
     company = fields.Char()
     subject = fields.Char()
+    domain = fields.Char()

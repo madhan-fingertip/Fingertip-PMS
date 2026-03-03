@@ -18,6 +18,7 @@
                 <field name="technology"/>
                 <field name="type"/>
                 <field name="site"/>
+                <field name="created_by"/>
                 <field name="published_on"/>
                 <field name="active"/>
                 <field name="create_date"/>
@@ -43,6 +44,7 @@
                             <field name="type"/>
                             <field name="site"/>
                             <field name="published_on"/>
+                            <field name="created_by"/>
                             <field name="active"/>
                         </group>
                         <group>
@@ -177,6 +179,7 @@
                 <field name="email"/>
                 <field name="phone"/>
                 <field name="location"/>
+                <field name="domain"/>
                 <field name="company"/>
                 <field name="subject"/>
                 <field name="message"/>
@@ -196,6 +199,7 @@
                         <field name="email"/>
                         <field name="phone"/>
                         <field name="location"/>
+                        <field name="domain"/>
                         <field name="company"/>
                         <field name="subject"/>
                     </group>
@@ -216,6 +220,7 @@
                 <field name="email"/>
                 <field name="phone"/>
                 <field name="location"/>
+                <field name="domain"/>
                 <group expand="0" string="Group By">
                     <filter string="Location" name="grp_location" context="{'group_by':'location'}"/>
                 </group>
