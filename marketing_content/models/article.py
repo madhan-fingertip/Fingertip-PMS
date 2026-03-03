@@ -65,3 +65,8 @@ class MarketingArticle(models.Model):
 
     active = fields.Boolean(default=True)
     published_on = fields.Datetime(string="Published On")
+    client = fields.Char(string="Client")
+    technologies = fields.Char(string="Technologies")
+    timeline = fields.Char(string="Timeline")
+    team_size = fields.Integer(string="Team")
+

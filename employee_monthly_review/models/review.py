@@ -183,7 +183,7 @@ class Review(models.Model):
     # -------------------------
     strengths_top3 = fields.Text(string="Strengths")
     improvements_top3 = fields.Text(string="Improvement Areas")
-    goals_next_month = fields.Text(string="3 Goals for Next Month")
+    goals_next_month = fields.Text(string="Goals for Next Month")
 
     _sql_constraints = [
         ("uniq_review_employee_month", "unique(employee_id, review_month)",

@@ -18,8 +18,11 @@
                 <field name="technology"/>
                 <field name="type"/>
                 <field name="site"/>
-                <field name="create_uid"/>
-                <field name="create_date"/>
+                <field name="create_uid" widget="many2one_avatar"/>
+                <field name="client"/>
+                <field name="technologies"/>
+                <field name="timeline"/>
+                <field name="team_size"/>
                 <field name="published_on"/>
                 <field name="active"/>
                 <field name="create_date"/>
@@ -45,12 +48,16 @@
                             <field name="type"/>
                             <field name="site"/>
                             <field name="published_on"/>
-                            <field name="create_uid"/>
+                            <field name="create_uid" widget="many2one_avatar"/>
                             <field name="create_date"/>
                             <field name="active"/>
                         </group>
                         <group>
                             <field name="image_url" placeholder="https://..."/>
+                            <field name="client"/>
+                            <field name="technologies"/>
+                            <field name="timeline"/>
+                            <field name="team_size"/>
                         </group>
                     </group>
 
