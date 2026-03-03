@@ -69,4 +69,8 @@ class MarketingArticle(models.Model):
     technologies = fields.Char(string="Technologies")
     timeline = fields.Char(string="Timeline")
     team_size = fields.Integer(string="Team")
+    creator_image = fields.Binary(
+        related="create_uid.image_1920",
+        string="Creator Image"
+    )
 
