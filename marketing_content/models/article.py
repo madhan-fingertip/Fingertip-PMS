@@ -20,7 +20,6 @@ class MarketingArticle(models.Model):
             ("education", "Education"),
             ("agriculture", "Agriculture"),
         ],
-        required=True,
         index=True,
     )
 
