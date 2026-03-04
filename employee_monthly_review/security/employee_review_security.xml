@@ -1,0 +1,25 @@
+
+<odoo>
+
+    <!-- Custom Group -->
+    <record id="group_employee_review_user" model="res.groups">
+        <field name="name">Employee Review User</field>
+        <field name="category_id" ref="base.module_category_human_resources"/>
+    </record>
+
+    <!-- Record Rule -->
+    <record id="employee_review_rule_user" model="ir.rule">
+        <field name="name">Employee Review: Own or Creator</field>
+        <field name="model_id" ref="model_review"/>
+        <field name="groups" eval="[(4, ref('group_employee_review_user'))]"/>
+        <field name="domain_force">
+            ['|',('create_uid','=',user.id),('employee_id.user_id','=',user.id)]
+        </field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+
+</odoo>

@@ -5,6 +5,7 @@
     "depends": ["hr"],
     "data": [
         "security/ir.model.access.csv",
+        "security/employee_review_security.xml",
         "views/review_views.xml",
     ],
     'images': ['static/description/performance_review.png'],
