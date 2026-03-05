@@ -5,13 +5,27 @@
     <!-- ============================= -->
     <template id="portal_ticket_list" name="My Tickets">
         <t t-call="ft_helpdesk_portal.portal_support_home">
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h2 class="fw-bold mb-0">My Tickets</h2>
+                            <p class="text-muted mb-0">
+                                <t t-out="ticket_count"/> ticket(s) found
+                            </p>
+                        </div>
+                        <a href="/my/support/ticket/new" class="btn btn-primary">
+                            <i class="fa fa-plus me-1"/> New Ticket
+                        </a>
+                    </div>
+
                     <!-- Filters & Search Bar -->
                     <div class="card border-0 shadow-sm mb-4">
                         <div class="card-body py-3">
                             <div class="row g-3 align-items-center">
                                 <!-- Filter Chips -->
                                 <div class="col-lg-7">
-                                    <div class="d-flex flex-wrap gap-2">
+                                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                                        <span class="fw-medium text-dark">Filter:</span>
                                         <t t-foreach="filters" t-as="f">
                                             <a t-attf-href="/my/support/tickets?filterby=#{f}&amp;sortby=#{sortby}&amp;search=#{search}&amp;search_in=#{search_in}"
                                                t-attf-class="btn btn-sm #{filterby == f and 'btn-primary' or 'btn-outline-secondary'} rounded-pill">
@@ -44,7 +58,7 @@
                             </div>
                             <!-- Sort Options -->
                             <div class="mt-2 d-flex gap-2 align-items-center">
-                                <span class="small text-muted">Sort by:</span>
+                                <span class="fw-medium text-dark">Sort by:</span>
                                 <t t-foreach="sortings" t-as="s">
                                     <a t-attf-href="/my/support/tickets?sortby=#{s}&amp;filterby=#{filterby}&amp;search=#{search}&amp;search_in=#{search_in}"
                                        t-attf-class="btn btn-sm #{sortby == s and 'btn-dark' or 'btn-outline-dark'} rounded-pill">
