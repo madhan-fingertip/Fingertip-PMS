@@ -23,6 +23,7 @@
         'portal',
         'project',
         'web',
+        'website',
     ],
     'data': [
         'security/security.xml',

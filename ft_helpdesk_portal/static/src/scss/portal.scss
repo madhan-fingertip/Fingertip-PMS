@@ -6,45 +6,227 @@
 /* ===================================
    Login Page — Split-Screen Layout
    =================================== */
-.ft-login-wrapper {
+
+/* Override website layout wrappers for full-bleed login */
+#wrapwrap:has(.ft-login-wrapper) {
     min-height: 100vh;
+    > main {
+        padding: 0 !important;
+        margin: 0 !important;
+        display: flex;
+        flex: 1;
+    }
 }
 
+.ft-login-wrapper {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+
+    @media (max-width: 991.98px) {
+        flex-direction: column;
+    }
+}
+
+/* ---------- LEFT PANEL (Branding) ---------- */
 .ft-login-left {
     flex: 1;
-    background: #ffffff;
-}
-
-.ft-login-right {
-    flex: 1;
-    background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 50%, #084298 100%);
+    background: linear-gradient(160deg, #0f0525 0%, #1a0a3e 30%, #2d1569 60%, #3a1d8e 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
     position: relative;
     overflow: hidden;
+    color: #ffffff;
 
+    /* Subtle radial glow */
     &::before {
         content: '';
         position: absolute;
-        top: -50%;
-        right: -50%;
+        top: -40%;
+        left: -30%;
+        width: 160%;
+        height: 160%;
+        background: radial-gradient(ellipse at 30% 50%, rgba(106, 90, 205, 0.15) 0%, transparent 60%);
+        pointer-events: none;
+    }
+
+    @media (max-width: 991.98px) {
+        padding: 2rem 1.5rem;
+        min-height: auto;
+    }
+}
+
+.ft-login-left-inner {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    max-width: 440px;
+}
+
+.ft-login-brand-logo-wrap {
+    margin-bottom: 2.5rem;
+}
+
+.ft-login-brand-logo {
+    max-height: 50px;
+    max-width: 220px;
+    width: auto;
+    filter: brightness(0) invert(1);
+}
+
+.ft-login-welcome {
+    font-size: 2.2rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 1rem;
+    color: #ffffff;
+
+    span {
+        color: #c4b5fd;
+    }
+
+    @media (max-width: 991.98px) {
+        font-size: 1.5rem;
+    }
+}
+
+.ft-login-tagline {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.75);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.ft-login-illustration {
+    margin: 1.5rem auto;
+    max-width: 260px;
+
+    svg {
         width: 100%;
-        height: 100%;
-        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        height: auto;
+    }
+
+    @media (max-width: 991.98px) {
+        max-width: 180px;
     }
 }
 
-.ft-login-logo {
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+.ft-login-copyright {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.45);
+    margin-top: 2rem;
+    margin-bottom: 0;
 }
 
-.ft-login-form-container {
-    .form-control {
-        border-radius: 0.5rem;
-        padding: 0.6rem 0.75rem;
+/* ---------- RIGHT PANEL (Login Form) ---------- */
+.ft-login-right {
+    flex: 1;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+
+    @media (max-width: 991.98px) {
+        padding: 2rem 1.5rem;
     }
-    .btn-primary {
-        border-radius: 0.5rem;
-        font-size: 1rem;
+}
+
+.ft-login-right-inner {
+    width: 100%;
+    max-width: 420px;
+}
+
+.ft-login-form-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 0.5rem;
+}
+
+.ft-login-form-subtitle {
+    font-size: 0.95rem;
+    color: #6c757d;
+    margin-bottom: 2rem;
+}
+
+.ft-login-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+
+    /* Style the injected Odoo login form */
+    .oe_login_form {
+        .form-label,
+        .col-form-label {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 0.7rem 1rem;
+            border: 1px solid #dee2e6;
+            font-size: 0.95rem;
+
+            &:focus {
+                border-color: #6c5ce7;
+                box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
+            }
+        }
+
+        .oe_login_buttons {
+            margin-top: 1.5rem !important;
+            padding-top: 0.5rem !important;
+
+            .btn-primary {
+                background: linear-gradient(135deg, #6c5ce7 0%, #a855f7 100%);
+                border: none;
+                border-radius: 8px;
+                padding: 0.75rem;
+                font-weight: 600;
+                font-size: 1rem;
+                transition: opacity 0.2s, transform 0.1s;
+
+                &:hover {
+                    opacity: 0.9;
+                    transform: translateY(-1px);
+                }
+            }
+
+            .btn-link {
+                color: #6c757d;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Hide database selector row that appears in dev mode */
+        .mb-3:has(select[name='db']) {
+            display: none;
+        }
     }
+
+    .alert {
+        border-radius: 8px;
+    }
+
+    /* owl user-switch component */
+    owl-component {
+        display: block;
+        margin-bottom: 1rem;
+    }
+}
+
+.ft-login-powered {
+    text-align: center;
+    font-size: 0.85rem;
+    color: #adb5bd;
+    margin-top: 1.5rem;
+    margin-bottom: 0;
 }
 
 /* ===================================
