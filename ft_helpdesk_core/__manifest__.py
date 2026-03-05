@@ -22,6 +22,7 @@
         'portal',
         'product',
         'project',
+        'project_custom_milestone',
         'web',
     ],
     'data': [
@@ -35,6 +36,7 @@
         'data/mail_templates.xml',
         'data/ticket_stages.xml',
         'data/default_data.xml',
+        'data/portal_rule.xml',
         # Wizard
         'wizard/ticket_close_wizard_views.xml',
         'wizard/ticket_assign_wizard_views.xml',
@@ -50,6 +52,8 @@
         'views/business_hours_views.xml',
         'views/res_config_settings_views.xml',
         'views/menus.xml',
+        # Portal
+        'views/portal_templates.xml',
     ],
     'assets': {
         'web.assets_backend': [

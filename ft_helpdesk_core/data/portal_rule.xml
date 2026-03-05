@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Portal users may only read tickets where they are the customer. -->
+    <record id="rule_ft_helpdesk_ticket_portal" model="ir.rule">
+        <field name="name">Helpdesk Ticket: portal users see own tickets</field>
+        <field name="model_id" ref="model_ft_helpdesk_ticket"/>
+        <field name="domain_force">[('customer_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Portal users may read project milestones linked to their tickets' projects. -->
+    <record id="rule_project_custom_milestone_portal" model="ir.rule">
+        <field name="name">Project Milestone: portal users see milestones of own ticket projects</field>
+        <field name="model_id" ref="project_custom_milestone.model_project_custom_milestone"/>
+        <field name="domain_force">[
+            ('project_id', 'in',
+             [t.project_id.id for t in env['ft.helpdesk.ticket'].search([('customer_id', '=', user.partner_id.id)])])
+        ]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+</odoo>
