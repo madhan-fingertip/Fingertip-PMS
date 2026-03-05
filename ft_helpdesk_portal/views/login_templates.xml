@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ===================================== -->
+    <!-- Custom Login Page (Salesforce-style)   -->
+    <!-- ===================================== -->
+    <template id="ft_login_page" name="FT Custom Login"
+              inherit_id="web.login" priority="99">
+
+        <!-- Replace the entire t-call to login_layout with our split-screen -->
+        <xpath expr="//t[@t-call='web.login_layout']" position="replace">
+            <div class="ft-login-wrapper d-flex min-vh-100">
+                <!-- LEFT: Login Form -->
+                <div class="ft-login-left d-flex align-items-center justify-content-center p-4">
+                    <div class="ft-login-form-container" style="max-width: 420px; width: 100%;">
+                        <!-- Logo -->
+                        <div class="text-center mb-4">
+                            <img t-attf-src="/web/binary/company_logo{{ '?dbname='+db if db else '' }}"
+                                 alt="Company Logo"
+                                 class="ft-login-logo mb-3" style="max-height: 60px;"/>
+                            <h3 class="fw-bold text-dark mb-1">Welcome Back</h3>
+                            <p class="text-muted">Sign in to access your support portal</p>
+                        </div>
+
+                        <!-- Error messages -->
+                        <p class="alert alert-danger" t-if="error" role="alert">
+                            <t t-esc="error"/>
+                        </p>
+                        <p class="alert alert-success" t-if="message" role="status">
+                            <t t-esc="message"/>
+                        </p>
+
+                        <!-- Login Form -->
+                        <form class="oe_login_form" role="form"
+                              t-attf-action="/web/login"
+                              method="post" onsubmit="this.action = '/web/login' + location.hash">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <input type="hidden" name="redirect" t-att-value="redirect"/>
+
+                            <div class="mb-3">
+                                <label for="login" class="form-label fw-medium">Email</label>
+                                <input type="text" name="login" id="login"
+                                       t-att-value="login"
+                                       class="form-control"
+                                       placeholder="your@email.com"
+                                       required="required"
+                                       autofocus="autofocus" autocapitalize="off"
+                                       autocomplete="username"/>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label fw-medium">Password</label>
+                                <input type="password" name="password" id="password"
+                                       class="form-control"
+                                       placeholder="Enter your password"
+                                       required="required"
+                                       autocomplete="current-password"
+                                       maxlength="4096"
+                                       t-att-autofocus="'autofocus' if login else None"/>
+                            </div>
+
+                            <div class="d-flex justify-content-end mb-4">
+                                <a href="/web/reset_password" class="small text-decoration-none">
+                                    Forgot password?
+                                </a>
+                            </div>
+
+                            <div class="oe_login_buttons text-center gap-1 d-grid mb-1">
+                                <button type="submit" class="btn btn-primary py-2 fw-semibold">
+                                    Sign In
+                                </button>
+                            </div>
+
+                            <input type="hidden" name="type" value="password"/>
+                        </form>
+
+                        <div class="text-center mt-4">
+                            <small class="text-muted">Powered by FingertipTech</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: Image / Brand panel -->
+                <div class="ft-login-right d-none d-lg-flex align-items-center justify-content-center">
+                    <div class="text-center text-white px-5">
+                        <i class="fa fa-headphones fa-5x mb-4" style="opacity: 0.9;"/>
+                        <h2 class="fw-bold mb-3">Your Support Hub</h2>
+                        <p class="fs-5" style="opacity: 0.85;">
+                            Track tickets, view milestones, and stay updated
+                            on releases — all in one place.
+                        </p>
+                        <div class="d-flex justify-content-center gap-4 mt-4" style="opacity: 0.7;">
+                            <div class="text-center">
+                                <i class="fa fa-ticket fa-2x mb-2"/>
+                                <div class="small">Tickets</div>
+                            </div>
+                            <div class="text-center">
+                                <i class="fa fa-flag-checkered fa-2x mb-2"/>
+                                <div class="small">Milestones</div>
+                            </div>
+                            <div class="text-center">
+                                <i class="fa fa-rocket fa-2x mb-2"/>
+                                <div class="small">Releases</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>

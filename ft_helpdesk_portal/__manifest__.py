@@ -26,11 +26,14 @@
     ],
     'data': [
         'security/security.xml',
+        'security/ir.model.access.csv',
         'views/portal_templates.xml',
         'views/portal_ticket_create.xml',
         'views/portal_ticket_list.xml',
         'views/portal_ticket_detail.xml',
         'views/portal_menu.xml',
+        'views/login_templates.xml',
+        'views/release_views.xml',
     ],
     'assets': {
         'web.assets_frontend': [

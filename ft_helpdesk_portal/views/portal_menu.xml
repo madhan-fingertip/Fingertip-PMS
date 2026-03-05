@@ -22,7 +22,7 @@
                 class="breadcrumb-item active">
                 Support
             </li>
-            <li t-if="page_name in ('ticket_list', 'ticket_create', 'ticket_detail')"
+            <li t-if="page_name in ('ticket_list', 'ticket_create', 'ticket_detail', 'milestones', 'releases')"
                 class="breadcrumb-item">
                 <a href="/my/support">Support</a>
             </li>
@@ -37,6 +37,14 @@
             <li t-if="page_name == 'ticket_detail'"
                 class="breadcrumb-item active">
                 <t t-out="ticket.ticket_no"/>
+            </li>
+            <li t-if="page_name == 'milestones'"
+                class="breadcrumb-item active">
+                Milestones
+            </li>
+            <li t-if="page_name == 'releases'"
+                class="breadcrumb-item active">
+                Releases
             </li>
         </xpath>
     </template>

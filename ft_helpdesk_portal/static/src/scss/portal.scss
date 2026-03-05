@@ -3,6 +3,82 @@
    Modern, clean, SaaS-like design
    =================================== */
 
+/* ===================================
+   Login Page — Split-Screen Layout
+   =================================== */
+.ft-login-wrapper {
+    min-height: 100vh;
+}
+
+.ft-login-left {
+    flex: 1;
+    background: #ffffff;
+}
+
+.ft-login-right {
+    flex: 1;
+    background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 50%, #084298 100%);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    }
+}
+
+.ft-login-logo {
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.ft-login-form-container {
+    .form-control {
+        border-radius: 0.5rem;
+        padding: 0.6rem 0.75rem;
+    }
+    .btn-primary {
+        border-radius: 0.5rem;
+        font-size: 1rem;
+    }
+}
+
+/* ===================================
+   Support Tabs
+   =================================== */
+.ft-support-tabs {
+    border-bottom: 2px solid #e9ecef;
+
+    .nav-link {
+        color: #6c757d;
+        font-weight: 500;
+        padding: 0.75rem 1.25rem;
+        border: none;
+        border-bottom: 3px solid transparent;
+        margin-bottom: -2px;
+        transition: color 0.2s, border-color 0.2s;
+
+        &:hover {
+            color: #0d6efd;
+            border-color: transparent;
+        }
+
+        &.active {
+            color: #0d6efd;
+            background: none;
+            border-color: #0d6efd;
+        }
+
+        .badge {
+            font-size: 0.7rem;
+        }
+    }
+}
+
 /* Icon circle for cards */
 .ft-icon-circle {
     width: 64px;

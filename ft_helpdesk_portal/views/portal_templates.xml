@@ -1,148 +1,172 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- ============================= -->
-    <!-- SUPPORT HOME / DASHBOARD      -->
+    <!-- SUPPORT HOME — TAB LAYOUT     -->
     <!-- ============================= -->
     <template id="portal_support_home" name="Support Home">
         <t t-call="portal.portal_layout">
             <t t-set="additional_title">Support</t>
             <div class="o_portal_wrap">
                 <div class="container py-4">
-                    <!-- Hero Section -->
-                    <div class="text-center mb-5">
-                        <h1 class="display-6 fw-bold text-primary mb-2">How can we help you?</h1>
-                        <p class="text-muted fs-5">Get support, track your tickets, or browse our knowledge base.</p>
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2 class="fw-bold mb-0">Support Center</h2>
+                        <a href="/my/support/ticket/new" class="btn btn-primary">
+                            <i class="fa fa-plus me-1"/> New Ticket
+                        </a>
                     </div>
 
-                    <!-- Quick Action Cards -->
-                    <div class="row g-4 mb-5">
-                        <div class="col-md-4">
-                            <a href="/my/support/ticket/new" class="text-decoration-none">
-                                <div class="card h-100 border-0 shadow-sm ft-action-card">
-                                    <div class="card-body text-center p-4">
-                                        <div class="ft-icon-circle bg-primary bg-opacity-10 text-primary mx-auto mb-3">
-                                            <i class="fa fa-plus fa-2x"/>
-                                        </div>
-                                        <h5 class="card-title fw-semibold">Create a Ticket</h5>
-                                        <p class="card-text text-muted small">Submit a new support request and we'll get back to you shortly.</p>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-md-4">
-                            <a href="/my/support/tickets" class="text-decoration-none">
-                                <div class="card h-100 border-0 shadow-sm ft-action-card">
-                                    <div class="card-body text-center p-4">
-                                        <div class="ft-icon-circle bg-info bg-opacity-10 text-info mx-auto mb-3">
-                                            <i class="fa fa-list-alt fa-2x"/>
-                                        </div>
-                                        <h5 class="card-title fw-semibold">My Tickets</h5>
-                                        <p class="card-text text-muted small">View, track, and manage all your support tickets.</p>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="col-md-4">
-                            <a href="/my/support/kb" class="text-decoration-none">
-                                <div class="card h-100 border-0 shadow-sm ft-action-card">
-                                    <div class="card-body text-center p-4">
-                                        <div class="ft-icon-circle bg-success bg-opacity-10 text-success mx-auto mb-3">
-                                            <i class="fa fa-book fa-2x"/>
-                                        </div>
-                                        <h5 class="card-title fw-semibold">Knowledge Base</h5>
-                                        <p class="card-text text-muted small">Find answers in our articles and documentation.</p>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Stats Cards -->
-                    <div class="row g-3 mb-5">
-                        <div class="col-6 col-lg-3">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body text-center py-3">
-                                    <div class="fs-2 fw-bold text-primary">
-                                        <t t-out="open_tickets"/>
-                                    </div>
-                                    <div class="small text-muted text-uppercase">Open Tickets</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-6 col-lg-3">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body text-center py-3">
-                                    <div class="fs-2 fw-bold text-warning">
-                                        <t t-out="pending_tickets"/>
-                                    </div>
-                                    <div class="small text-muted text-uppercase">Awaiting Your Reply</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-6 col-lg-3">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body text-center py-3">
-                                    <div class="fs-2 fw-bold text-success">
-                                        <t t-out="resolved_tickets"/>
-                                    </div>
-                                    <div class="small text-muted text-uppercase">Resolved</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-6 col-lg-3">
-                            <div class="card border-0 shadow-sm">
-                                <div class="card-body text-center py-3">
-                                    <div class="fs-2 fw-bold text-secondary">
-                                        <t t-out="total_tickets"/>
-                                    </div>
-                                    <div class="small text-muted text-uppercase">Total Tickets</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Recent Tickets -->
-                    <t t-if="recent_tickets">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h4 class="fw-semibold mb-0">Recent Tickets</h4>
-                            <a href="/my/support/tickets" class="btn btn-sm btn-outline-primary">
-                                View All <i class="fa fa-arrow-right ms-1"/>
-                            </a>
-                        </div>
-                        <div class="card border-0 shadow-sm">
-                            <div class="list-group list-group-flush">
-                                <t t-foreach="recent_tickets" t-as="ticket">
-                                    <a t-attf-href="/my/support/ticket/#{ticket.id}"
-                                       class="list-group-item list-group-item-action py-3">
-                                        <div class="d-flex justify-content-between align-items-start">
-                                            <div>
-                                                <span class="text-muted me-2 small">
-                                                    <t t-out="ticket.ticket_no"/>
-                                                </span>
-                                                <span class="fw-medium">
-                                                    <t t-out="ticket.name"/>
-                                                </span>
-                                            </div>
-                                            <div class="d-flex align-items-center gap-2">
-                                                <t t-call="ft_helpdesk_portal.ticket_state_badge">
-                                                    <t t-set="state" t-value="ticket.state"/>
-                                                </t>
-                                                <t t-call="ft_helpdesk_portal.ticket_priority_badge">
-                                                    <t t-set="priority" t-value="ticket.priority"/>
-                                                </t>
-                                            </div>
-                                        </div>
-                                        <div class="small text-muted mt-1">
-                                            <i class="fa fa-clock-o me-1"/>
-                                            <t t-out="ticket.create_date" t-options='{"widget": "datetime", "format": "dd MMM yyyy, HH:mm"}'/>
-                                        </div>
-                                    </a>
+                    <!-- Navigation Tabs -->
+                    <ul class="nav nav-tabs ft-support-tabs mb-4" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a t-attf-class="nav-link #{active_tab == 'tickets' and 'active' or ''}"
+                               href="/my/support/tickets">
+                                <i class="fa fa-ticket me-1"/> Tickets
+                                <t t-if="ticket_count">
+                                    <span class="badge text-bg-primary ms-1"><t t-out="ticket_count"/></span>
                                 </t>
-                            </div>
-                        </div>
-                    </t>
+                            </a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a t-attf-class="nav-link #{active_tab == 'milestones' and 'active' or ''}"
+                               href="/my/support/milestones">
+                                <i class="fa fa-flag-checkered me-1"/> Milestones
+                                <t t-if="milestone_count">
+                                    <span class="badge text-bg-info ms-1"><t t-out="milestone_count"/></span>
+                                </t>
+                            </a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a t-attf-class="nav-link #{active_tab == 'releases' and 'active' or ''}"
+                               href="/my/support/releases">
+                                <i class="fa fa-rocket me-1"/> Releases
+                                <t t-if="release_count">
+                                    <span class="badge text-bg-success ms-1"><t t-out="release_count"/></span>
+                                </t>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <!-- Tab Content (injected by sub-templates) -->
+                    <div class="ft-tab-content">
+                        <t t-raw="0"/>
+                    </div>
                 </div>
             </div>
+        </t>
+    </template>
+
+    <!-- ============================= -->
+    <!-- MILESTONES TAB CONTENT        -->
+    <!-- ============================= -->
+    <template id="portal_support_milestones" name="Support Milestones">
+        <t t-call="ft_helpdesk_portal.portal_support_home">
+            <t t-if="milestones">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-0">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="px-4">ID</th>
+                                    <th class="px-3">Milestone</th>
+                                    <th class="px-3">Project</th>
+                                    <th class="px-3">Amount</th>
+                                    <th class="px-3">Paid</th>
+                                    <th class="px-3">Due Date</th>
+                                    <th class="px-3">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="milestones" t-as="m">
+                                    <tr>
+                                        <td class="px-4"><t t-esc="m.milestone_id or '-'"/></td>
+                                        <td class="px-3 fw-medium"><t t-esc="m.name"/></td>
+                                        <td class="px-3"><t t-esc="m.project_id.name"/></td>
+                                        <td class="px-3"><t t-esc="'%.2f' % m.amount"/></td>
+                                        <td class="px-3"><t t-esc="'%.2f' % m.paid_amount"/></td>
+                                        <td class="px-3">
+                                            <t t-if="m.due_date">
+                                                <t t-esc="m.due_date" t-options='{"widget": "date"}'/>
+                                            </t>
+                                            <t t-else="">-</t>
+                                        </td>
+                                        <td class="px-3">
+                                            <span t-if="m.status == 'paid'" class="badge text-bg-success">Paid</span>
+                                            <span t-elif="m.status == 'partially_paid'" class="badge text-bg-info">Partially Paid</span>
+                                            <span t-elif="m.status == 'invoice_raised'" class="badge text-bg-warning">Invoice Raised</span>
+                                            <span t-elif="m.status == 'completed'" class="badge text-bg-primary">Completed</span>
+                                            <span t-else="" class="badge text-bg-secondary">Not Started</span>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </t>
+            <t t-else="">
+                <div class="text-center py-5">
+                    <i class="fa fa-flag-checkered fa-3x text-muted mb-3" style="opacity: 0.3;"/>
+                    <p class="text-muted">No milestones found for your projects.</p>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <!-- ============================= -->
+    <!-- RELEASES TAB CONTENT          -->
+    <!-- ============================= -->
+    <template id="portal_support_releases" name="Support Releases">
+        <t t-call="ft_helpdesk_portal.portal_support_home">
+            <t t-if="releases">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-0">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="px-4">Release</th>
+                                    <th class="px-3">Version</th>
+                                    <th class="px-3">Project</th>
+                                    <th class="px-3">Release Date</th>
+                                    <th class="px-3">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="releases" t-as="rel">
+                                    <tr>
+                                        <td class="px-4 fw-medium"><t t-esc="rel.name"/></td>
+                                        <td class="px-3">
+                                            <t t-if="rel.version">
+                                                <span class="badge text-bg-light border"><t t-esc="rel.version"/></span>
+                                            </t>
+                                            <t t-else="">-</t>
+                                        </td>
+                                        <td class="px-3"><t t-esc="rel.project_id.name"/></td>
+                                        <td class="px-3">
+                                            <t t-if="rel.release_date">
+                                                <t t-esc="rel.release_date" t-options='{"widget": "date"}'/>
+                                            </t>
+                                            <t t-else="">-</t>
+                                        </td>
+                                        <td class="px-3">
+                                            <span t-if="rel.status == 'released'" class="badge text-bg-success">Released</span>
+                                            <span t-elif="rel.status == 'in_progress'" class="badge text-bg-primary">In Progress</span>
+                                            <span t-elif="rel.status == 'cancelled'" class="badge text-bg-danger">Cancelled</span>
+                                            <span t-else="" class="badge text-bg-secondary">Planned</span>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </t>
+            <t t-else="">
+                <div class="text-center py-5">
+                    <i class="fa fa-rocket fa-3x text-muted mb-3" style="opacity: 0.3;"/>
+                    <p class="text-muted">No releases found for your projects.</p>
+                </div>
+            </t>
         </t>
     </template>
 

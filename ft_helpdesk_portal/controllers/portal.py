@@ -5,6 +5,7 @@ import logging
 from odoo import http, fields, _
 from odoo.http import request
 from odoo.addons.portal.controllers.portal import CustomerPortal, pager as portal_pager
+from odoo.addons.web.controllers.home import Home
 from odoo.exceptions import AccessError, MissingError
 from odoo.osv.expression import AND
 
@@ -26,28 +27,81 @@ class HelpdeskPortal(CustomerPortal):
         return values
 
     # =============================
-    # Support Home
+    # Common tab values helper
+    # =============================
+
+    def _get_support_tab_values(self, active_tab='tickets'):
+        """Return values shared by all support tabs (counts for badges)."""
+        partner = request.env.user.partner_id
+        commercial_partner = partner.commercial_partner_id
+        Ticket = request.env['ft.helpdesk.ticket'].sudo()
+        ticket_domain = [('customer_id.commercial_partner_id', '=', commercial_partner.id)]
+
+        # Find project IDs linked to the customer's tickets
+        tickets = Ticket.search(ticket_domain)
+        project_ids = tickets.mapped('project_id').ids
+
+        milestone_count = request.env['project.custom.milestone'].sudo().search_count(
+            [('project_id', 'in', project_ids)]
+        ) if project_ids else 0
+
+        release_count = request.env['ft.helpdesk.release'].sudo().search_count(
+            [('project_id', 'in', project_ids)]
+        ) if project_ids else 0
+
+        return {
+            'page_name': 'support_home',
+            'active_tab': active_tab,
+            'ticket_count': Ticket.search_count(ticket_domain),
+            'milestone_count': milestone_count,
+            'release_count': release_count,
+            'project_ids': project_ids,
+            'ticket_domain': ticket_domain,
+        }
+
+    # =============================
+    # Support Home → redirect to tickets
     # =============================
 
     @http.route('/my/support', type='http', auth='user', website=True)
     def portal_support_home(self, **kw):
-        partner = request.env.user.partner_id
-        commercial_partner = partner.commercial_partner_id
-        Ticket = request.env['ft.helpdesk.ticket'].sudo()
-        domain = [('customer_id.commercial_partner_id', '=', commercial_partner.id)]
+        return request.redirect('/my/support/tickets')
 
-        values = {
-            'page_name': 'support_home',
-            'total_tickets': Ticket.search_count(domain),
-            'open_tickets': Ticket.search_count(
-                AND([domain, [('state', 'not in', ('closed', 'cancelled'))]])),
-            'pending_tickets': Ticket.search_count(
-                AND([domain, [('state', '=', 'pending_customer')]])),
-            'resolved_tickets': Ticket.search_count(
-                AND([domain, [('state', 'in', ('resolved', 'closed'))]])),
-            'recent_tickets': Ticket.search(domain, limit=5, order='create_date desc'),
-        }
-        return request.render('ft_helpdesk_portal.portal_support_home', values)
+    # =============================
+    # Milestones Tab
+    # =============================
+
+    @http.route('/my/support/milestones', type='http', auth='user', website=True)
+    def portal_support_milestones(self, **kw):
+        values = self._get_support_tab_values('milestones')
+        project_ids = values.pop('project_ids')
+        values.pop('ticket_domain')
+
+        milestones = request.env['project.custom.milestone'].sudo().search(
+            [('project_id', 'in', project_ids)],
+            order='due_date asc, id asc',
+        ) if project_ids else request.env['project.custom.milestone']
+
+        values['milestones'] = milestones
+        return request.render('ft_helpdesk_portal.portal_support_milestones', values)
+
+    # =============================
+    # Releases Tab
+    # =============================
+
+    @http.route('/my/support/releases', type='http', auth='user', website=True)
+    def portal_support_releases(self, **kw):
+        values = self._get_support_tab_values('releases')
+        project_ids = values.pop('project_ids')
+        values.pop('ticket_domain')
+
+        releases = request.env['ft.helpdesk.release'].sudo().search(
+            [('project_id', 'in', project_ids)],
+            order='release_date desc, id desc',
+        ) if project_ids else request.env['ft.helpdesk.release']
+
+        values['releases'] = releases
+        return request.render('ft_helpdesk_portal.portal_support_releases', values)
 
     # =============================
     # Ticket List
@@ -120,11 +174,13 @@ class HelpdeskPortal(CustomerPortal):
             offset=pager_values['offset'],
         )
 
-        values = {
+        values = self._get_support_tab_values('tickets')
+        values.pop('project_ids')
+        values.pop('ticket_domain')
+        values.update({
             'page_name': 'ticket_list',
             'tickets': tickets,
             'pager': pager_values,
-            'ticket_count': ticket_count,
             'sortby': sortby,
             'sortings': sortings,
             'filterby': filterby,
@@ -138,7 +194,7 @@ class HelpdeskPortal(CustomerPortal):
                 'description': _('Description'),
             },
             'default_url': '/my/support/tickets',
-        }
+        })
         return request.render('ft_helpdesk_portal.portal_ticket_list', values)
 
     # =============================
@@ -502,3 +558,16 @@ class HelpdeskPortal(CustomerPortal):
                 ]
             fields_data.append(field_info)
         return fields_data
+
+
+class HelpdeskLoginRedirect(Home):
+    """Redirect portal users to /my/support after login."""
+
+    @http.route('/web/login', type='http', auth='none')
+    def web_login(self, redirect=None, **kw):
+        response = super().web_login(redirect=redirect, **kw)
+        if not redirect and request.params.get('login_success'):
+            user = request.env.user
+            if user.has_group('base.group_portal'):
+                return request.redirect('/my/support')
+        return response
