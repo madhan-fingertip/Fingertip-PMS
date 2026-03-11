@@ -186,16 +186,16 @@ class Review(models.Model):
     goals_next_month = fields.Text(string="Goals for Next Month")
 
     _sql_constraints = [
-        ("uniq_review_employee_month", "unique(employee_id, review_month)",
-         "A review already exists for this employee for the same month."),
+        ("uniq_review_employee_month_reviewer", "unique(employee_id, review_month, reviewer_id)",
+         "A review already exists for this employee for the same month by this reviewer."),
     ]
 
-    @api.depends("employee_id", "review_month")
+    @api.depends("employee_id", "review_month", "reviewer_id")
     def _compute_name(self):
         for rec in self:
-            if rec.employee_id and rec.review_month:
+            if rec.employee_id and rec.review_month and rec.reviewer_id:
                 m = fields.Date.to_string(rec.review_month)[:7]
-                rec.name = f"{m} - {rec.employee_id.name}"
+                rec.name = f"{m} - {rec.employee_id.name} (by {rec.reviewer_id.name})"
             else:
                 rec.name = "Monthly Review"
 
