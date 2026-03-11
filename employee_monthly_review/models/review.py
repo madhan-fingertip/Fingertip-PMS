@@ -193,7 +193,7 @@ class Review(models.Model):
     @api.depends("employee_id", "review_month", "reviewer_id")
     def _compute_name(self):
         for rec in self:
-            if rec.employee_id and rec.review_month:
+            if rec.employee_id and rec.review_month and rec.reviewer_id:
                 m = fields.Date.to_string(rec.review_month)[:7]
                 rec.name = f"{m} - {rec.employee_id.name} (by {rec.reviewer_id.name})"
             else:
