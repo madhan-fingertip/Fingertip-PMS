@@ -15,29 +15,44 @@ class KnowledgeBaseController(http.Controller):
         Article = request.env['ft.helpdesk.kb.article'].sudo()
         Category = request.env['ft.helpdesk.kb.category'].sudo()
 
-        categories = Category.search([
+        partner = request.env.user.partner_id if not request.env.user._is_public() else False
+
+        # Base article domain with customer filtering
+        article_domain = [('portal_published', '=', True)]
+        if partner:
+            article_domain += ['|', ('customer_ids', '=', False), ('customer_ids', 'in', [partner.id])]
+
+        articles = False
+        if search:
+            search_domain = article_domain + [
+                '|', '|', '|',
+                ('name', 'ilike', search),
+                ('summary', 'ilike', search),
+                ('keywords', 'ilike', search),
+                ('body_html', 'ilike', search),
+            ]
+            articles = Article.search(search_domain, limit=20, order='helpful_score desc, view_count desc')
+
+        # Filter categories: only show those with accessible articles
+        all_categories = Category.search([
             ('portal_published', '=', True),
             ('parent_id', '=', False),
         ], order='sequence')
 
-        articles = False
-            partner = request.env.user.partner_id if not request.env.user._is_public() else False
-            kb_domain = [('portal_published', '=', True)]
-            if partner:
-                kb_domain += ['|', ('customer_ids', '=', False), ('customer_ids', 'in', [partner.id])]
-            if search:
-                kb_domain += ['|', '|', '|',
-                    ('name', 'ilike', search),
-                    ('summary', 'ilike', search),
-                    ('keywords', 'ilike', search),
-                    ('body_html', 'ilike', search),
-                ]
-            articles = Article.search(kb_domain, limit=20, order='helpful_score desc, view_count desc')
+        visible_categories = Category
+        category_article_counts = {}
+        for cat in all_categories:
+            cat_domain = article_domain + [('category_id', '=', cat.id)]
+            count = Article.search_count(cat_domain)
+            if count > 0:
+                visible_categories |= cat
+                category_article_counts[cat.id] = count
 
         values = {
             'page_name': 'kb_index',
             'active_tab': 'kb',
-            'categories': categories,
+            'categories': visible_categories,
+            'category_article_counts': category_article_counts,
             'articles': articles,
             'search': search,
         }
@@ -59,10 +74,14 @@ class KnowledgeBaseController(http.Controller):
     def kb_article(self, slug, **kw):
         """Single KB article page."""
         Article = request.env['ft.helpdesk.kb.article'].sudo()
-        article = Article.search([
+        partner = request.env.user.partner_id if not request.env.user._is_public() else False
+        article_domain = [
             ('slug', '=', slug),
             ('portal_published', '=', True),
-        ], limit=1)
+        ]
+        if partner:
+            article_domain += ['|', ('customer_ids', '=', False), ('customer_ids', 'in', [partner.id])]
+        article = Article.search(article_domain, limit=1)
 
         if not article:
             return request.redirect('/my/support/kb')
@@ -70,12 +89,15 @@ class KnowledgeBaseController(http.Controller):
         # Increment view counter
         article._increment_view()
 
-        # Related articles from same category
-        related = Article.search([
+        # Related articles from same category (also filtered)
+        related_domain = [
             ('category_id', '=', article.category_id.id),
             ('portal_published', '=', True),
             ('id', '!=', article.id),
-        ], limit=5, order='view_count desc')
+        ]
+        if partner:
+            related_domain += ['|', ('customer_ids', '=', False), ('customer_ids', 'in', [partner.id])]
+        related = Article.search(related_domain, limit=5, order='view_count desc')
 
         values = {
             'page_name': 'kb_article',
@@ -95,10 +117,15 @@ class KnowledgeBaseController(http.Controller):
         if not category.exists() or not category.portal_published:
             return request.redirect('/my/support/kb')
 
-        articles = Article.search([
+        partner = request.env.user.partner_id if not request.env.user._is_public() else False
+        article_domain = [
             ('category_id', '=', category.id),
             ('portal_published', '=', True),
-        ], order='sequence, helpful_score desc')
+        ]
+        if partner:
+            article_domain += ['|', ('customer_ids', '=', False), ('customer_ids', 'in', [partner.id])]
+
+        articles = Article.search(article_domain, order='sequence, helpful_score desc')
 
         values = {
             'page_name': 'kb_category',

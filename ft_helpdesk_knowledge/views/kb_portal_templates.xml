@@ -85,7 +85,7 @@
                                                     <t t-out="cat.name"/>
                                                 </h6>
                                                 <p class="card-text text-muted small">
-                                                    <t t-out="cat.article_count"/> articles
+                                                    <t t-out="category_article_counts.get(cat.id, 0)"/> articles
                                                 </p>
                                             </div>
                                         </div>

@@ -17,4 +17,11 @@
               parent="menu_ft_helpdesk_knowledge"
               action="action_kb_category"
               sequence="20"/>
+
+    <!-- KB Article Analysis under Reporting -->
+    <menuitem id="menu_ft_helpdesk_kb_article_analysis"
+              name="KB Article Analysis"
+              parent="ft_helpdesk_reporting.menu_ft_helpdesk_reporting"
+              action="action_kb_article_analysis"
+              sequence="20"/>
 </odoo>

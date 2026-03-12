@@ -15,6 +15,11 @@ class KBArticle(models.Model):
     )
     sequence = fields.Integer(string='Sequence', default=10)
     active = fields.Boolean(default=True)
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('in_review', 'In Review'),
+        ('completed', 'Completed'),
+    ], string='Status', default='draft', required=True, tracking=True)
 
     category_id = fields.Many2one(
         'ft.helpdesk.kb.category', string='Category',
@@ -56,12 +61,12 @@ class KBArticle(models.Model):
         string='Keywords',
         help='Comma-separated keywords for search matching.',
     )
-        # Customer-specific tagging
-        customer_ids = fields.Many2many(
-            'res.partner', 'ft_kb_article_customer_rel',
-            'article_id', 'partner_id', string='Customers',
-            help='Restrict article visibility to these customers. Leave empty for global.',
-        )
+    # Customer-specific tagging
+    customer_ids = fields.Many2many(
+        'res.partner', 'ft_kb_article_customer_rel',
+        'article_id', 'partner_id', string='Customers',
+        help='Restrict article visibility to these customers. Leave empty for global.',
+    )
 
     @api.depends('helpful_yes', 'helpful_no')
     def _compute_helpful_score(self):
@@ -82,6 +87,15 @@ class KBArticle(models.Model):
         slug = re.sub(r'[^\w\s-]', '', slug)
         slug = re.sub(r'[-\s]+', '-', slug)
         return slug[:100]
+
+    def action_set_draft(self):
+        self.write({'state': 'draft'})
+
+    def action_set_in_review(self):
+        self.write({'state': 'in_review'})
+
+    def action_set_completed(self):
+        self.write({'state': 'completed'})
 
     def action_publish(self):
         self.write({'portal_published': True})

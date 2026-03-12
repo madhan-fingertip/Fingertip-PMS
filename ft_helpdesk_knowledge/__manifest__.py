@@ -17,6 +17,7 @@
     'license': 'LGPL-3',
     'depends': [
         'ft_helpdesk_core',
+        'ft_helpdesk_reporting',
         'portal',
         'web',
     ],
@@ -25,6 +26,7 @@
         'security/ir.model.access.csv',
         'views/kb_backend_views.xml',
         'views/kb_portal_templates.xml',
+        'views/kb_article_analysis_views.xml',
         'views/menus.xml',
     ],
     'assets': {

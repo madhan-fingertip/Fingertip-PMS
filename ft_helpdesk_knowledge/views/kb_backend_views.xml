@@ -57,6 +57,7 @@
                 <field name="slug"/>
                 <field name="category_id"/>
                 <field name="author_id" widget="many2one_avatar_user"/>
+                <field name="state"/>
                 <field name="portal_published"/>
                 <field name="view_count"/>
                 <field name="helpful_score" string="Helpful %" widget="progressbar"/>
@@ -75,6 +76,13 @@
                             class="btn-primary" invisible="portal_published"/>
                     <button name="action_unpublish" type="object" string="Unpublish"
                             class="btn-secondary" invisible="not portal_published"/>
+                    <button name="action_set_draft" type="object" string="Set to Draft"
+                            class="btn-secondary" invisible="state == 'draft'"/>
+                    <button name="action_set_in_review" type="object" string="In Review"
+                            class="btn-primary" invisible="state == 'in_review'"/>
+                    <button name="action_set_completed" type="object" string="Completed"
+                            class="btn-success" invisible="state == 'completed'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,in_review,completed"/>
                 </header>
                 <sheet>
                     <widget name="web_ribbon" title="Published" bg_color="text-bg-success"
@@ -102,9 +110,11 @@
                             <field name="body_html" nolabel="1"/>
                         </page>
                         <page string="Tags" name="tags">
-                            <field name="tag_ids" widget="many2many_tags"
-                                   options="{'color_field': 'color'}"/>
-                            <field name="customer_ids" widget="many2many_tags"/>
+                            <group>
+                                <field name="tag_ids" widget="many2many_tags"
+                                       options="{'color_field': 'color'}"/>
+                                <field name="customer_ids" widget="many2many_tags"/>
+                            </group>
                         </page>
                         <page string="Metrics" name="metrics">
                             <group>
@@ -140,11 +150,20 @@
                 <filter string="Draft" name="draft"
                         domain="[('portal_published', '=', False)]"/>
                 <separator/>
+                <filter string="Draft Status" name="state_draft"
+                        domain="[('state', '=', 'draft')]"/>
+                <filter string="In Review" name="state_in_review"
+                        domain="[('state', '=', 'in_review')]"/>
+                <filter string="Completed" name="state_completed"
+                        domain="[('state', '=', 'completed')]"/>
+                <separator/>
                 <group expand="0" string="Group By">
                     <filter string="Category" name="group_category"
                             context="{'group_by': 'category_id'}"/>
                     <filter string="Author" name="group_author"
                             context="{'group_by': 'author_id'}"/>
+                    <filter string="Status" name="group_state"
+                            context="{'group_by': 'state'}"/>
                 </group>
             </search>
         </field>
