@@ -17,7 +17,7 @@
                      <field name="date"/>
                     <field name="department_id"/>
                     <field name="positions"/>
-                   
+                   <field name="description"/>
                 </list>
             </field>
         </record>

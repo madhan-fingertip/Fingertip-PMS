@@ -88,6 +88,8 @@ class AccountAnalyticLine(models.Model):
     used_ai = fields.Boolean(string='Used AI')
     chat_link = fields.Char(string='Chat Link')
     reason = fields.Char(string='Reason')
+    hours_saved = fields.Float(string='Hours Saved')
+    challenges = fields.Text(string='Challenges')
 
     @api.onchange('jobposition_id')
     def _onchange_jobposition_id(self):

@@ -185,6 +185,143 @@ class Review(models.Model):
     improvements_top3 = fields.Text(string="Improvement Areas")
     goals_next_month = fields.Text(string="Goals for Next Month")
 
+    overall_rating = fields.Float(
+        string="Overall Rating",
+        compute="_compute_overall_rating",
+        store=True
+    )
+
+    overall_rating_label = fields.Selection(
+        RATING,
+        string="Overall Rating Level",
+        compute="_compute_overall_rating",
+        store=True
+    )
+
+    @api.depends(
+        'communication_clarity_rating',
+        'accountability_ownership_rating',
+        'deadline_discipline_rating',
+        'work_quality_rating',
+        'process_adherence_rating',
+        'learning_improvement_rating',
+
+        'prospecting_pipeline_discipline_rating',
+        'follow_up_deal_progression_rating',
+        'discovery_questioning_quality_rating',
+        'objection_handling_negotiation_rating',
+        'forecast_accuracy_revenue_ownership_rating',
+
+        'campaign_planning_execution_rating',
+        'lead_quality_contribution_rating',
+        'performance_tracking_reporting_rating',
+        'tool_proficiency_ads_automation_crm_rating',
+        'creativity_experimentation_rating',
+
+        'technical_competency_rating',
+        'code_quality_standards_rating',
+        'debugging_root_cause_rating',
+        'requirement_understanding_accuracy_rating',
+        'estimation_accuracy_reliability_rating',
+
+        'task_planning_allocation_rating',
+        'delivery_predictability_rating',
+        'mentoring_technical_guidance_rating',
+        'risk_identification_escalation_rating',
+        'stakeholder_client_communication_rating',
+
+        'project_planning_timeline_control_rating',
+        'scope_change_management_rating',
+        'risk_dependency_management_rating',
+        'stakeholder_communication_rating',
+        'status_reporting_accuracy_rating',
+
+        'test_case_design_quality_rating',
+        'bug_reporting_clarity_rating',
+        'coverage_edge_case_thinking_rating',
+        'regression_discipline_rating',
+        'quality_ownership_rating',
+
+        'hiring_pipeline_management_rating',
+        'policy_compliance_documentation_rating',
+        'employee_issue_handling_rating',
+        'process_improvement_initiative_rating',
+        'confidentiality_professionalism_rating'
+    )
+    def _compute_overall_rating(self):
+
+        rating_fields = [
+            'communication_clarity_rating',
+            'accountability_ownership_rating',
+            'deadline_discipline_rating',
+            'work_quality_rating',
+            'process_adherence_rating',
+            'learning_improvement_rating',
+
+            'prospecting_pipeline_discipline_rating',
+            'follow_up_deal_progression_rating',
+            'discovery_questioning_quality_rating',
+            'objection_handling_negotiation_rating',
+            'forecast_accuracy_revenue_ownership_rating',
+
+            'campaign_planning_execution_rating',
+            'lead_quality_contribution_rating',
+            'performance_tracking_reporting_rating',
+            'tool_proficiency_ads_automation_crm_rating',
+            'creativity_experimentation_rating',
+
+            'technical_competency_rating',
+            'code_quality_standards_rating',
+            'debugging_root_cause_rating',
+            'requirement_understanding_accuracy_rating',
+            'estimation_accuracy_reliability_rating',
+
+            'task_planning_allocation_rating',
+            'delivery_predictability_rating',
+            'mentoring_technical_guidance_rating',
+            'risk_identification_escalation_rating',
+            'stakeholder_client_communication_rating',
+
+            'project_planning_timeline_control_rating',
+            'scope_change_management_rating',
+            'risk_dependency_management_rating',
+            'stakeholder_communication_rating',
+            'status_reporting_accuracy_rating',
+
+            'test_case_design_quality_rating',
+            'bug_reporting_clarity_rating',
+            'coverage_edge_case_thinking_rating',
+            'regression_discipline_rating',
+            'quality_ownership_rating',
+
+            'hiring_pipeline_management_rating',
+            'policy_compliance_documentation_rating',
+            'employee_issue_handling_rating',
+            'process_improvement_initiative_rating',
+            'confidentiality_professionalism_rating'
+        ]
+
+        for rec in self:
+
+            values = []
+
+            for field in rating_fields:
+                rating = rec[field]
+                if rating:
+                    values.append(int(rating))
+
+            if values:
+                avg = sum(values) / len(values)
+                rec.overall_rating = round(avg, 2)
+
+                rounded = round(avg)
+
+                rec.overall_rating_label = str(rounded)
+
+            else:
+                rec.overall_rating = 0
+                rec.overall_rating_label = False
+
     _sql_constraints = [
         ("uniq_review_employee_month_reviewer", "unique(employee_id, review_month, reviewer_id)",
          "A review already exists for this employee for the same month by this reviewer."),

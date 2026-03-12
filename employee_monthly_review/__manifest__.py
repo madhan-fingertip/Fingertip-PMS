@@ -4,8 +4,8 @@
     "category": "Human Resources",
     "depends": ["hr"],
     "data": [
-        "security/ir.model.access.csv",
         "security/employee_review_security.xml",
+        "security/ir.model.access.csv",
         "views/review_views.xml",
     ],
     'images': ['static/description/performance_review.png'],

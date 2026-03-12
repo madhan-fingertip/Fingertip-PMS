@@ -10,9 +10,41 @@
         <field name="employee_id"/>
         <field name="role"/>
         <field name="reviewer_id"/>
+        <field name="overall_rating_label"/>
       </list>
     </field>
   </record>
+  <record id="view_review_pivot" model="ir.ui.view">
+    <field name="name">review.pivot</field>
+    <field name="model">review</field>
+    <field name="arch" type="xml">
+        <pivot string="Employee Review Analysis">
+
+            <!-- Rows -->
+            <field name="role" type="row"/>
+            <field name="employee_id" type="row"/>
+
+            <!-- Columns -->
+            <field name="review_month" type="col" interval="month"/>
+
+            <!-- Measures -->
+            <field name="overall_rating" type="measure"/>
+
+        </pivot>
+    </field>
+</record>
+  <record id="view_review_graph" model="ir.ui.view">
+    <field name="name">review.graph</field>
+    <field name="model">review</field>
+    <field name="arch" type="xml">
+        <graph string="Employee Performance" type="bar">
+
+            <field name="employee_id" type="row"/>
+            <field name="overall_rating" type="measure"/>
+
+        </graph>
+    </field>
+</record>
 
   <record id="review_form" model="ir.ui.view">
     <field name="name">review.form</field>
@@ -32,6 +64,7 @@
             <group>
               <field name="role"/>
               <field name="reviewer_id"/>
+              <field name="overall_rating_label"/>
             </group>
           </group>
 
@@ -242,7 +275,7 @@
     <record id="action_employee_monthly_review" model="ir.actions.act_window">
         <field name="name">Monthly Reviews</field>
         <field name="res_model">review</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">list,form,pivot,graph</field>
     </record>
 
     <!-- MENUS (Top-level App) -->

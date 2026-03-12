@@ -14,3 +14,7 @@ class HRPolicy(models.Model):
     description = fields.Text(
         string="Description"
     )
+    attachment_ids = fields.Many2many(
+        "ir.attachment",
+        string="Attachments"
+    )
