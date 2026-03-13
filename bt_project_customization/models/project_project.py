@@ -91,7 +91,7 @@ class AccountAnalyticLine(models.Model):
     hours_saved = fields.Float(string='Hours Saved')
     challenges = fields.Text(string='Challenges')
     ai_time_impact = fields.Selection([
-        ('0', '0 (AI not used)'),
+        ('0', '0'),
         ('15_mins', '15 mins'),
         ('30_mins', '30 mins'),
         ('1_hour', '1 hour'),
