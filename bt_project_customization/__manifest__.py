@@ -4,7 +4,7 @@
     'description': 'Project Customization.',
     'category': 'Project',
     'author': 'Broadtech',
-    'depends': ['project','hr_timesheet'],
+    'depends': ['project','hr_timesheet','sale_timesheet'],
     'data': [
         'security/ir.model.access.csv',
         'security/project_timesheet_group.xml',

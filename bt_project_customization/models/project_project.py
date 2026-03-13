@@ -90,11 +90,18 @@ class AccountAnalyticLine(models.Model):
     reason = fields.Char(string='Reason')
     hours_saved = fields.Float(string='Hours Saved')
     challenges = fields.Text(string='Challenges')
-
-    @api.onchange('jobposition_id')
-    def _onchange_jobposition_id(self):
-        if self.jobposition_id:
-            self.employee_id.job_id = self.jobposition_id
+    ai_time_impact = fields.Selection([
+        ('0', '0 (AI not used)'),
+        ('15_mins', '15 mins'),
+        ('30_mins', '30 mins'),
+        ('1_hour', '1 hour'),
+        ('2_hours', '2 hours'),
+        ('3_hours', '3 hours'),
+        ('5_hours', '5 hours'),
+        ('8_plus_hours', '8+ hours'),
+        ('more_time', 'More time taken'),
+        ('na', 'N/A'),
+    ], string='AI Time Impact')
 
 
     # @api.depends('employee_id.job_id')
