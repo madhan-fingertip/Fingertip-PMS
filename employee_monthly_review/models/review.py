@@ -34,23 +34,23 @@ class Review(models.Model):
     # -------------------------
     # COMMON (6) - rating + comment
     # -------------------------
-    communication_clarity_rating = fields.Selection(RATING, required=False)
-    communication_clarity_comment = fields.Text()
+    communication_clarity_rating = fields.Selection(RATING, required=True)
+    communication_clarity_comment = fields.Text(required=True)
 
-    accountability_ownership_rating = fields.Selection(RATING, required=False)
-    accountability_ownership_comment = fields.Text()
+    accountability_ownership_rating = fields.Selection(RATING, required=True)
+    accountability_ownership_comment = fields.Text(required=True)
 
-    deadline_discipline_rating = fields.Selection(RATING, required=False)
-    deadline_discipline_comment = fields.Text()
+    deadline_discipline_rating = fields.Selection(RATING, required=True)
+    deadline_discipline_comment = fields.Text(required=True)
 
-    work_quality_rating = fields.Selection(RATING, required=False)
-    work_quality_comment = fields.Text()
+    work_quality_rating = fields.Selection(RATING, required=True)
+    work_quality_comment = fields.Text(required=True)
 
-    process_adherence_rating = fields.Selection(RATING, required=False)
-    process_adherence_comment = fields.Text()
+    process_adherence_rating = fields.Selection(RATING, required=True)
+    process_adherence_comment = fields.Text(required=True)
 
-    learning_improvement_rating = fields.Selection(RATING, required=False)
-    learning_improvement_comment = fields.Text()
+    learning_improvement_rating = fields.Selection(RATING, required=True)
+    learning_improvement_comment = fields.Text(required=True)
 
     # -------------------------
     # SALES (5)
@@ -181,9 +181,9 @@ class Review(models.Model):
     # -------------------------
     # After section
     # -------------------------
-    strengths_top3 = fields.Text(string="Strengths")
-    improvements_top3 = fields.Text(string="Improvement Areas")
-    goals_next_month = fields.Text(string="Goals for Next Month")
+    strengths_top3 = fields.Text(string="Strengths", required=True)
+    improvements_top3 = fields.Text(string="Improvement Areas", required=True)
+    goals_next_month = fields.Text(string="Goals for Next Month", required=True)
 
     overall_rating = fields.Float(
         string="Overall Rating",
@@ -340,6 +340,145 @@ class Review(models.Model):
         if rating in ("1", "2") and not (comment and comment.strip()):
             raise ValidationError(f'Comment is mandatory for "{label}" when rating is 1 or 2.')
 
+    def _field_required(self, value, label):
+        if not value or (isinstance(value, str) and not value.strip()):
+            raise ValidationError(f'"{label}" is required for the selected role.')
+        if '_comment' in label.lower().replace(' ', '_') and isinstance(value, str) and len(value.strip()) < 100:
+            raise ValidationError(f'"{label}" must be at least 100 characters (currently {len(value.strip())}).')
+
+    def _check_comment_min_length(self, value, label):
+        if value and isinstance(value, str) and len(value.strip()) < 100:
+            raise ValidationError(f'"{label}" must be at least 100 characters (currently {len(value.strip())}).')
+
+    @api.constrains('role',
+        'prospecting_pipeline_discipline_rating', 'prospecting_pipeline_discipline_comment',
+        'follow_up_deal_progression_rating', 'follow_up_deal_progression_comment',
+        'discovery_questioning_quality_rating', 'discovery_questioning_quality_comment',
+        'objection_handling_negotiation_rating', 'objection_handling_negotiation_comment',
+        'forecast_accuracy_revenue_ownership_rating', 'forecast_accuracy_revenue_ownership_comment',
+        'campaign_planning_execution_rating', 'campaign_planning_execution_comment',
+        'lead_quality_contribution_rating', 'lead_quality_contribution_comment',
+        'performance_tracking_reporting_rating', 'performance_tracking_reporting_comment',
+        'tool_proficiency_ads_automation_crm_rating', 'tool_proficiency_ads_automation_crm_comment',
+        'creativity_experimentation_rating', 'creativity_experimentation_comment',
+        'technical_competency_rating', 'technical_competency_comment',
+        'code_quality_standards_rating', 'code_quality_standards_comment',
+        'debugging_root_cause_rating', 'debugging_root_cause_comment',
+        'requirement_understanding_accuracy_rating', 'requirement_understanding_accuracy_comment',
+        'estimation_accuracy_reliability_rating', 'estimation_accuracy_reliability_comment',
+        'task_planning_allocation_rating', 'task_planning_allocation_comment',
+        'delivery_predictability_rating', 'delivery_predictability_comment',
+        'mentoring_technical_guidance_rating', 'mentoring_technical_guidance_comment',
+        'risk_identification_escalation_rating', 'risk_identification_escalation_comment',
+        'stakeholder_client_communication_rating', 'stakeholder_client_communication_comment',
+        'project_planning_timeline_control_rating', 'project_planning_timeline_control_comment',
+        'scope_change_management_rating', 'scope_change_management_comment',
+        'risk_dependency_management_rating', 'risk_dependency_management_comment',
+        'stakeholder_communication_rating', 'stakeholder_communication_comment',
+        'status_reporting_accuracy_rating', 'status_reporting_accuracy_comment',
+        'test_case_design_quality_rating', 'test_case_design_quality_comment',
+        'bug_reporting_clarity_rating', 'bug_reporting_clarity_comment',
+        'coverage_edge_case_thinking_rating', 'coverage_edge_case_thinking_comment',
+        'regression_discipline_rating', 'regression_discipline_comment',
+        'quality_ownership_rating', 'quality_ownership_comment',
+        'hiring_pipeline_management_rating', 'hiring_pipeline_management_comment',
+        'policy_compliance_documentation_rating', 'policy_compliance_documentation_comment',
+        'employee_issue_handling_rating', 'employee_issue_handling_comment',
+        'process_improvement_initiative_rating', 'process_improvement_initiative_comment',
+        'confidentiality_professionalism_rating', 'confidentiality_professionalism_comment',
+    )
+    def _check_role_fields_required(self):
+        ROLE_FIELDS = {
+            'sales': [
+                ('prospecting_pipeline_discipline_rating', 'Prospecting Pipeline Discipline Rating'),
+                ('prospecting_pipeline_discipline_comment', 'Prospecting Pipeline Discipline Comment'),
+                ('follow_up_deal_progression_rating', 'Follow Up Deal Progression Rating'),
+                ('follow_up_deal_progression_comment', 'Follow Up Deal Progression Comment'),
+                ('discovery_questioning_quality_rating', 'Discovery Questioning Quality Rating'),
+                ('discovery_questioning_quality_comment', 'Discovery Questioning Quality Comment'),
+                ('objection_handling_negotiation_rating', 'Objection Handling Negotiation Rating'),
+                ('objection_handling_negotiation_comment', 'Objection Handling Negotiation Comment'),
+                ('forecast_accuracy_revenue_ownership_rating', 'Forecast Accuracy Revenue Ownership Rating'),
+                ('forecast_accuracy_revenue_ownership_comment', 'Forecast Accuracy Revenue Ownership Comment'),
+            ],
+            'marketing': [
+                ('campaign_planning_execution_rating', 'Campaign Planning Execution Rating'),
+                ('campaign_planning_execution_comment', 'Campaign Planning Execution Comment'),
+                ('lead_quality_contribution_rating', 'Lead Quality Contribution Rating'),
+                ('lead_quality_contribution_comment', 'Lead Quality Contribution Comment'),
+                ('performance_tracking_reporting_rating', 'Performance Tracking Reporting Rating'),
+                ('performance_tracking_reporting_comment', 'Performance Tracking Reporting Comment'),
+                ('tool_proficiency_ads_automation_crm_rating', 'Tool Proficiency Ads Automation CRM Rating'),
+                ('tool_proficiency_ads_automation_crm_comment', 'Tool Proficiency Ads Automation CRM Comment'),
+                ('creativity_experimentation_rating', 'Creativity Experimentation Rating'),
+                ('creativity_experimentation_comment', 'Creativity Experimentation Comment'),
+            ],
+            'developer': [
+                ('technical_competency_rating', 'Technical Competency Rating'),
+                ('technical_competency_comment', 'Technical Competency Comment'),
+                ('code_quality_standards_rating', 'Code Quality Standards Rating'),
+                ('code_quality_standards_comment', 'Code Quality Standards Comment'),
+                ('debugging_root_cause_rating', 'Debugging Root Cause Rating'),
+                ('debugging_root_cause_comment', 'Debugging Root Cause Comment'),
+                ('requirement_understanding_accuracy_rating', 'Requirement Understanding Accuracy Rating'),
+                ('requirement_understanding_accuracy_comment', 'Requirement Understanding Accuracy Comment'),
+                ('estimation_accuracy_reliability_rating', 'Estimation Accuracy Reliability Rating'),
+                ('estimation_accuracy_reliability_comment', 'Estimation Accuracy Reliability Comment'),
+            ],
+            'team_lead': [
+                ('task_planning_allocation_rating', 'Task Planning Allocation Rating'),
+                ('task_planning_allocation_comment', 'Task Planning Allocation Comment'),
+                ('delivery_predictability_rating', 'Delivery Predictability Rating'),
+                ('delivery_predictability_comment', 'Delivery Predictability Comment'),
+                ('mentoring_technical_guidance_rating', 'Mentoring Technical Guidance Rating'),
+                ('mentoring_technical_guidance_comment', 'Mentoring Technical Guidance Comment'),
+                ('risk_identification_escalation_rating', 'Risk Identification Escalation Rating'),
+                ('risk_identification_escalation_comment', 'Risk Identification Escalation Comment'),
+                ('stakeholder_client_communication_rating', 'Stakeholder Client Communication Rating'),
+                ('stakeholder_client_communication_comment', 'Stakeholder Client Communication Comment'),
+            ],
+            'project_manager': [
+                ('project_planning_timeline_control_rating', 'Project Planning Timeline Control Rating'),
+                ('project_planning_timeline_control_comment', 'Project Planning Timeline Control Comment'),
+                ('scope_change_management_rating', 'Scope Change Management Rating'),
+                ('scope_change_management_comment', 'Scope Change Management Comment'),
+                ('risk_dependency_management_rating', 'Risk Dependency Management Rating'),
+                ('risk_dependency_management_comment', 'Risk Dependency Management Comment'),
+                ('stakeholder_communication_rating', 'Stakeholder Communication Rating'),
+                ('stakeholder_communication_comment', 'Stakeholder Communication Comment'),
+                ('status_reporting_accuracy_rating', 'Status Reporting Accuracy Rating'),
+                ('status_reporting_accuracy_comment', 'Status Reporting Accuracy Comment'),
+            ],
+            'tester': [
+                ('test_case_design_quality_rating', 'Test Case Design Quality Rating'),
+                ('test_case_design_quality_comment', 'Test Case Design Quality Comment'),
+                ('bug_reporting_clarity_rating', 'Bug Reporting Clarity Rating'),
+                ('bug_reporting_clarity_comment', 'Bug Reporting Clarity Comment'),
+                ('coverage_edge_case_thinking_rating', 'Coverage Edge Case Thinking Rating'),
+                ('coverage_edge_case_thinking_comment', 'Coverage Edge Case Thinking Comment'),
+                ('regression_discipline_rating', 'Regression Discipline Rating'),
+                ('regression_discipline_comment', 'Regression Discipline Comment'),
+                ('quality_ownership_rating', 'Quality Ownership Rating'),
+                ('quality_ownership_comment', 'Quality Ownership Comment'),
+            ],
+            'hr': [
+                ('hiring_pipeline_management_rating', 'Hiring Pipeline Management Rating'),
+                ('hiring_pipeline_management_comment', 'Hiring Pipeline Management Comment'),
+                ('policy_compliance_documentation_rating', 'Policy Compliance Documentation Rating'),
+                ('policy_compliance_documentation_comment', 'Policy Compliance Documentation Comment'),
+                ('employee_issue_handling_rating', 'Employee Issue Handling Rating'),
+                ('employee_issue_handling_comment', 'Employee Issue Handling Comment'),
+                ('process_improvement_initiative_rating', 'Process Improvement Initiative Rating'),
+                ('process_improvement_initiative_comment', 'Process Improvement Initiative Comment'),
+                ('confidentiality_professionalism_rating', 'Confidentiality Professionalism Rating'),
+                ('confidentiality_professionalism_comment', 'Confidentiality Professionalism Comment'),
+            ],
+        }
+        for rec in self:
+            role_fields = ROLE_FIELDS.get(rec.role, [])
+            for field_name, label in role_fields:
+                rec._field_required(rec[field_name], label)
+
     @api.constrains(
         # Common
         "communication_clarity_rating","communication_clarity_comment",
@@ -400,6 +539,18 @@ class Review(models.Model):
     )
     def _check_comments_mandatory_if_low(self):
         for rec in self:
+            # Common comment min length checks
+            rec._check_comment_min_length(rec.communication_clarity_comment, "Communication Clarity Comment")
+            rec._check_comment_min_length(rec.accountability_ownership_comment, "Accountability Ownership Comment")
+            rec._check_comment_min_length(rec.deadline_discipline_comment, "Deadline Discipline Comment")
+            rec._check_comment_min_length(rec.work_quality_comment, "Work Quality Comment")
+            rec._check_comment_min_length(rec.process_adherence_comment, "Process Adherence Comment")
+            rec._check_comment_min_length(rec.learning_improvement_comment, "Learning Improvement Comment")
+            # After section min length checks
+            rec._check_comment_min_length(rec.strengths_top3, "Strengths")
+            rec._check_comment_min_length(rec.improvements_top3, "Improvement Areas")
+            rec._check_comment_min_length(rec.goals_next_month, "Goals for Next Month")
+
             # Common checks
             rec._comment_required(rec.communication_clarity_rating, rec.communication_clarity_comment, "Communication Clarity")
             rec._comment_required(rec.accountability_ownership_rating, rec.accountability_ownership_comment, "Accountability / Ownership")
