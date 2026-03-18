@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================= -->
+    <!-- TICKET DETAIL PAGE            -->
+    <!-- ============================= -->
+    <template id="portal_ticket_detail" name="Ticket Detail">
+        <t t-call="portal.portal_layout">
+            <t t-set="additional_title" t-value="ticket.ticket_no"/>
+            <div class="o_portal_wrap ft-support-portal">
+                <div class="container py-4">
+                    <!-- Success banner for just-created tickets -->
+                    <t t-if="just_created">
+                        <div class="alert alert-success alert-dismissible border-0 shadow-sm mb-4" role="alert">
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"/>
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-check-circle fa-2x me-3 text-success"/>
+                                <div>
+                                    <h5 class="alert-heading mb-1">Ticket Submitted Successfully!</h5>
+                                    <p class="mb-0">Your ticket <strong><t t-out="ticket.ticket_no"/></strong> has been created. Our support team will review it and get back to you soon.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+
+                    <div class="row g-4">
+                        <!-- Main Content -->
+                        <div class="col-lg-8">
+                            <!-- Ticket Header Card -->
+                            <div class="card border-0 shadow-sm mb-4">
+                                <div class="card-body p-4">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div>
+                                            <span class="text-muted small fw-mono">
+                                                <t t-out="ticket.ticket_no"/>
+                                            </span>
+                                            <h3 class="fw-bold mb-1 mt-1">
+                                                <t t-out="ticket.name"/>
+                                            </h3>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <t t-call="ft_helpdesk_portal.ticket_state_badge">
+                                                <t t-set="state" t-value="ticket.state"/>
+                                            </t>
+                                            <t t-call="ft_helpdesk_portal.ticket_priority_badge">
+                                                <t t-set="priority" t-value="ticket.priority"/>
+                                            </t>
+                                        </div>
+                                    </div>
+
+                                    <!-- Description -->
+                                    <t t-if="ticket.description">
+                                        <div class="border rounded p-3 bg-light mb-3">
+                                            <t t-out="ticket.description"/>
+                                        </div>
+                                    </t>
+
+                                    <!-- Ticket Actions -->
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <t t-if="allow_close and ticket.state not in ('closed', 'cancelled')">
+                                            <form method="POST"
+                                                  t-attf-action="/my/support/ticket/#{ticket.id}/close"
+                                                  class="d-inline">
+                                                <input type="hidden" name="csrf_token"
+                                                       t-att-value="request.csrf_token()"/>
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-success"
+                                                        onclick="return confirm('Are you sure you want to close this ticket?')">
+                                                    <i class="fa fa-check me-1"/> Close Ticket
+                                                </button>
+                                            </form>
+                                        </t>
+                                        <t t-if="allow_reopen and ticket.state in ('resolved', 'closed')">
+                                            <form method="POST"
+                                                  t-attf-action="/my/support/ticket/#{ticket.id}/reopen"
+                                                  class="d-inline">
+                                                <input type="hidden" name="csrf_token"
+                                                       t-att-value="request.csrf_token()"/>
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-warning">
+                                                    <i class="fa fa-refresh me-1"/> Reopen Ticket
+                                                </button>
+                                            </form>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Conversation Thread -->
+                            <div class="card border-0 shadow-sm mb-4">
+                                <div class="card-header bg-white border-bottom py-3">
+                                    <h5 class="mb-0 fw-semibold">
+                                        <i class="fa fa-comments me-2 text-primary"/>
+                                        Conversation
+                                    </h5>
+                                </div>
+                                <div class="card-body p-0">
+                                    <t t-if="messages">
+                                        <div class="ft-conversation">
+                                            <t t-foreach="messages" t-as="msg">
+                                                <div t-attf-class="ft-message p-4 #{msg.author_id.id == ticket.customer_id.id and 'ft-message-customer' or 'ft-message-agent'}">
+                                                    <div class="d-flex gap-3">
+                                                        <!-- Avatar -->
+                                                        <div class="ft-avatar flex-shrink-0">
+                                                            <t t-if="msg.author_id.id == ticket.customer_id.id">
+                                                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                                                                     style="width: 40px; height: 40px; font-size: 1rem;">
+                                                                    <t t-out="msg.author_id.name[:1].upper()"/>
+                                                                </div>
+                                                            </t>
+                                                            <t t-else="">
+                                                                <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center"
+                                                                     style="width: 40px; height: 40px; font-size: 1rem;">
+                                                                    <i class="fa fa-headphones"/>
+                                                                </div>
+                                                            </t>
+                                                        </div>
+                                                        <!-- Message Content -->
+                                                        <div class="flex-grow-1" style="min-width: 0;">
+                                                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                                                <strong class="small">
+                                                                    <t t-out="msg.author_id.name"/>
+                                                                    <t t-if="msg.author_id.id != ticket.customer_id.id">
+                                                                        <span class="badge text-bg-success ms-1">Support</span>
+                                                                    </t>
+                                                                </strong>
+                                                                <span class="text-muted small">
+                                                                    <t t-out="msg.create_date"
+                                                                       t-options='{"widget": "datetime", "format": "dd MMM yyyy, HH:mm"}'/>
+                                                                </span>
+                                                            </div>
+                                                            <div class="ft-message-body">
+                                                                <t t-out="msg.body"/>
+                                                            </div>
+                                                            <!-- Message Attachments -->
+                                                            <t t-if="msg.attachment_ids">
+                                                                <div class="mt-2 d-flex flex-wrap gap-2">
+                                                                    <t t-foreach="msg.attachment_ids" t-as="att">
+                                                                        <a t-attf-href="/web/content/#{att.id}?download=true"
+                                                                           class="btn btn-sm btn-outline-secondary"
+                                                                           target="_blank">
+                                                                            <i class="fa fa-paperclip me-1"/>
+                                                                            <t t-out="att.name"/>
+                                                                        </a>
+                                                                    </t>
+                                                                </div>
+                                                            </t>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </t>
+                                    <t t-if="not messages">
+                                        <div class="text-center py-5 text-muted">
+                                            <i class="fa fa-comments fa-3x mb-3 opacity-25"/>
+                                            <p>No messages yet. Start the conversation below.</p>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+
+                            <!-- Reply Form -->
+                            <t t-if="ticket.state not in ('closed', 'cancelled')">
+                                <div class="card border-0 shadow-sm">
+                                    <div class="card-header bg-white border-bottom py-3">
+                                        <h5 class="mb-0 fw-semibold">
+                                            <i class="fa fa-reply me-2 text-primary"/>
+                                            Reply
+                                        </h5>
+                                    </div>
+                                    <div class="card-body p-4">
+                                        <form method="POST"
+                                              t-attf-action="/my/support/ticket/#{ticket.id}/reply"
+                                              enctype="multipart/form-data">
+                                            <input type="hidden" name="csrf_token"
+                                                   t-att-value="request.csrf_token()"/>
+                                            <div class="mb-3">
+                                                <textarea name="body" class="form-control" rows="4"
+                                                          placeholder="Type your reply here..."
+                                                          required="required"/>
+                                            </div>
+                                            <div class="mb-3">
+                                                <input type="file" name="attachments" multiple="multiple"
+                                                       class="form-control form-control-sm"
+                                                       accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt,.csv,.zip"/>
+                                            </div>
+                                            <div class="d-flex justify-content-end">
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="fa fa-paper-plane me-1"/> Send Reply
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+
+                        <!-- Sidebar -->
+                        <div class="col-lg-4">
+                            <!-- Ticket Details Card -->
+                            <div class="card border-0 shadow-sm mb-4">
+                                <div class="card-header bg-white border-bottom py-3">
+                                    <h6 class="mb-0 fw-semibold">Ticket Details</h6>
+                                </div>
+                                <div class="card-body p-0">
+                                    <table class="table table-borderless mb-0">
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-muted small py-2 px-4" style="width: 40%;">Status</td>
+                                                <td class="py-2 px-4">
+                                                    <t t-call="ft_helpdesk_portal.ticket_state_badge">
+                                                        <t t-set="state" t-value="ticket.state"/>
+                                                    </t>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted small py-2 px-4">Priority</td>
+                                                <td class="py-2 px-4">
+                                                    <t t-if="ticket.priority == '0'">Low</t>
+                                                    <t t-if="ticket.priority == '1'">Normal</t>
+                                                    <t t-if="ticket.priority == '2'"><span class="text-warning fw-medium">High</span></t>
+                                                    <t t-if="ticket.priority == '3'"><span class="text-danger fw-bold">Urgent</span></t>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted small py-2 px-4">Ticket #</td>
+                                                <td class="py-2 px-4 fw-mono"><t t-out="ticket.ticket_no"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-muted small py-2 px-4">Created</td>
+                                                <td class="py-2 px-4">
+                                                    <t t-out="ticket.create_date"
+                                                       t-options='{"widget": "datetime", "format": "dd MMM yyyy, HH:mm"}'/>
+                                                </td>
+                                            </tr>
+                                            <t t-if="ticket.category_id">
+                                                <tr>
+                                                    <td class="text-muted small py-2 px-4">Category</td>
+                                                    <td class="py-2 px-4"><t t-out="ticket.category_id.name"/></td>
+                                                </tr>
+                                            </t>
+                                            <t t-if="ticket.type_id">
+                                                <tr>
+                                                    <td class="text-muted small py-2 px-4">Type</td>
+                                                    <td class="py-2 px-4"><t t-out="ticket.type_id.name"/></td>
+                                                </tr>
+                                            </t>
+                                            <t t-if="ticket.assigned_user_id">
+                                                <tr>
+                                                    <td class="text-muted small py-2 px-4">Assignee</td>
+                                                    <td class="py-2 px-4"><t t-out="ticket.assigned_user_id.name"/></td>
+                                                </tr>
+                                            </t>
+                                            <t t-if="ticket.team_id">
+                                                <tr>
+                                                    <td class="text-muted small py-2 px-4">Team</td>
+                                                    <td class="py-2 px-4"><t t-out="ticket.team_id.name"/></td>
+                                                </tr>
+                                            </t>
+                                            <t t-if="ticket.resolved_at">
+                                                <tr>
+                                                    <td class="text-muted small py-2 px-4">Resolved</td>
+                                                    <td class="py-2 px-4">
+                                                        <t t-out="ticket.resolved_at"
+                                                           t-options='{"widget": "datetime", "format": "dd MMM yyyy, HH:mm"}'/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Attachments Card -->
+                            <t t-if="attachments">
+                                <div class="card border-0 shadow-sm mb-4">
+                                    <div class="card-header bg-white border-bottom py-3">
+                                        <h6 class="mb-0 fw-semibold">
+                                            <i class="fa fa-paperclip me-1"/>
+                                            Attachments (<t t-out="len(attachments)"/>)
+                                        </h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-flex flex-column gap-2">
+                                            <t t-foreach="attachments" t-as="att">
+                                                <a t-attf-href="/web/content/#{att.id}?download=true"
+                                                   class="btn btn-sm btn-outline-secondary text-start"
+                                                   target="_blank">
+                                                    <i class="fa fa-download me-2"/>
+                                                    <t t-out="att.name"/>
+                                                </a>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+
+
+                            <!-- Back to List -->
+                            <a href="/my/support/tickets" class="btn btn-outline-secondary w-100">
+                                <i class="fa fa-arrow-left me-1"/> Back to My Tickets
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

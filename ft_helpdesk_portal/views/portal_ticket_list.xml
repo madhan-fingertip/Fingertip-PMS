@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================= -->
+    <!-- TICKET LIST PAGE              -->
+    <!-- ============================= -->
+    <template id="portal_ticket_list" name="My Tickets">
+        <t t-call="ft_helpdesk_portal.portal_support_home">
+                    <!-- Page Header -->
+                    <div class="ft-page-header text-center text-white rounded-3 p-4 mb-4">
+                        <i class="fa fa-ticket fa-2x mb-2" style="opacity: 0.85;"/>
+                        <h2 class="fw-bold mb-1">My Tickets</h2>
+                        <p class="mb-0" style="opacity: 0.8;">
+                            <t t-out="ticket_count"/> ticket(s) found
+                        </p>
+                    </div>
+
+                    <!-- Action Bar -->
+                    <div class="d-flex justify-content-end mb-4">
+                        <a href="/my/support/ticket/new" class="btn ft-btn-purple">
+                            <i class="fa fa-plus me-1"/> New Ticket
+                        </a>
+                    </div>
+
+                    <!-- Filters & Search Bar -->
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body py-3">
+                            <div class="row g-3 align-items-center">
+                                <!-- Filter Chips -->
+                                <div class="col-lg-7">
+                                    <div class="d-flex flex-wrap gap-2 align-items-center">
+                                        <span class="fw-medium text-dark">Filter:</span>
+                                        <t t-foreach="filters" t-as="f">
+                                            <a t-attf-href="/my/support/tickets?filterby=#{f}&amp;sortby=#{sortby}&amp;search=#{search}&amp;search_in=#{search_in}"
+                                               t-attf-class="btn btn-sm #{filterby == f and 'ft-btn-purple' or 'btn-outline-secondary'} rounded-pill">
+                                                <t t-out="filters[f]['label']"/>
+                                            </a>
+                                        </t>
+                                    </div>
+                                </div>
+                                <!-- Search -->
+                                <div class="col-lg-5">
+                                    <form method="GET" action="/my/support/tickets" class="input-group">
+                                        <input type="hidden" name="filterby" t-att-value="filterby"/>
+                                        <input type="hidden" name="sortby" t-att-value="sortby"/>
+                                        <select name="search_in" class="form-select" style="max-width: 120px;">
+                                            <t t-foreach="search_in_options" t-as="opt">
+                                                <option t-att-value="opt"
+                                                        t-att-selected="search_in == opt and 'selected'">
+                                                    <t t-out="search_in_options[opt]"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                        <input type="text" name="search" class="form-control"
+                                               t-att-value="search"
+                                               placeholder="Search tickets..."/>
+                                        <button class="btn btn-outline-secondary" style="border-color: #6f42c1; color: #6f42c1;" type="submit">
+                                            <i class="fa fa-search"/>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            <!-- Sort Options -->
+                            <div class="mt-2 d-flex gap-2 align-items-center">
+                                <span class="fw-medium text-dark">Sort by:</span>
+                                <t t-foreach="sortings" t-as="s">
+                                    <a t-attf-href="/my/support/tickets?sortby=#{s}&amp;filterby=#{filterby}&amp;search=#{search}&amp;search_in=#{search_in}"
+                                       t-attf-class="btn btn-sm #{sortby == s and 'btn-dark' or 'btn-outline-dark'} rounded-pill">
+                                        <t t-out="sortings[s]['label']"/>
+                                    </a>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ticket List -->
+                    <t t-if="tickets">
+                        <div class="card border-0 shadow-sm">
+                            <div class="list-group list-group-flush">
+                                <t t-foreach="tickets" t-as="ticket">
+                                    <a t-attf-href="/my/support/ticket/#{ticket.id}"
+                                       class="list-group-item list-group-item-action py-3 px-4">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div class="me-3" style="min-width: 0; flex: 1;">
+                                                <div class="d-flex align-items-center mb-1">
+                                                    <span class="text-muted small me-2 fw-mono">
+                                                        <t t-out="ticket.ticket_no"/>
+                                                    </span>
+                                                    <t t-call="ft_helpdesk_portal.ticket_priority_badge">
+                                                        <t t-set="priority" t-value="ticket.priority"/>
+                                                    </t>
+                                                </div>
+                                                <h6 class="mb-1 fw-medium text-truncate">
+                                                    <t t-out="ticket.name"/>
+                                                </h6>
+                                                <div class="d-flex flex-wrap gap-2 align-items-center small text-muted">
+                                                    <span>
+                                                        <i class="fa fa-clock-o me-1"/>
+                                                        <t t-out="ticket.create_date"
+                                                           t-options='{"widget": "datetime", "format": "dd MMM yyyy"}'/>
+                                                    </span>
+                                                    <t t-if="ticket.category_id">
+                                                        <span>
+                                                            <i class="fa fa-folder-o me-1"/>
+                                                            <t t-out="ticket.category_id.name"/>
+                                                        </span>
+                                                    </t>
+                                                    <t t-if="ticket.assigned_user_id">
+                                                        <span>
+                                                            <i class="fa fa-user me-1"/>
+                                                            <t t-out="ticket.assigned_user_id.name"/>
+                                                        </span>
+                                                    </t>
+                                                </div>
+                                            </div>
+                                            <div class="text-end flex-shrink-0">
+                                                <t t-call="ft_helpdesk_portal.ticket_state_badge">
+                                                    <t t-set="state" t-value="ticket.state"/>
+                                                </t>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </t>
+                            </div>
+                        </div>
+
+                        <!-- Pager -->
+                        <div class="d-flex justify-content-center mt-4">
+                            <t t-call="portal.pager"/>
+                        </div>
+                    </t>
+
+                    <!-- Empty State -->
+                    <t t-if="not tickets">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body text-center py-5">
+                                <div class="ft-icon-circle bg-light mx-auto mb-3">
+                                    <i class="fa fa-ticket fa-2x text-muted"/>
+                                </div>
+                                <h5 class="text-muted">No tickets found</h5>
+                                <p class="text-muted mb-3">
+                                    <t t-if="search or filterby != 'all'">
+                                        Try adjusting your filters or search query.
+                                    </t>
+                                    <t t-else="">
+                                        You haven't submitted any support tickets yet.
+                                    </t>
+                                </p>
+                                <a href="/my/support/ticket/new" class="btn ft-btn-purple">
+                                    <i class="fa fa-plus me-1"/> Create Your First Ticket
+                                </a>
+                            </div>
+                        </div>
+                    </t>
+        </t>
+    </template>
+</odoo>
