@@ -100,11 +100,11 @@
                   <field name="forecast_accuracy_revenue_ownership_rating" string="Forecast Accuracy &amp; Revenue Ownership "/>
                 </group>
                 <group>
-                  <field name="prospecting_pipeline_discipline_comment" string="Prospecting &amp; Pipeline Discipline "  />
-                  <field name="objection_handling_negotiation_comment" string="Objection Handling &amp; Negotiation "  />
-                  <field name="follow_up_deal_progression_comment" string="Follow-Up &amp; Deal Progression "  />
-                  <field name="discovery_questioning_quality_comment" string="Discovery &amp; Questioning Quality "  />
-                  <field name="forecast_accuracy_revenue_ownership_comment" string="Forecast Accuracy &amp; Revenue Ownership "  />
+                  <field name="prospecting_pipeline_discipline_comment" string="Prospecting &amp; Pipeline Discipline " required="role == 'sales'"/>
+                  <field name="objection_handling_negotiation_comment" string="Objection Handling &amp; Negotiation " required="role == 'sales'"/>
+                  <field name="follow_up_deal_progression_comment" string="Follow-Up &amp; Deal Progression " required="role == 'sales'"/>
+                  <field name="discovery_questioning_quality_comment" string="Discovery &amp; Questioning Quality " required="role == 'sales'"/>
+                  <field name="forecast_accuracy_revenue_ownership_comment" string="Forecast Accuracy &amp; Revenue Ownership " required="role == 'sales'"/>
                 </group>
               </group>
 
@@ -118,11 +118,11 @@
                   <field name="creativity_experimentation_rating" string="Creativity &amp; Experimentation "/>
                 </group>
                 <group>
-                  <field name="campaign_planning_execution_comment" string="Campaign Planning &amp; Execution "  />
-                  <field name="lead_quality_contribution_comment" string="Lead Quality Contribution "  />
-                  <field name="performance_tracking_reporting_comment" string="Performance Tracking &amp; Reporting "  />
-                  <field name="tool_proficiency_ads_automation_crm_comment" string="Tool Proficiency (Ads/Automation/CRM) "  />
-                  <field name="creativity_experimentation_comment" string="Creativity &amp; Experimentation "  />
+                  <field name="campaign_planning_execution_comment" string="Campaign Planning &amp; Execution " required="role == 'marketing'"/>
+                  <field name="lead_quality_contribution_comment" string="Lead Quality Contribution " required="role == 'marketing'"/>
+                  <field name="performance_tracking_reporting_comment" string="Performance Tracking &amp; Reporting " required="role == 'marketing'"/>
+                  <field name="tool_proficiency_ads_automation_crm_comment" string="Tool Proficiency (Ads/Automation/CRM) " required="role == 'marketing'"/>
+                  <field name="creativity_experimentation_comment" string="Creativity &amp; Experimentation " required="role == 'marketing'"/>
                 </group>
               </group>
 
@@ -136,13 +136,11 @@
                   <field name="estimation_accuracy_reliability_rating" string="Estimation Accuracy &amp; Reliability "/>
                 </group>
                 <group>
-                  <field name="technical_competency_comment" string="Technical Competency "  />
-                  <field name="code_quality_standards_comment" string="Code Quality &amp; Standards "  />
-                  <field name="debugging_root_cause_comment" string="Debugging / Root Cause Ability "  />
-
-                  <field name="requirement_understanding_accuracy_comment" string="Requirement Understanding Accuracy "  />
-
-                  <field name="estimation_accuracy_reliability_comment" string="Estimation Accuracy &amp; Reliability "  />
+                  <field name="technical_competency_comment" string="Technical Competency " required="role == 'developer'"/>
+                  <field name="code_quality_standards_comment" string="Code Quality &amp; Standards " required="role == 'developer'"/>
+                  <field name="debugging_root_cause_comment" string="Debugging / Root Cause Ability " required="role == 'developer'"/>
+                  <field name="requirement_understanding_accuracy_comment" string="Requirement Understanding Accuracy " required="role == 'developer'"/>
+                  <field name="estimation_accuracy_reliability_comment" string="Estimation Accuracy &amp; Reliability " required="role == 'developer'"/>
                 </group>
               </group>
 
@@ -150,21 +148,17 @@
               <group string="Team Lead Parameters" colspan="2" invisible="role != 'team_lead'">
                 <group>
                   <field name="task_planning_allocation_rating" string="Task Planning &amp; Allocation "/>
-
                   <field name="delivery_predictability_rating" string="Delivery Predictability "/>
-
                   <field name="mentoring_technical_guidance_rating" string="Mentoring &amp; Technical Guidance "/>
                   <field name="risk_identification_escalation_rating" string="Risk Identification &amp; Escalation "/>
                   <field name="stakeholder_client_communication_rating" string="Stakeholder / Client Communication "/>
                 </group>
                 <group>
-                  <field name="task_planning_allocation_comment" string="Task Planning &amp; Allocation "  />
-                  <field name="delivery_predictability_comment" string="Delivery Predictability "  />
-                  <field name="mentoring_technical_guidance_comment" string="Mentoring &amp; Technical Guidance "  />
-
-                  <field name="risk_identification_escalation_comment" string="Risk Identification &amp; Escalation "  />
-
-                  <field name="stakeholder_client_communication_comment" string="Stakeholder / Client Communication "  />
+                  <field name="task_planning_allocation_comment" string="Task Planning &amp; Allocation " required="role == 'team_lead'"/>
+                  <field name="delivery_predictability_comment" string="Delivery Predictability " required="role == 'team_lead'"/>
+                  <field name="mentoring_technical_guidance_comment" string="Mentoring &amp; Technical Guidance " required="role == 'team_lead'"/>
+                  <field name="risk_identification_escalation_comment" string="Risk Identification &amp; Escalation " required="role == 'team_lead'"/>
+                  <field name="stakeholder_client_communication_comment" string="Stakeholder / Client Communication " required="role == 'team_lead'"/>
                 </group>
               </group>
 
@@ -172,21 +166,17 @@
               <group string="Project Manager Parameters" colspan="2" invisible="role != 'project_manager'">
                 <group>
                   <field name="project_planning_timeline_control_rating" string="Project Planning &amp; Timeline Control "/>
-
                   <field name="scope_change_management_rating" string="Scope &amp; Change Management "/>
-
                   <field name="risk_dependency_management_rating" string="Risk &amp; Dependency Management "/>
                   <field name="stakeholder_communication_rating" string="Stakeholder Communication "/>
                   <field name="status_reporting_accuracy_rating" string="Status Reporting Accuracy "/>
                 </group>
                 <group>
-                  <field name="project_planning_timeline_control_comment" string="Project Planning &amp; Timeline Control "  />
-                  <field name="scope_change_management_comment" string="Scope &amp; Change Management "  />
-                  <field name="risk_dependency_management_comment" string="Risk &amp; Dependency Management "  />
-
-                  <field name="stakeholder_communication_comment" string="Stakeholder Communication "  />
-
-                  <field name="status_reporting_accuracy_comment" string="Status Reporting Accuracy "  />
+                  <field name="project_planning_timeline_control_comment" string="Project Planning &amp; Timeline Control " required="role == 'project_manager'"/>
+                  <field name="scope_change_management_comment" string="Scope &amp; Change Management " required="role == 'project_manager'"/>
+                  <field name="risk_dependency_management_comment" string="Risk &amp; Dependency Management " required="role == 'project_manager'"/>
+                  <field name="stakeholder_communication_comment" string="Stakeholder Communication " required="role == 'project_manager'"/>
+                  <field name="status_reporting_accuracy_comment" string="Status Reporting Accuracy " required="role == 'project_manager'"/>
                 </group>
               </group>
 
@@ -194,21 +184,17 @@
               <group string="Tester / QA Parameters" colspan="2" invisible="role != 'tester'">
                 <group>
                   <field name="test_case_design_quality_rating" string="Test Case Design Quality "/>
-
                   <field name="bug_reporting_clarity_rating" string="Bug Reporting Clarity "/>
-
                   <field name="coverage_edge_case_thinking_rating" string="Coverage &amp; Edge Case Thinking "/>
                   <field name="regression_discipline_rating" string="Regression Discipline "/>
                   <field name="quality_ownership_rating" string="Quality Ownership "/>
                 </group>
                 <group>
-                  <field name="test_case_design_quality_comment" string="Test Case Design Quality "  />
-                  <field name="bug_reporting_clarity_comment" string="Bug Reporting Clarity "  />
-                  <field name="coverage_edge_case_thinking_comment" string="Coverage &amp; Edge Case Thinking "  />
-
-                  <field name="regression_discipline_comment" string="Regression Discipline "  />
-
-                  <field name="quality_ownership_comment" string="Quality Ownership "  />
+                  <field name="test_case_design_quality_comment" string="Test Case Design Quality " required="role == 'tester'"/>
+                  <field name="bug_reporting_clarity_comment" string="Bug Reporting Clarity " required="role == 'tester'"/>
+                  <field name="coverage_edge_case_thinking_comment" string="Coverage &amp; Edge Case Thinking " required="role == 'tester'"/>
+                  <field name="regression_discipline_comment" string="Regression Discipline " required="role == 'tester'"/>
+                  <field name="quality_ownership_comment" string="Quality Ownership " required="role == 'tester'"/>
                 </group>
               </group>
 
@@ -216,21 +202,17 @@
               <group string="HR Parameters" colspan="2" invisible="role != 'hr'">
                 <group>
                   <field name="hiring_pipeline_management_rating" string="Hiring Pipeline Management "/>
-
                   <field name="policy_compliance_documentation_rating" string="Policy Compliance &amp; Documentation "/>
-
                   <field name="employee_issue_handling_rating" string="Employee Issue Handling "/>
                   <field name="process_improvement_initiative_rating" string="Process Improvement Initiative "/>
                   <field name="confidentiality_professionalism_rating" string="Confidentiality &amp; Professionalism "/>
                 </group>
                 <group>
-                  <field name="hiring_pipeline_management_comment" string="Hiring Pipeline Management "  />
-                  <field name="policy_compliance_documentation_comment" string="Policy Compliance &amp; Documentation "  />
-                  <field name="employee_issue_handling_comment" string="Employee Issue Handling "  />
-
-                  <field name="process_improvement_initiative_comment" string="Process Improvement Initiative "  />
-
-                  <field name="confidentiality_professionalism_comment" string="Confidentiality &amp; Professionalism "  />
+                  <field name="hiring_pipeline_management_comment" string="Hiring Pipeline Management " required="role == 'hr'"/>
+                  <field name="policy_compliance_documentation_comment" string="Policy Compliance &amp; Documentation " required="role == 'hr'"/>
+                  <field name="employee_issue_handling_comment" string="Employee Issue Handling " required="role == 'hr'"/>
+                  <field name="process_improvement_initiative_comment" string="Process Improvement Initiative " required="role == 'hr'"/>
+                  <field name="confidentiality_professionalism_comment" string="Confidentiality &amp; Professionalism " required="role == 'hr'"/>
                 </group>
               </group>
 
