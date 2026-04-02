@@ -162,9 +162,9 @@
                 <header>
                     <button name="action_assign_to_me" type="object" string="Assign to Me"
                             class="btn-primary"
-                            invisible="assigned_user_id == uid"/>
+                            invisible="assigned_user_id == uid or state in ('closed', 'cancelled')"/>
                     <button name="action_set_state_open" type="object" string="Start Working"
-                            class="btn-primary" invisible="state != 'new'"/>
+                            class="btn-primary" invisible="state != 'new' or assigned_user_id"/>
                     <button name="action_set_state_pending_customer" type="object"
                             string="Pending Customer" class="btn-secondary"
                             invisible="state not in ('open', 'pending_internal')"/>
@@ -237,26 +237,15 @@
                         <page string="Conversation" name="conversation">
                             <field name="description" placeholder="Describe the issue..."
                                    invisible="state != 'new' and not description"/>
-                            <group>
-                                <group string="Customer Messages">
-                                    <field name="customer_message_ids" nolabel="1" readonly="1">
-                                        <list create="0" edit="0" delete="0">
-                                            <field name="author_id" string="From"/>
-                                            <field name="date" string="Date"/>
-                                            <field name="body" string="Message"/>
-                                        </list>
-                                    </field>
-                                </group>
-                                <group string="Internal / System Messages">
-                                    <field name="agent_message_ids" nolabel="1" readonly="1">
-                                        <list create="0" edit="0" delete="0">
-                                            <field name="author_id" string="From"/>
-                                            <field name="date" string="Date"/>
-                                            <field name="body" string="Message"/>
-                                        </list>
-                                    </field>
-                                </group>
-                            </group>
+                            <separator string="Customer Messages"/>
+                            <field name="customer_message_ids" nolabel="1" readonly="1">
+                                <list create="0" edit="0" delete="0">
+                                    <field name="author_id" string="From"/>
+                                    <field name="date" string="Date"/>
+                                    <field name="body" string="Message"/>
+                                    <field name="attachment_ids" string="Attachments" widget="many2many_binary"/>
+                                </list>
+                            </field>
                         </page>
                         <page string="Details" name="details">
                             <group>

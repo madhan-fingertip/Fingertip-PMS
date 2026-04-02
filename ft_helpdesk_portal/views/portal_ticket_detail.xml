@@ -135,7 +135,7 @@
                                                             <t t-if="msg.attachment_ids">
                                                                 <div class="mt-2 d-flex flex-wrap gap-2">
                                                                     <t t-foreach="msg.attachment_ids" t-as="att">
-                                                                        <a t-attf-href="/web/content/#{att.id}?download=true"
+                                                                        <a t-attf-href="/web/content/#{att.id}?download=true&amp;access_token=#{att.access_token}"
                                                                            class="btn btn-sm btn-outline-secondary"
                                                                            target="_blank">
                                                                             <i class="fa fa-paperclip me-1"/>
@@ -183,6 +183,9 @@
                                                 <input type="file" name="attachments" multiple="multiple"
                                                        class="form-control form-control-sm"
                                                        accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt,.csv,.zip"/>
+                                                <small class="form-text text-muted">
+                                                    Accepted formats: JPG, JPEG, PNG, GIF, PDF, DOC, DOCX, XLS, XLSX, TXT, CSV, ZIP
+                                                </small>
                                             </div>
                                             <div class="d-flex justify-content-end">
                                                 <button type="submit" class="btn btn-primary">
@@ -283,7 +286,7 @@
                                     <div class="card-body">
                                         <div class="d-flex flex-column gap-2">
                                             <t t-foreach="attachments" t-as="att">
-                                                <a t-attf-href="/web/content/#{att.id}?download=true"
+                                                <a t-attf-href="/web/content/#{att.id}?download=true&amp;access_token=#{att.access_token}"
                                                    class="btn btn-sm btn-outline-secondary text-start"
                                                    target="_blank">
                                                     <i class="fa fa-download me-2"/>

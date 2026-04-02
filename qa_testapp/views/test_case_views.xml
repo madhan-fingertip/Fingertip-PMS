@@ -8,8 +8,8 @@
             <list string="Test Cases">
                 <field name="test_case_id"/>
                 <field name="test_case_title"/>
-                <field name="module"/>
                 <field name="project_id"/>
+                <field name="module_id"/>
                 <field name="status"/>
                 <field name="severity"/>
                 <field name="test_type"/>
@@ -29,8 +29,9 @@
                         <group>
                             <field name="test_case_id" readonly="1"/>
                             <field name="test_case_title"/>
-                            <field name="module"/>
                             <field name="project_id"/>
+                            <field name="available_module_ids" invisible="1"/>
+                            <field name="module_id"/>
                         </group>
                         <group>
                             <field name="status"/>

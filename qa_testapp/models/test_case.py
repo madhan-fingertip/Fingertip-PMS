@@ -9,8 +9,14 @@ class QATestCase(models.Model):
 
     test_case_id = fields.Char(string='Test Case ID', readonly=True, copy=False, default='New')
     test_case_title = fields.Char(string='Test Case Title', required=True)
-    module = fields.Char(string='Module', required=True)
     project_id = fields.Many2one('project.project', string='Project', required=True)
+    module_id = fields.Many2one(
+        'cus.module', string='Module', required=True,
+        domain="[('id', 'in', available_module_ids)]",
+    )
+    available_module_ids = fields.Many2many(
+        'cus.module', compute='_compute_available_modules',
+    )
     test_objective = fields.Text(string='Test Objective')
     pre_conditions = fields.Text(string='Pre Conditions')
     test_data = fields.Text(string='Test Data')
@@ -42,6 +48,22 @@ class QATestCase(models.Model):
         ('uat', 'UAT'),
         ('regression', 'Regression')
     ], string='Test Type', default='smoke')
+
+    @api.depends('project_id')
+    def _compute_available_modules(self):
+        for rec in self:
+            if rec.project_id:
+                tasks = self.env['project.task'].sudo().search([
+                    ('project_id', '=', rec.project_id.id),
+                    ('module_id', '!=', False),
+                ])
+                rec.available_module_ids = tasks.mapped('module_id')
+            else:
+                rec.available_module_ids = self.env['cus.module'].sudo().search([])
+
+    @api.onchange('project_id')
+    def _onchange_project_id(self):
+        self.module_id = False
 
     @api.model_create_multi
     def create(self, vals_list):

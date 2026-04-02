@@ -62,11 +62,16 @@ class KBArticle(models.Model):
         help='Comma-separated keywords for search matching.',
     )
     # Customer-specific tagging
+    customer_visibility = fields.Selection([
+        ('all', 'All Customers'),
+        ('specific', 'Specific Customers'),
+    ], string='Customer Visibility', default='all', required=True,
+        help='Choose whether this article is visible to all customers or only specific ones.',
+    )
     customer_ids = fields.Many2many(
         'res.partner', 'ft_kb_article_customer_rel',
         'article_id', 'partner_id', string='Customers',
-        required=True,
-        help='Restrict article visibility to these customers. This field is mandatory — articles without customer mapping will be visible to all customers.',
+        help='Restrict article visibility to these customers.',
     )
 
     @api.depends('helpful_yes', 'helpful_no')

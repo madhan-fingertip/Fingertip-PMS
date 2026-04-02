@@ -488,8 +488,9 @@ class HelpdeskPortal(CustomerPortal):
                 auth='user', website=True)
     def portal_ticket_detail(self, ticket_id, **kw):
         try:
-            ticket = self._document_check_access(
+            self._document_check_access(
                 'ft.helpdesk.ticket', ticket_id)
+            ticket = request.env['ft.helpdesk.ticket'].sudo().browse(ticket_id)
         except (AccessError, MissingError):
             return request.redirect('/my/support/tickets')
 
@@ -507,11 +508,18 @@ class HelpdeskPortal(CustomerPortal):
         messages = request.env['mail.message'].sudo().search(
             msg_domain, order='create_date asc')
 
+        # Generate access tokens for message attachments
+        for msg in messages:
+            for att in msg.attachment_ids:
+                att.sudo().generate_access_token()
+
         # Get attachments
         attachments = request.env['ir.attachment'].sudo().search([
             ('res_model', '=', 'ft.helpdesk.ticket'),
             ('res_id', '=', ticket.id),
         ])
+        for att in attachments:
+            att.sudo().generate_access_token()
 
         # Portal settings
         allow_close = request.env['ir.config_parameter'].sudo().get_param(

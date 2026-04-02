@@ -113,7 +113,10 @@
                             <group>
                                 <field name="tag_ids" widget="many2many_tags"
                                        options="{'color_field': 'color'}"/>
-                                <field name="customer_ids" widget="many2many_tags" required="1"/>
+                                <field name="customer_visibility" required="1"/>
+                                <field name="customer_ids" widget="many2many_tags"
+                                       invisible="customer_visibility != 'specific'"
+                                       required="customer_visibility == 'specific'"/>
                             </group>
                         </page>
                         <page string="Metrics" name="metrics">

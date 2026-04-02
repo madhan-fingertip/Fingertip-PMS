@@ -20,7 +20,11 @@ class KnowledgeBaseController(http.Controller):
         # Base article domain with customer filtering
         article_domain = [('portal_published', '=', True)]
         if partner:
-            article_domain += ['|', ('customer_ids', '=', False), ('customer_ids', 'in', [partner.id])]
+            article_domain += [
+                '|',
+                ('customer_visibility', '=', 'all'),
+                '&', ('customer_visibility', '=', 'specific'), ('customer_ids', 'in', [partner.id]),
+            ]
 
         articles = False
         if search:
@@ -80,7 +84,7 @@ class KnowledgeBaseController(http.Controller):
             ('portal_published', '=', True),
         ]
         if partner:
-            article_domain += ['|', ('customer_ids', '=', False), ('customer_ids', 'in', [partner.id])]
+            article_domain += ['|', ('customer_visibility', '=', 'all'), '&', ('customer_visibility', '=', 'specific'), ('customer_ids', 'in', [partner.id])]
         article = Article.search(article_domain, limit=1)
 
         if not article:
@@ -96,7 +100,7 @@ class KnowledgeBaseController(http.Controller):
             ('id', '!=', article.id),
         ]
         if partner:
-            related_domain += ['|', ('customer_ids', '=', False), ('customer_ids', 'in', [partner.id])]
+            related_domain += ['|', ('customer_visibility', '=', 'all'), '&', ('customer_visibility', '=', 'specific'), ('customer_ids', 'in', [partner.id])]
         related = Article.search(related_domain, limit=5, order='view_count desc')
 
         values = {
@@ -123,7 +127,7 @@ class KnowledgeBaseController(http.Controller):
             ('portal_published', '=', True),
         ]
         if partner:
-            article_domain += ['|', ('customer_ids', '=', False), ('customer_ids', 'in', [partner.id])]
+            article_domain += ['|', ('customer_visibility', '=', 'all'), '&', ('customer_visibility', '=', 'specific'), ('customer_ids', 'in', [partner.id])]
 
         articles = Article.search(article_domain, order='sequence, helpful_score desc')
 

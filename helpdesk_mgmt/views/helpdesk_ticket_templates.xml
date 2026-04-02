@@ -13,7 +13,7 @@
             >
                 <a
                     t-if="ticket"
-                    t-attf-href="/my/tickets?{{ keep_query() }}"
+                    t-attf-href="/my/support/tickets?{{ keep_query() }}"
                 >Tickets</a>
                 <t t-else="">Tickets</t>
             </li>
@@ -32,7 +32,7 @@
         <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
             <t t-call="portal.portal_docs_entry">
                 <t t-set="title">Tickets</t>
-                <t t-set="url" t-value="'/my/tickets'" />
+                <t t-set="url" t-value="'/my/support/tickets'" />
                 <t t-set="placeholder_count" t-value="'ticket_count'" />
             </t>
             <form method="POST" t-attf-action="/new/ticket">

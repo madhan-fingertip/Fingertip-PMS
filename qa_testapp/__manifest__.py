@@ -14,7 +14,7 @@ A comprehensive Quality Assurance suite for Odoo 18 with:
 """,
     'author': 'Fingertip',
     'website': '',
-    'depends': ['base', 'project', 'mail'],
+    'depends': ['base', 'project', 'mail', 'bt_project_customization'],
     'data': [
             'security/ir.model.access.csv',
             'data/ticket_sequence.xml',

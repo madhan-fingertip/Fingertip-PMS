@@ -6,14 +6,13 @@
         <field name="model">qa_testapp.test_scenario</field>
         <field name="arch" type="xml">
             <list string="Test Scenarios">
-                <field name="s_no"/>
                 <field name="date"/>
                 <field name="test_scenario_id"/>
-                <field name="module"/>
+                <field name="project_id"/>
+                <field name="module_id"/>
                 <field name="description"/>
                 <field name="status"/>
                 <field name="comments"/>
-                <field name="project_id"/>
                 <field name="created_by"/>
             </list>
         </field>
@@ -27,11 +26,11 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="s_no"/>
+                            <field name="test_scenario_id" readonly="1"/>
                             <field name="date"/>
-                            <field name="test_scenario_id"/>
-                            <field name="module"/>
                             <field name="project_id"/>
+                            <field name="available_module_ids" invisible="1"/>
+                            <field name="module_id"/>
                         </group>
                         <group>
                             <field name="status"/>
@@ -49,7 +48,7 @@
             </form>
         </field>
     </record>
-    
+
     <!-- Action -->
     <record id="qa_testapp_action_test_scenario" model="ir.actions.act_window">
         <field name="name">Test Scenarios</field>

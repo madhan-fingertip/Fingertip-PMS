@@ -14,4 +14,28 @@
             </field>
         </field>
     </record>
+ 
+    <!-- Add module_id to quick create form -->
+    <record id="view_quick_create_task_module" model="ir.ui.view">
+        <field name="name">project.task.quick_create.module</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.quick_create_task_form"/>
+        <field name="arch" type="xml">
+            <field name="user_ids" position="before">
+                <field name="module_id" required="True"/>
+            </field>
+        </field>
+    </record>
+
+     <record id="view_task_kanban_module_field" model="ir.ui.view">
+        <field name="name">project.task.kanban.module.field</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='project_id']" position="after">
+                <field name="module_id"/>
+            </xpath>
+        </field>
+    </record>
+ 
 </odoo>

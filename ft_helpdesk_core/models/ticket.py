@@ -193,11 +193,7 @@ class HelpdeskTicket(models.Model):
     )
     customer_message_ids = fields.One2many(
         'mail.message', 'res_id', string='Customer Messages',
-        compute='_compute_split_messages',
-    )
-    agent_message_ids = fields.One2many(
-        'mail.message', 'res_id', string='Internal / System Messages',
-        compute='_compute_split_messages',
+        compute='_compute_customer_messages',
     )
 
     # =====================
@@ -264,17 +260,11 @@ class HelpdeskTicket(models.Model):
         for ticket in self:
             ticket.message_count = len(ticket.message_ids)
 
-    def _compute_split_messages(self):
+    def _compute_customer_messages(self):
         for ticket in self:
-            customer_msgs = self.env['mail.message']
-            agent_msgs = self.env['mail.message']
-            for msg in ticket.message_ids:
-                if msg.message_type in ('comment', 'email') and msg.author_id == ticket.customer_id:
-                    customer_msgs |= msg
-                else:
-                    agent_msgs |= msg
-            ticket.customer_message_ids = customer_msgs
-            ticket.agent_message_ids = agent_msgs
+            ticket.customer_message_ids = ticket.message_ids.filtered(
+                lambda msg: msg.message_type in ('comment', 'email') and msg.author_id == ticket.customer_id
+            )
 
     @api.model
     def _group_expand_states(self, states, domain):
