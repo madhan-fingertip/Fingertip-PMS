@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="group_project_activity_update_user" model="res.groups">
+            <field name="name">Project Activity Update User</field>
+            <field name="category_id" ref="base.module_category_project"/>
+            <field name="comment">Users in this group can access and create project activity updates</field>
+        </record>
+    </data>
+</odoo>

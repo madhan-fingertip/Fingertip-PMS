@@ -65,7 +65,8 @@ class KBArticle(models.Model):
     customer_ids = fields.Many2many(
         'res.partner', 'ft_kb_article_customer_rel',
         'article_id', 'partner_id', string='Customers',
-        help='Restrict article visibility to these customers. Leave empty for global.',
+        required=True,
+        help='Restrict article visibility to these customers. This field is mandatory — articles without customer mapping will be visible to all customers.',
     )
 
     @api.depends('helpful_yes', 'helpful_no')

@@ -237,7 +237,26 @@
                         <page string="Conversation" name="conversation">
                             <field name="description" placeholder="Describe the issue..."
                                    invisible="state != 'new' and not description"/>
-                            <field name="message_ids" widget="mail_thread" readonly="1"/>
+                            <group>
+                                <group string="Customer Messages">
+                                    <field name="customer_message_ids" nolabel="1" readonly="1">
+                                        <list create="0" edit="0" delete="0">
+                                            <field name="author_id" string="From"/>
+                                            <field name="date" string="Date"/>
+                                            <field name="body" string="Message"/>
+                                        </list>
+                                    </field>
+                                </group>
+                                <group string="Internal / System Messages">
+                                    <field name="agent_message_ids" nolabel="1" readonly="1">
+                                        <list create="0" edit="0" delete="0">
+                                            <field name="author_id" string="From"/>
+                                            <field name="date" string="Date"/>
+                                            <field name="body" string="Message"/>
+                                        </list>
+                                    </field>
+                                </group>
+                            </group>
                         </page>
                         <page string="Details" name="details">
                             <group>

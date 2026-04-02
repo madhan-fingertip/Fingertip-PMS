@@ -14,7 +14,7 @@
             <field name="name">Public Reply</field>
             <field name="res_model">ft.helpdesk.ticket</field>
             <field name="internal" eval="False"/>
-            <field name="description">Public reply visible to customer</field>
+            <field name="description"></field>
         </record>
 
         <!-- State Change Subtype -->
@@ -31,7 +31,7 @@
             <field name="res_model">ft.helpdesk.ticket</field>
             <field name="internal" eval="False"/>
             <field name="default" eval="True"/>
-            <field name="description">A new ticket has been created</field>
+            <field name="description"></field>
         </record>
     </data>
 </odoo>

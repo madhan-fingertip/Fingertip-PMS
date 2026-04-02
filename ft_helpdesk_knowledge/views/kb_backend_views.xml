@@ -113,7 +113,7 @@
                             <group>
                                 <field name="tag_ids" widget="many2many_tags"
                                        options="{'color_field': 'color'}"/>
-                                <field name="customer_ids" widget="many2many_tags"/>
+                                <field name="customer_ids" widget="many2many_tags" required="1"/>
                             </group>
                         </page>
                         <page string="Metrics" name="metrics">
