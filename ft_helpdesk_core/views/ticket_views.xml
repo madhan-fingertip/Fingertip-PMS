@@ -190,7 +190,7 @@
                             string="Escalate" class="btn-warning"
                             invisible="state in ('closed', 'cancelled') or is_escalated == True"/>
                     <field name="state" widget="statusbar"
-                           statusbar_visible="new,open,pending_customer,resolved,closed"/>
+                           statusbar_visible="new,open,pending_internal,pending_customer,resolved,closed"/>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
@@ -237,12 +237,11 @@
                         <page string="Conversation" name="conversation">
                             <field name="description" placeholder="Describe the issue..."
                                    invisible="state != 'new' and not description"/>
-                            <field name="message_ids" widget="mail_thread"/>
+                            <field name="message_ids" widget="mail_thread" readonly="1"/>
                         </page>
                         <page string="Details" name="details">
                             <group>
                                 <group string="Classification">
-                                    <field name="product_id"/>
                                     <field name="tag_ids" widget="many2many_tags"
                                            options="{'color_field': 'color'}"/>
                                 </group>

@@ -6,12 +6,10 @@
         <field name="model">qa_testapp.test_case</field>
         <field name="arch" type="xml">
             <list string="Test Cases">
-                <field name="s_no"/>
                 <field name="test_case_id"/>
                 <field name="test_case_title"/>
                 <field name="module"/>
                 <field name="project_id"/>
-                <field name="project_org_id"/>
                 <field name="status"/>
                 <field name="severity"/>
                 <field name="test_type"/>
@@ -29,12 +27,10 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="s_no"/>
-                            <field name="test_case_id"/>
+                            <field name="test_case_id" readonly="1"/>
                             <field name="test_case_title"/>
                             <field name="module"/>
                             <field name="project_id"/>
-                            <field name="project_org_id"/>
                         </group>
                         <group>
                             <field name="status"/>
@@ -49,12 +45,16 @@
                             <field name="pre_conditions"/>
                         </page>
                         <page string="Test Data &amp; Steps">
-                            <field name="test_data"/>
-                            <field name="test_steps"/>
+                            <group>
+                                <field name="test_data"/>
+                                <field name="test_steps"/>
+                            </group>
                         </page>
                         <page string="Results">
-                            <field name="expected_result"/>
-                            <field name="actual_result"/>
+                            <group>
+                                <field name="expected_result"/>
+                                <field name="actual_result"/>
+                            </group>
                         </page>
                         <page string="Execution">
                             <field name="executed_date"/>
@@ -65,7 +65,7 @@
             </form>
         </field>
     </record>
-    
+
     <!-- Action -->
     <record id="qa_testapp_action_test_case" model="ir.actions.act_window">
         <field name="name">Test Cases</field>

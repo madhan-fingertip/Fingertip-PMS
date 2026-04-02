@@ -6,8 +6,7 @@
         <field name="inherit_id" ref="base.res_config_settings_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//form" position="inside">
-                <app data-string="FT Helpdesk" string="FT Helpdesk"
-                     data-key="ft_helpdesk_core">
+                <app string="FT Helpdesk" name="ft_helpdesk_core">
                     <block title="Portal Settings">
                         <setting string="Allow Portal Close"
                                  help="Allow customers to close their own tickets from the portal.">

@@ -30,7 +30,7 @@
               
     <!-- Ticket/Bug Menu -->
     <menuitem id="qa_testapp_menu_ticket"
-              name="Tickets"
+              name="Bug"
               parent="qa_testapp_menu_root"
               action="qa_testapp_action_ticket"
               sequence="40"/>

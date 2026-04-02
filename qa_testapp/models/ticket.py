@@ -17,7 +17,7 @@ class QATicket(models.Model):
     environment = fields.Selection([
         ('sandbox', 'Sandbox'),
         ('production', 'Production')
-    ], string='Environment', default='sandbox')
+    ], string='Environment', default='sandbox', required=True)
     device = fields.Selection([
         ('mobile', 'Mobile'),
         ('desktop', 'Desktop'),
@@ -51,11 +51,29 @@ class QATicket(models.Model):
         ('unable', 'Unable to Reproduce')
     ], string='Reproducibility', default='always')
     evidence_notes = fields.Text(string='Evidence Notes')
+    evidence_attachment_ids = fields.Many2many(
+        'ir.attachment', 'qa_testapp_ticket_attachment_rel',
+        'ticket_id', 'attachment_id',
+        string='Attachments',
+    )
     reporter_id = fields.Many2one('res.users', string='Reporter', default=lambda self: self.env.user, tracking=True)
     reported_date = fields.Datetime(string='Reported Date', default=fields.Datetime.now)
-    project_id = fields.Many2one('project.project', string='Project')
-    project_org_id = fields.Many2one('res.partner', string='Project ORG ID')
+    project_id = fields.Many2one('project.project', string='Project', required=True)
+    module = fields.Char(string='Module', tracking=True)
     test_case_id = fields.Many2one('qa_testapp.test_case', string='Related Test Case')
+    assignee_id = fields.Many2one('res.users', string='Assignee', required=True, tracking=True)
+
+    def action_in_progress(self):
+        self.write({'status': 'in_progress'})
+
+    def action_fixed(self):
+        self.write({'status': 'fixed'})
+
+    def action_closed(self):
+        self.write({'status': 'closed'})
+
+    def action_reopen(self):
+        self.write({'status': 'reopened'})
 
     @api.model_create_multi
     def create(self, vals_list):

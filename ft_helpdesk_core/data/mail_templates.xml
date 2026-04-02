@@ -8,26 +8,26 @@
             <field name="subject">Ticket {{ object.ticket_no }} - Confirmation</field>
             <field name="partner_to">{{ object.customer_id.id }}</field>
             <field name="body_html"><![CDATA[
-<p>Dear {{ object.customer_id.name }},</p>
+<p>Dear <t t-out="object.customer_id.name"/>,</p>
 <p>Thank you for contacting us. Your support ticket has been created successfully.</p>
 <table style="border-collapse: collapse; width: 100%; margin: 16px 0;">
     <tr>
         <td style="padding: 8px; font-weight: bold; width: 150px;">Ticket Number:</td>
-        <td style="padding: 8px;">{{ object.ticket_no }}</td>
+        <td style="padding: 8px;"><t t-out="object.ticket_no"/></td>
     </tr>
     <tr>
         <td style="padding: 8px; font-weight: bold;">Subject:</td>
-        <td style="padding: 8px;">{{ object.name }}</td>
+        <td style="padding: 8px;"><t t-out="object.name"/></td>
     </tr>
-    {% if object.description %}
+    <t t-if="object.description">
     <tr>
         <td style="padding: 8px; font-weight: bold; vertical-align: top;">Description:</td>
-        <td style="padding: 8px;">{{ object.description | safe }}</td>
+        <td style="padding: 8px;"><t t-out="object.description"/></td>
     </tr>
-    {% endif %}
+    </t>
 </table>
 <p>Our support team will review your request and get back to you as soon as possible.</p>
-<p>Best regards,<br/>{{ object.company_id.name }} Support Team</p>
+<p>Best regards,<br/><t t-out="object.company_id.name"/> Support Team</p>
             ]]></field>
             <field name="auto_delete" eval="True"/>
         </record>

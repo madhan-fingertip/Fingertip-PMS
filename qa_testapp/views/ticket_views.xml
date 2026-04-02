@@ -19,6 +19,7 @@
                 <field name="device"/>
                 <field name="reproducibility"/>
                 <field name="reporter_id"/>
+                <field name="assignee_id"/>
                 <field name="reported_date"/>
             </list>
         </field>
@@ -30,7 +31,15 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <field name="status" widget="statusbar" statusbar_visible="open,in_progress,fixed,closed,reopened"/>
+                    <button name="action_in_progress" type="object" string="In Progress"
+                            class="btn-primary" invisible="status in ('in_progress', 'fixed', 'closed')"/>
+                    <button name="action_fixed" type="object" string="Fixed"
+                            class="btn-success" invisible="status in ('open', 'fixed', 'closed')"/>
+                    <button name="action_closed" type="object" string="Close"
+                            class="btn-secondary" invisible="status in ('open', 'closed')"/>
+                    <button name="action_reopen" type="object" string="Re-Open"
+                            class="btn-warning" invisible="status not in ('fixed', 'closed')"/>
+                    <field name="status" widget="statusbar" clickable="1" statusbar_visible="open,in_progress,fixed,closed,reopened"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
@@ -51,8 +60,9 @@
                         </group>
                         <group string="Project and Reporter">
                             <field name="project_id"/>
-                            <field name="project_org_id"/>
+                            <field name="module"/>
                             <field name="reporter_id"/>
+                            <field name="assignee_id"/>
                             <field name="reported_date"/>
                             <field name="test_case_id"/>
                         </group>
@@ -65,12 +75,14 @@
                             <field name="steps_to_reproduce"/>
                         </page>
                         <page string="Results">
-                            <field name="expected_result"/>
-                            <field name="actual_result"/>
+                            <group>
+                                <field name="expected_result"/>
+                                <field name="actual_result"/>
+                            </group>
                         </page>
                         <page string="Evidence">
                             <field name="evidence_notes"/>
-                            <p class="text-muted mt-2"><i>Attach screenshots or logs using the attachment button below.</i></p>
+                            <field name="evidence_attachment_ids" widget="many2many_binary" string="Attachments"/>
                         </page>
                     </notebook>
                 </sheet>
@@ -107,7 +119,7 @@
         </field>
     </record>
     <record id="qa_testapp_action_ticket" model="ir.actions.act_window">
-        <field name="name">Tickets</field>
+        <field name="name">Bug</field>
         <field name="res_model">qa_testapp.ticket</field>
         <field name="view_mode">list,form,kanban</field>
     </record>

@@ -10,8 +10,8 @@ _logger = logging.getLogger(__name__)
 TICKET_STATES = [
     ('new', 'New'),
     ('open', 'In Progress'),
-    ('pending_customer', 'Pending Customer'),
     ('pending_internal', 'Pending Internal'),
+    ('pending_customer', 'Pending Customer'),
     ('resolved', 'Resolved'),
     ('closed', 'Closed'),
     ('cancelled', 'Cancelled'),
@@ -28,7 +28,6 @@ CHANNEL_SELECTION = [
     ('portal', 'Portal'),
     ('email', 'Email'),
     ('internal', 'Internal'),
-    ('api', 'API'),
 ]
 
 
@@ -398,8 +397,14 @@ class HelpdeskTicket(models.Model):
                 'escalation_level': ticket.escalation_level + 1,
                 'priority': '3',  # Set to urgent
             })
+            escalated_to = ''
+            if ticket.team_id and ticket.team_id.leader_user_id:
+                escalated_to = ticket.team_id.leader_user_id.name
             ticket.message_post(
-                body=_('Ticket escalated to level %s.') % ticket.escalation_level,
+                body=_('Ticket escalated to level %s.%s') % (
+                    ticket.escalation_level,
+                    _(' Escalated to: %s') % escalated_to if escalated_to else '',
+                ),
                 subtype_xmlid='ft_helpdesk_core.mt_ticket_internal_note',
                 message_type='notification',
             )
