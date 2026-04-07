@@ -19,23 +19,7 @@
             <field name="name">Helpdesk: Auto-Close Resolved Tickets</field>
             <field name="model_id" ref="ft_helpdesk_core.model_ft_helpdesk_ticket"/>
             <field name="state">code</field>
-            <field name="code">
-days = int(env['ir.config_parameter'].sudo().get_param('ft_helpdesk.auto_close_days', '0'))
-if days > 0:
-    from datetime import timedelta
-    cutoff = (datetime.datetime.now() - timedelta(days=days))
-    tickets = env['ft.helpdesk.ticket'].search([
-        ('state', '=', 'resolved'),
-        ('resolved_at', '&lt;', cutoff.strftime('%Y-%m-%d %H:%M:%S')),
-    ])
-    for ticket in tickets:
-        ticket.write({'state': 'closed'})
-        ticket.message_post(
-            body='Ticket auto-closed after %d days in resolved state.' % days,
-            message_type='notification',
-            subtype_xmlid='ft_helpdesk_core.mt_ticket_state_change',
-        )
-            </field>
+            <field name="code">model._cron_auto_close_tickets()</field>
             <field name="interval_number">1</field>
             <field name="interval_type">days</field>
 
