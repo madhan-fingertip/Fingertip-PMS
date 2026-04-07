@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from odoo import api, fields, models
 
 
@@ -72,3 +74,20 @@ class HelpdeskTicketSLA(models.Model):
                     if not sla.resolution_done_at:
                         sla.resolution_done_at = now
         return result
+
+    @api.model
+    def _cron_auto_close_tickets(self):
+        days = int(self.env['ir.config_parameter'].sudo().get_param('ft_helpdesk.auto_close_days', '0'))
+        if days > 0:
+            cutoff = fields.Datetime.now() - timedelta(days=days)
+            tickets = self.search([
+                ('state', '=', 'resolved'),
+                ('resolved_at', '<', cutoff),
+            ])
+            for ticket in tickets:
+                ticket.write({'state': 'closed'})
+                ticket.message_post(
+                    body='Ticket auto-closed after %d days in resolved state.' % days,
+                    message_type='notification',
+                    subtype_xmlid='ft_helpdesk_core.mt_ticket_state_change',
+                )

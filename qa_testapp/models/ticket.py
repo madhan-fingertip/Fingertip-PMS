@@ -16,6 +16,7 @@ class QATicket(models.Model):
     actual_result = fields.Text(string='Actual Result')
     environment = fields.Selection([
         ('sandbox', 'Sandbox'),
+        ('qa', 'QA'),
         ('production', 'Production')
     ], string='Environment', default='sandbox', required=True)
     device = fields.Selection([

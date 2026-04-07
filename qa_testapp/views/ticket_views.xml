@@ -55,7 +55,7 @@
                             <field name="severity"/>
                             <field name="priority"/>
                             <field name="reproducibility"/>
-                            <field name="environment"/>
+                            <field name="environment" required="1"/>
                             <field name="device"/>
                         </group>
                         <group string="Project and Reporter">
