@@ -85,6 +85,28 @@ class AccountAnalyticLine(models.Model):
         readonly=False,
     )
     module_id = fields.Many2one('cus.module',related='task_id.module_id',string='Module')
+    project_status = fields.Many2one(
+        'project.project.stage',
+        string='Project Status', store=True, readonly=True,
+        help='Snapshot of the project stage at the time the timesheet was created. '
+             'Frozen after creation and only updates if the project itself is changed.',
+    )
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('project_id') and not vals.get('project_status'):
+                project = self.env['project.project'].browse(vals['project_id'])
+                if project.stage_id:
+                    vals['project_status'] = project.stage_id.id
+        return super().create(vals_list)
+
+    def write(self, vals):
+        # Only refresh project_status snapshot when the project itself changes
+        if 'project_id' in vals:
+            project = self.env['project.project'].browse(vals['project_id']) if vals['project_id'] else False
+            vals['project_status'] = project.stage_id.id if project and project.stage_id else False
+        return super().write(vals)
     used_ai = fields.Boolean(string='Used AI')
     chat_link = fields.Char(string='Chat Link')
     reason = fields.Char(string='Reason')
