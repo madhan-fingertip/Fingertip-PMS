@@ -381,7 +381,7 @@
     font-family: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
 }
 
-/* Conversation thread */
+/* Conversation thread (legacy) */
 .ft-conversation {
     .ft-message {
         border-bottom: 1px solid #f0f0f0;
@@ -414,12 +414,96 @@
     }
 }
 
+/* Timeline conversation */
+.ft-timeline {
+    position: relative;
+
+    .ft-timeline-avatar {
+        width: 36px;
+        height: 36px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .ft-timeline-bubble {
+        padding: 0.875rem 1rem;
+        border-radius: 0.625rem;
+        border: 1px solid #e9ecef;
+
+        .ft-message-body {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+
+            img {
+                max-width: 100%;
+                height: auto;
+            }
+
+            p:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+
+    .ft-bubble-customer {
+        background-color: #f0f4ff;
+        border-color: #d6e0f5;
+    }
+
+    .ft-bubble-agent {
+        background-color: #f0faf6;
+        border-color: #cce8dc;
+    }
+
+    .ft-timeline-item:last-child {
+        margin-bottom: 0 !important;
+    }
+}
+
 /* Ticket list items */
 .list-group-item {
     transition: background-color 0.15s ease;
 
     &:hover {
         background-color: #f8f9fa;
+    }
+}
+
+/* Ticket table */
+.ft-ticket-table {
+    thead tr {
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .ft-ticket-row {
+        transition: background-color 0.15s ease;
+
+        &:hover {
+            background-color: #f8f5ff;
+        }
+
+        td {
+            vertical-align: middle;
+            border-bottom: 1px solid #f0f0f0;
+        }
+    }
+}
+
+/* Detail table in sidebar */
+.ft-detail-table {
+    tr {
+        border-bottom: 1px solid #f5f5f5;
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
+}
+
+/* Description body */
+.ft-description-body {
+    p:last-child {
+        margin-bottom: 0;
     }
 }
 
@@ -545,6 +629,13 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* ── Hide portal breadcrumbs on support portal pages ── */
+.ft-support-portal .o_portal_submenu,
+.ft-support-portal #portal_breadcrumbs,
+.ft-support-portal .o_portal_navbar {
+    display: none !important;
+}
+
 /* ── Hide website navbar items on support portal pages ── */
 /* Keep only the customer login dropdown */
 #wrapwrap:has(.ft-support-portal) {
@@ -596,29 +687,26 @@
     }
 }
 
-/* ── Chatter: distinguish customer messages from system notifications ── */
-/* Customer/public messages — blue-tinted bubble */
-.o-mail-Message:not(.o-isNote) .o-mail-Message-bubble {
-    background-color: rgba(13, 110, 253, 0.08) !important;
-    border-left: 3px solid #0d6efd !important;
+/* ── Chatter: hide public/customer messages — only show internal items ── */
+/* Hide public comment messages in chatter (they're shown in Conversation tab) */
+.o_FormRenderer[data-model="ft.helpdesk.ticket"] .o-mail-Message:not(.o-isNote):not(.o-mail-Message-tracking) {
+    display: none !important;
 }
 
-/* System notifications/tracking — subtle gray style */
-.o-mail-Message .o-mail-Message-body.o-note {
-    background-color: #f8f9fa !important;
-    border-left: 3px solid #dee2e6 !important;
-    color: #6c757d;
-    font-size: 0.9rem;
+/* Show tracking/system messages */
+.o_FormRenderer[data-model="ft.helpdesk.ticket"] .o-mail-Message.o-isNote,
+.o_FormRenderer[data-model="ft.helpdesk.ticket"] .o-mail-Message:has(.o-mail-Message-tracking) {
+    display: block !important;
+}
+
+/* Internal notes — yellow tint */
+.o-mail-Message.o-isNote .o-mail-Message-bubble {
+    background-color: rgba(255, 193, 7, 0.12) !important;
+    border-left: 3px solid #ffc107 !important;
 }
 
 /* Tracking value changes — compact and muted */
 .o-mail-Message-tracking {
     opacity: 0.85;
     font-size: 0.88rem;
-}
-
-/* Internal notes — keep yellow tint */
-.o-mail-Message.o-isNote .o-mail-Message-bubble {
-    background-color: rgba(255, 193, 7, 0.12) !important;
-    border-left: 3px solid #ffc107 !important;
 }

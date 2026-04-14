@@ -90,7 +90,27 @@ class SLAStatus(models.Model):
     def _compute_sla_state(self):
         now = fields.Datetime.now()
         for status in self:
-            if status.first_response_breached or status.resolution_breached:
+            # Check breached flags (set by cron) OR real-time deadline check
+            fr_breached = status.first_response_breached or (
+                status.first_response_deadline
+                and not status.first_response_done_at
+                and now > status.first_response_deadline
+            )
+            res_breached = status.resolution_breached or (
+                status.resolution_deadline
+                and not status.resolution_done_at
+                and now > status.resolution_deadline
+            )
+
+            if fr_breached or res_breached:
+                # Also update the breach flags so cron doesn't need to catch up
+                vals = {}
+                if fr_breached and not status.first_response_breached:
+                    vals['first_response_breached'] = True
+                if res_breached and not status.resolution_breached:
+                    vals['resolution_breached'] = True
+                if vals:
+                    status.sudo().write(vals)
                 status.sla_state = 'breached'
             elif status.first_response_done_at and status.resolution_done_at:
                 status.sla_state = 'completed'

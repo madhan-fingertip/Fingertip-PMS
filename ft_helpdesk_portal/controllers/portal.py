@@ -11,7 +11,7 @@ from odoo.osv.expression import AND
 
 _logger = logging.getLogger(__name__)
 
-TICKETS_PER_PAGE = 20
+TICKETS_PER_PAGE = 10
 
 
 class HelpdeskPortal(CustomerPortal):
@@ -222,7 +222,7 @@ class HelpdeskPortal(CustomerPortal):
     # Ticket List
     # =============================
 
-    @http.route('/my/support/tickets', type='http', auth='user', website=True)
+    @http.route(['/my/support/tickets', '/my/support/tickets/page/<int:page>'], type='http', auth='user', website=True)
     def portal_ticket_list(self, page=1, sortby='date', filterby='all',
                            search='', search_in='all', **kw):
         partner = request.env.user.partner_id

@@ -6,6 +6,7 @@
     <template id="portal_support_landing" name="Support Landing Page">
         <t t-call="portal.portal_layout">
             <t t-set="additional_title">Support</t>
+            <t t-set="no_breadcrumbs" t-value="True"/>
             <div class="o_portal_wrap ft-support-portal">
                 <div class="container py-4">
                     <!-- Page Header -->
@@ -70,6 +71,7 @@
     <template id="portal_support_home" name="Support Home">
         <t t-call="portal.portal_layout">
             <t t-set="additional_title">Support</t>
+            <t t-set="no_breadcrumbs" t-value="True"/>
             <div class="o_portal_wrap ft-support-portal">
                 <div class="container py-4">
                     <!-- Navigation Tabs -->
@@ -146,7 +148,7 @@
                 <div class="row g-4">
                     <t t-foreach="projects" t-as="proj">
                         <div class="col-md-6">
-                            <div class="card border-0 shadow-sm h-100">
+                            <div class="card shadow-sm h-100" style="border: 1px solid #e0e0e0;">
                                 <div class="card-body p-4">
                                     <div class="d-flex justify-content-between align-items-start mb-3">
                                         <h5 class="fw-bold mb-0">
@@ -265,52 +267,58 @@
             </div>
 
             <!-- Filters & Search Bar -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-body py-3">
-                    <div class="row g-3 align-items-center">
-                        <!-- Filter Chips -->
-                        <div class="col-lg-7">
-                            <div class="d-flex flex-wrap gap-2 align-items-center">
-                                <span class="fw-medium text-dark">Filter:</span>
-                                <t t-foreach="filters" t-as="f">
+            <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between mb-4">
+                <div class="d-flex gap-2 align-items-center">
+                    <!-- Filter Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle px-3 py-2" type="button" data-bs-toggle="dropdown" style="font-size: 0.9rem;">
+                            Filter: <strong><t t-out="filters[filterby]['label']"/></strong>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <t t-foreach="filters" t-as="f">
+                                <li>
                                     <a t-attf-href="/my/support/milestones?filterby=#{f}&amp;sortby=#{sortby}&amp;search=#{search}"
-                                       t-attf-class="btn btn-sm #{filterby == f and 'ft-btn-purple' or 'btn-outline-secondary'} rounded-pill">
+                                       t-attf-class="dropdown-item #{filterby == f and 'active' or ''}">
                                         <t t-out="filters[f]['label']"/>
                                     </a>
-                                </t>
-                            </div>
-                        </div>
-                        <!-- Search -->
-                        <div class="col-lg-5">
-                            <form method="GET" action="/my/support/milestones" class="input-group">
-                                <input type="hidden" name="filterby" t-att-value="filterby"/>
-                                <input type="hidden" name="sortby" t-att-value="sortby"/>
-                                <input type="text" name="search" class="form-control"
-                                       t-att-value="search"
-                                       placeholder="Search milestones..."/>
-                                <button class="btn btn-outline-secondary" style="border-color: #6f42c1; color: #6f42c1;" type="submit">
-                                    <i class="fa fa-search"/>
-                                </button>
-                            </form>
-                        </div>
+                                </li>
+                            </t>
+                        </ul>
                     </div>
-                    <!-- Sort Options -->
-                    <div class="mt-2 d-flex gap-2 align-items-center">
-                        <span class="fw-medium text-dark">Sort by:</span>
-                        <t t-foreach="sortings" t-as="s">
-                            <a t-attf-href="/my/support/milestones?sortby=#{s}&amp;filterby=#{filterby}&amp;search=#{search}"
-                               t-attf-class="btn btn-sm #{sortby == s and 'btn-dark' or 'btn-outline-dark'} rounded-pill">
-                                <t t-out="sortings[s]['label']"/>
-                            </a>
-                        </t>
+                    <!-- Sort Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle px-3 py-2" type="button" data-bs-toggle="dropdown" style="font-size: 0.9rem;">
+                            Sort: <strong><t t-out="sortings[sortby]['label']"/></strong>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <t t-foreach="sortings" t-as="s">
+                                <li>
+                                    <a t-attf-href="/my/support/milestones?sortby=#{s}&amp;filterby=#{filterby}&amp;search=#{search}"
+                                       t-attf-class="dropdown-item #{sortby == s and 'active' or ''}">
+                                        <t t-out="sortings[s]['label']"/>
+                                    </a>
+                                </li>
+                            </t>
+                        </ul>
                     </div>
                 </div>
+                <!-- Search -->
+                <form method="GET" action="/my/support/milestones" class="input-group" style="max-width: 300px;">
+                    <input type="hidden" name="filterby" t-att-value="filterby"/>
+                    <input type="hidden" name="sortby" t-att-value="sortby"/>
+                    <input type="text" name="search" class="form-control py-2" style="font-size: 0.9rem;"
+                           t-att-value="search"
+                           placeholder="Search milestones..."/>
+                    <button class="btn btn-outline-secondary px-3" type="submit">
+                        <i class="fa fa-search"/>
+                    </button>
+                </form>
             </div>
 
             <t t-if="milestones">
-                <div class="card border-0 shadow-sm">
+                <div class="card shadow-sm" style="border: 1px solid #e0e0e0;">
                     <div class="card-body p-0">
-                        <table class="table table-hover mb-0">
+                        <table class="table table-hover table-bordered mb-0">
                             <thead class="table-light">
                                 <tr>
                                     <th class="px-4">ID</th>
@@ -372,52 +380,58 @@
             </div>
 
             <!-- Filters & Search Bar -->
-            <div class="card border-0 shadow-sm mb-4">
-                <div class="card-body py-3">
-                    <div class="row g-3 align-items-center">
-                        <!-- Filter Chips -->
-                        <div class="col-lg-7">
-                            <div class="d-flex flex-wrap gap-2 align-items-center">
-                                <span class="fw-medium text-dark">Filter:</span>
-                                <t t-foreach="filters" t-as="f">
+            <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between mb-4">
+                <div class="d-flex gap-2 align-items-center">
+                    <!-- Filter Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle px-3 py-2" type="button" data-bs-toggle="dropdown" style="font-size: 0.9rem;">
+                            Filter: <strong><t t-out="filters[filterby]['label']"/></strong>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <t t-foreach="filters" t-as="f">
+                                <li>
                                     <a t-attf-href="/my/support/releases?filterby=#{f}&amp;sortby=#{sortby}&amp;search=#{search}"
-                                       t-attf-class="btn btn-sm #{filterby == f and 'ft-btn-purple' or 'btn-outline-secondary'} rounded-pill">
+                                       t-attf-class="dropdown-item #{filterby == f and 'active' or ''}">
                                         <t t-out="filters[f]['label']"/>
                                     </a>
-                                </t>
-                            </div>
-                        </div>
-                        <!-- Search -->
-                        <div class="col-lg-5">
-                            <form method="GET" action="/my/support/releases" class="input-group">
-                                <input type="hidden" name="filterby" t-att-value="filterby"/>
-                                <input type="hidden" name="sortby" t-att-value="sortby"/>
-                                <input type="text" name="search" class="form-control"
-                                       t-att-value="search"
-                                       placeholder="Search releases..."/>
-                                <button class="btn btn-outline-secondary" style="border-color: #6f42c1; color: #6f42c1;" type="submit">
-                                    <i class="fa fa-search"/>
-                                </button>
-                            </form>
-                        </div>
+                                </li>
+                            </t>
+                        </ul>
                     </div>
-                    <!-- Sort Options -->
-                    <div class="mt-2 d-flex gap-2 align-items-center">
-                        <span class="fw-medium text-dark">Sort by:</span>
-                        <t t-foreach="sortings" t-as="s">
-                            <a t-attf-href="/my/support/releases?sortby=#{s}&amp;filterby=#{filterby}&amp;search=#{search}"
-                               t-attf-class="btn btn-sm #{sortby == s and 'btn-dark' or 'btn-outline-dark'} rounded-pill">
-                                <t t-out="sortings[s]['label']"/>
-                            </a>
-                        </t>
+                    <!-- Sort Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary dropdown-toggle px-3 py-2" type="button" data-bs-toggle="dropdown" style="font-size: 0.9rem;">
+                            Sort: <strong><t t-out="sortings[sortby]['label']"/></strong>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <t t-foreach="sortings" t-as="s">
+                                <li>
+                                    <a t-attf-href="/my/support/releases?sortby=#{s}&amp;filterby=#{filterby}&amp;search=#{search}"
+                                       t-attf-class="dropdown-item #{sortby == s and 'active' or ''}">
+                                        <t t-out="sortings[s]['label']"/>
+                                    </a>
+                                </li>
+                            </t>
+                        </ul>
                     </div>
                 </div>
+                <!-- Search -->
+                <form method="GET" action="/my/support/releases" class="input-group" style="max-width: 300px;">
+                    <input type="hidden" name="filterby" t-att-value="filterby"/>
+                    <input type="hidden" name="sortby" t-att-value="sortby"/>
+                    <input type="text" name="search" class="form-control py-2" style="font-size: 0.9rem;"
+                           t-att-value="search"
+                           placeholder="Search releases..."/>
+                    <button class="btn btn-outline-secondary px-3" type="submit">
+                        <i class="fa fa-search"/>
+                    </button>
+                </form>
             </div>
 
             <t t-if="releases">
-                <div class="card border-0 shadow-sm">
+                <div class="card shadow-sm" style="border: 1px solid #e0e0e0;">
                     <div class="card-body p-0">
-                        <table class="table table-hover mb-0">
+                        <table class="table table-hover table-bordered mb-0">
                             <thead class="table-light">
                                 <tr>
                                     <th class="px-4">Release</th>

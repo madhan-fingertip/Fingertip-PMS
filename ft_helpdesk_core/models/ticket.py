@@ -1,6 +1,7 @@
 import json
 import logging
 from datetime import timedelta
+from markupsafe import Markup
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
@@ -263,7 +264,9 @@ class HelpdeskTicket(models.Model):
     def _compute_customer_messages(self):
         for ticket in self:
             ticket.customer_message_ids = ticket.message_ids.filtered(
-                lambda msg: msg.message_type in ('comment', 'email') and msg.author_id == ticket.customer_id
+                lambda msg: msg.message_type in ('comment', 'email')
+                and not msg.is_internal
+                and msg.subtype_id and not msg.subtype_id.internal
             )
 
     @api.model
@@ -296,15 +299,52 @@ class HelpdeskTicket(models.Model):
             # Subscribe customer as follower and send creation confirmation
             if ticket.customer_id:
                 ticket.message_subscribe(partner_ids=ticket.customer_id.ids)
-                template = self.env.ref(
-                    'ft_helpdesk_core.mt_ticket_new_email_template',
-                    raise_if_not_found=False,
-                )
-                if template and ticket.customer_id.email:
+                if ticket.customer_id.email:
                     try:
-                        ticket.message_post_with_source(
-                            source_ref=template,
+                        company = ticket.company_id or self.env.company
+                        desc = ticket.description or 'N/A'
+                        # Strip HTML tags from description for clean display
+                        if hasattr(desc, '__str__'):
+                            desc = str(desc)
+                        body_html = (
+                            '<div style="font-family: Arial, sans-serif; max-width: 600px;">'
+                            '<p style="font-size: 15px;">Dear <strong>%s</strong>,</p>'
+                            '<p style="font-size: 14px; color: #333;">Thank you for contacting us. '
+                            'Your support ticket has been created successfully.</p>'
+                            '<table style="border-collapse: collapse; width: 100%%; margin: 16px 0; '
+                            'border: 1px solid #e0e0e0;">'
+                            '<tr style="background-color: #f8f9fa;">'
+                            '<td style="padding: 10px 14px; font-weight: bold; width: 150px; '
+                            'border-bottom: 1px solid #e0e0e0; font-size: 13px; color: #555;">Ticket Number</td>'
+                            '<td style="padding: 10px 14px; border-bottom: 1px solid #e0e0e0; '
+                            'font-size: 14px; font-weight: 600; color: #6f42c1;">%s</td></tr>'
+                            '<tr><td style="padding: 10px 14px; font-weight: bold; width: 150px; '
+                            'border-bottom: 1px solid #e0e0e0; font-size: 13px; color: #555;">Subject</td>'
+                            '<td style="padding: 10px 14px; border-bottom: 1px solid #e0e0e0; '
+                            'font-size: 14px;">%s</td></tr>'
+                            '<tr style="background-color: #f8f9fa;">'
+                            '<td style="padding: 10px 14px; font-weight: bold; width: 150px; '
+                            'font-size: 13px; color: #555; vertical-align: top;">Description</td>'
+                            '<td style="padding: 10px 14px; font-size: 14px;">%s</td></tr>'
+                            '</table>'
+                            '<p style="font-size: 14px; color: #333;">Our support team will review '
+                            'your request and get back to you as soon as possible.</p>'
+                            '<p style="font-size: 14px; color: #333;">Best regards,<br/>'
+                            '<strong>%s Support Team</strong></p></div>'
+                        ) % (
+                            ticket.customer_id.name,
+                            ticket.ticket_no,
+                            ticket.name,
+                            desc,
+                            company.name,
+                        )
+                        ticket.message_post(
+                            body=Markup(body_html),
+                            subject='Ticket %s - Confirmation' % ticket.ticket_no,
+                            email_from='admin@fingertipplus.com',
+                            partner_ids=ticket.customer_id.ids,
                             subtype_xmlid='ft_helpdesk_core.mt_ticket_new',
+                            message_type='comment',
                         )
                     except Exception:
                         _logger.warning(
@@ -418,19 +458,42 @@ class HelpdeskTicket(models.Model):
                 subtype_xmlid='ft_helpdesk_core.mt_ticket_internal_note',
                 message_type='notification',
             )
-            # Notify team leader
-            if ticket.team_id and ticket.team_id.leader_user_id:
-                ticket.activity_schedule(
-                    'mail.mail_activity_data_todo',
-                    user_id=ticket.team_id.leader_user_id.id,
-                    summary=_('Escalated Ticket: %s') % ticket.ticket_no,
-                    note=_('Ticket %s has been escalated to level %s.') % (
-                        ticket.ticket_no, ticket.escalation_level),
-                )
+            # Create planned activity for escalation
+            notify_user = (
+                ticket.team_id and ticket.team_id.leader_user_id
+                or ticket.assigned_user_id
+                or self.env.user
+            )
+            ticket.activity_schedule(
+                'mail.mail_activity_data_todo',
+                user_id=notify_user.id,
+                summary=_('Escalated Ticket: %s') % ticket.ticket_no,
+                note=_('Ticket %s has been escalated to level %s.') % (
+                    ticket.ticket_no, ticket.escalation_level),
+            )
 
     def action_request_info(self):
         """Move to pending_customer and prompt for a reply template."""
         self.write({'state': 'pending_customer'})
+
+    def action_send_customer_reply(self):
+        """Open a compose wizard to reply to the customer."""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Reply to Customer'),
+            'res_model': 'mail.compose.message',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_model': 'ft.helpdesk.ticket',
+                'default_res_ids': self.ids,
+                'default_partner_ids': self.customer_id.ids if self.customer_id else [],
+                'default_subtype_xmlid': 'ft_helpdesk_core.mt_ticket_public_reply',
+                'default_email_from': 'admin@fingertipplus.com',
+                'default_composition_mode': 'comment',
+            },
+        }
 
     # =====================
     # Mail Thread Overrides
