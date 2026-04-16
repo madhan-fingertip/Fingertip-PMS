@@ -124,7 +124,7 @@ class HelpdeskPortal(CustomerPortal):
     # =============================
 
     @http.route('/my/support/milestones', type='http', auth='user', website=True)
-    def portal_support_milestones(self, sortby='date', filterby='all', search='', **kw):
+    def portal_support_milestones(self, sortby='due_date_asc', filterby='all', search='', **kw):
         values = self._get_support_tab_values('milestones')
         project_ids = values.pop('project_ids')
         values.pop('ticket_domain')
@@ -132,14 +132,24 @@ class HelpdeskPortal(CustomerPortal):
         Milestone = request.env['project.custom.milestone'].sudo()
         domain = [('project_id', 'in', project_ids)] if project_ids else [('id', '=', False)]
 
-        # Sorting
+        # Sorting — one asc/desc entry per sortable column
         sortings = {
-            'date': {'label': _('Due Date'), 'order': 'due_date asc, id asc'},
-            'name': {'label': _('Name'), 'order': 'name asc'},
-            'status': {'label': _('Status'), 'order': 'status asc, due_date asc'},
-            'amount': {'label': _('Amount'), 'order': 'amount desc, id asc'},
+            'milestone_id_asc': {'order': 'milestone_id asc, id asc'},
+            'milestone_id_desc': {'order': 'milestone_id desc, id desc'},
+            'name_asc': {'order': 'name asc, id asc'},
+            'name_desc': {'order': 'name desc, id desc'},
+            'project_asc': {'order': 'project_id asc, due_date asc'},
+            'project_desc': {'order': 'project_id desc, due_date asc'},
+            'amount_asc': {'order': 'amount asc, id asc'},
+            'amount_desc': {'order': 'amount desc, id asc'},
+            'paid_amount_asc': {'order': 'paid_amount asc, id asc'},
+            'paid_amount_desc': {'order': 'paid_amount desc, id asc'},
+            'due_date_asc': {'order': 'due_date asc, id asc'},
+            'due_date_desc': {'order': 'due_date desc, id desc'},
+            'status_asc': {'order': 'status asc, due_date asc'},
+            'status_desc': {'order': 'status desc, due_date asc'},
         }
-        order = sortings.get(sortby, sortings['date'])['order']
+        order = sortings.get(sortby, sortings['due_date_asc'])['order']
 
         # Filtering
         filters = {
@@ -174,7 +184,7 @@ class HelpdeskPortal(CustomerPortal):
     # =============================
 
     @http.route('/my/support/releases', type='http', auth='user', website=True)
-    def portal_support_releases(self, sortby='date', filterby='all', search='', **kw):
+    def portal_support_releases(self, sortby='release_date_desc', filterby='all', search='', **kw):
         values = self._get_support_tab_values('releases')
         project_ids = values.pop('project_ids')
         values.pop('ticket_domain')
@@ -182,14 +192,20 @@ class HelpdeskPortal(CustomerPortal):
         Release = request.env['ft.helpdesk.release'].sudo()
         domain = [('project_id', 'in', project_ids)] if project_ids else [('id', '=', False)]
 
-        # Sorting
+        # Sorting — one asc/desc entry per sortable column
         sortings = {
-            'date': {'label': _('Newest'), 'order': 'release_date desc, id desc'},
-            'date_asc': {'label': _('Oldest'), 'order': 'release_date asc, id asc'},
-            'name': {'label': _('Name'), 'order': 'name asc'},
-            'status': {'label': _('Status'), 'order': 'status asc, release_date desc'},
+            'name_asc': {'order': 'name asc, id asc'},
+            'name_desc': {'order': 'name desc, id desc'},
+            'version_asc': {'order': 'version asc, id asc'},
+            'version_desc': {'order': 'version desc, id desc'},
+            'project_asc': {'order': 'project_id asc, release_date desc'},
+            'project_desc': {'order': 'project_id desc, release_date desc'},
+            'release_date_asc': {'order': 'release_date asc, id asc'},
+            'release_date_desc': {'order': 'release_date desc, id desc'},
+            'status_asc': {'order': 'status asc, release_date desc'},
+            'status_desc': {'order': 'status desc, release_date desc'},
         }
-        order = sortings.get(sortby, sortings['date'])['order']
+        order = sortings.get(sortby, sortings['release_date_desc'])['order']
 
         # Filtering
         filters = {
@@ -223,7 +239,7 @@ class HelpdeskPortal(CustomerPortal):
     # =============================
 
     @http.route(['/my/support/tickets', '/my/support/tickets/page/<int:page>'], type='http', auth='user', website=True)
-    def portal_ticket_list(self, page=1, sortby='date', filterby='all',
+    def portal_ticket_list(self, page=1, sortby='create_date_desc', filterby='all',
                            search='', search_in='all', **kw):
         partner = request.env.user.partner_id
         commercial_partner = partner.commercial_partner_id
@@ -231,15 +247,24 @@ class HelpdeskPortal(CustomerPortal):
 
         domain = [('customer_id.commercial_partner_id', '=', commercial_partner.id)]
 
-        # Sorting
+        # Sorting — one asc/desc entry per sortable column
         sortings = {
-            'date': {'label': _('Newest'), 'order': 'create_date desc'},
-            'date_asc': {'label': _('Oldest'), 'order': 'create_date asc'},
-            'priority': {'label': _('Priority'), 'order': 'priority desc, create_date desc'},
-            'status': {'label': _('Status'), 'order': 'state asc, create_date desc'},
-            'name': {'label': _('Subject'), 'order': 'name asc'},
+            'ticket_no_asc': {'order': 'ticket_no asc, id asc'},
+            'ticket_no_desc': {'order': 'ticket_no desc, id desc'},
+            'name_asc': {'order': 'name asc, id asc'},
+            'name_desc': {'order': 'name desc, id desc'},
+            'priority_asc': {'order': 'priority asc, create_date desc'},
+            'priority_desc': {'order': 'priority desc, create_date desc'},
+            'category_asc': {'order': 'category_id asc, create_date desc'},
+            'category_desc': {'order': 'category_id desc, create_date desc'},
+            'assignee_asc': {'order': 'assigned_user_id asc, create_date desc'},
+            'assignee_desc': {'order': 'assigned_user_id desc, create_date desc'},
+            'create_date_asc': {'order': 'create_date asc, id asc'},
+            'create_date_desc': {'order': 'create_date desc, id desc'},
+            'state_asc': {'order': 'state asc, create_date desc'},
+            'state_desc': {'order': 'state desc, create_date desc'},
         }
-        order = sortings.get(sortby, sortings['date'])['order']
+        order = sortings.get(sortby, sortings['create_date_desc'])['order']
 
         # Filtering
         filters = {

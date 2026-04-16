@@ -11,6 +11,7 @@
                 <field name="project_id"/>
                 <field name="amount"/>
                 <field name="paid_amount"/>
+                <field name="hours_spent"/>
                 <field name="status"/>
                 <field name="due_date"/>
             </list>
@@ -35,6 +36,7 @@
                             <field name="amount"/>
                             <field name="paid_amount"/>
                             <field name="percentage"/>
+                            <field name="hours_spent"/>
                             <field name="due_date"/>
                         </group>
                     </group>
@@ -42,7 +44,11 @@
                     <group>
                         <field name="description"/>
                     </group>
+                    <group string="Attachments">
+                        <field name="attachment_ids" widget="many2many_binary" nolabel="1"/>
+                    </group>
                 </sheet>
+                <chatter/>
             </form>
         </field>
     </record>

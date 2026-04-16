@@ -14,16 +14,6 @@
         </xpath>
     </template>
 
-    <!-- Add visible Logout button in breadcrumb bar -->
-    <template id="portal_logout_button" name="Portal Logout Button"
-              inherit_id="portal.portal_layout" priority="40">
-        <xpath expr="//div[hasclass('o_portal')]/div[hasclass('d-flex')]" position="inside">
-            <a href="/web/session/logout?redirect=/web/login" class="ft-logout-btn ms-auto">
-                <i class="fa fa-sign-out me-1"/> Logout
-            </a>
-        </xpath>
-    </template>
-
     <!-- Breadcrumb: hide home icon for portal users -->
     <template id="portal_breadcrumb_home_override" name="Support Home Breadcrumb"
               inherit_id="portal.portal_breadcrumbs" priority="30">

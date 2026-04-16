@@ -167,8 +167,6 @@
                     <field name="ba_id"/>
                     <field name="pm_id"/>
 <!--                    <field name="status"/>-->
-                    <field name="sync_wc"/>
-                    <field name="wc_id"/>
                     <!--                    <field name="finance_description"/>-->
 
 
@@ -176,6 +174,8 @@
 
                 <xpath expr="//field[@name='user_id']" position="after">
 
+                    <field name="allow_billable"/>
+                    <field name="partner_id" invisible="not allow_billable" widget="res_partner_many2one" context="{'res_partner_search_mode': 'customer'}"/>
                     <field name="brd_approval_date"/>
                     <field name="brd_submission_date"/>
                     <field name="go_live_date"/>

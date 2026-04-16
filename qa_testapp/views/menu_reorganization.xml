@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================= -->
+    <!-- Rename Project menu to PMS     -->
+    <!-- ============================= -->
+    <record id="project.menu_main_pm" model="ir.ui.menu">
+        <field name="name">PMS</field>
+    </record>
+
+    <!-- ============================= -->
+    <!-- Reorder existing menus         -->
+    <!-- ============================= -->
+    <!-- Projects: sequence 10 -->
+    <record id="project.menu_projects" model="ir.ui.menu">
+        <field name="sequence">10</field>
+    </record>
+    <record id="project.menu_projects_group_stage" model="ir.ui.menu">
+        <field name="sequence">10</field>
+    </record>
+
+    <!-- Tasks: sequence 20 -->
+    <record id="project.menu_project_management" model="ir.ui.menu">
+        <field name="sequence">20</field>
+    </record>
+
+    <!-- ============================= -->
+    <!-- Add Timesheets menu (sequence 30) -->
+    <!-- ============================= -->
+    <menuitem id="menu_updates_timesheets"
+              name="Timesheets"
+              parent="project.menu_main_pm"
+              action="hr_timesheet.timesheet_action_all"
+              sequence="30"/>
+
+    <!-- ============================= -->
+    <!-- Add QA TestApp menus           -->
+    <!-- ============================= -->
+    <!-- Bug: sequence 40 -->
+    <menuitem id="menu_updates_bug"
+              name="Bugs"
+              parent="project.menu_main_pm"
+              action="qa_testapp.qa_testapp_action_ticket"
+              sequence="40"/>
+
+    <!-- Test Cases: sequence 50 -->
+    <menuitem id="menu_updates_test_cases"
+              name="Test Cases"
+              parent="project.menu_main_pm"
+              action="qa_testapp.qa_testapp_action_test_case"
+              sequence="50"/>
+
+    <!-- Test Plans: sequence 60 -->
+    <menuitem id="menu_updates_test_plans"
+              name="Test Plans"
+              parent="project.menu_main_pm"
+              action="qa_testapp.qa_testapp_action_test_plan"
+              sequence="60"/>
+
+    <!-- Test Scenarios: sequence 65 (right after Test Plans) -->
+    <menuitem id="menu_updates_test_scenarios"
+              name="Test Scenarios"
+              parent="project.menu_main_pm"
+              action="qa_testapp.qa_testapp_action_test_scenario"
+              sequence="65"/>
+
+    <!-- ============================= -->
+    <!-- Reorder Milestones / Releases  -->
+    <!-- ============================= -->
+    <!-- Milestones: sequence 70 -->
+    <record id="project_custom_milestone.menu_project_custom_milestone_root" model="ir.ui.menu">
+        <field name="sequence">70</field>
+    </record>
+
+    <!-- Releases: sequence 80 -->
+    <record id="ft_helpdesk_portal.menu_ft_helpdesk_release" model="ir.ui.menu">
+        <field name="sequence">80</field>
+    </record>
+
+    <!-- ============================= -->
+    <!-- Updates: first menu (sequence 5) -->
+    <!-- ============================= -->
+    <record id="project_update.menu_project_activity_update" model="ir.ui.menu">
+        <field name="name">Updates</field>
+        <field name="sequence">5</field>
+        <field name="active" eval="True"/>
+    </record>
+
+    <!-- ============================= -->
+    <!-- Reporting + Configuration      -->
+    <!-- ============================= -->
+    <!-- Reporting: sequence 90 -->
+    <record id="project.menu_project_report" model="ir.ui.menu">
+        <field name="sequence">90</field>
+    </record>
+
+    <!-- Configuration: sequence 100 -->
+    <record id="project.menu_project_config" model="ir.ui.menu">
+        <field name="sequence">100</field>
+    </record>
+
+</odoo>

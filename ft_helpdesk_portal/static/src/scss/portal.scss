@@ -602,6 +602,14 @@
 .o_portal_wrap {
     .card {
         border-radius: 0.75rem;
+        /* Allow dropdown menus inside card-header to extend beyond the card */
+        overflow: visible;
+    }
+
+    /* Keep inner corners clipped for the table wrapper */
+    .card > .table-responsive {
+        border-bottom-left-radius: 0.75rem;
+        border-bottom-right-radius: 0.75rem;
         overflow: hidden;
     }
 
@@ -664,6 +672,37 @@
 /* Fix neutralized banner blocking navbar clicks */
 #oe_neutralize_banner {
     pointer-events: none;
+}
+
+/* Sortable table header links (Odoo-backend style) */
+.ft-sort-th {
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+    &:hover {
+        background-color: rgba(124, 58, 237, 0.06);
+    }
+}
+.ft-sort-link {
+    display: inline-flex;
+    align-items: center;
+    color: inherit;
+    text-decoration: none;
+    width: 100%;
+    &:hover,
+    &:focus,
+    &.active {
+        color: #7c3aed;
+        text-decoration: none;
+    }
+    .fa-sort.ft-sort-idle {
+        opacity: 0.35;
+        font-size: 0.85em;
+    }
+    .fa-caret-up,
+    .fa-caret-down {
+        color: #7c3aed;
+    }
 }
 
 /* Logout button in navbar */

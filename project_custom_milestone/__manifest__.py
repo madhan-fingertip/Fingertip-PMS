@@ -4,7 +4,7 @@
     'summary': 'Manage project milestones with payment tracking',
     'category': 'Project',
     'author': 'Your Company',
-    'depends': ['project','sale'],
+    'depends': ['project','sale','mail'],
     'data': [
         'security/ir.model.access.csv',
         'views/project_milestone_views.xml',
