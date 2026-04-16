@@ -508,6 +508,7 @@ class HelpdeskTicket(models.Model):
     @api.returns('mail.message', lambda value: value.id)
     def message_post(self, **kwargs):
         """Override to track first response and customer replies."""
+        kwargs['email_from'] = 'admin@fingertipplus.com'
         message = super().message_post(**kwargs)
         # Determine if this is a public reply by an agent
         subtype_id = kwargs.get('subtype_id')
@@ -535,6 +536,12 @@ class HelpdeskTicket(models.Model):
                     if ticket.state == 'pending_customer':
                         ticket.state = 'open'
         return message
+
+    def message_notify(self, **kwargs):
+        """Force all helpdesk notifications (incl. activity-assigned emails)
+        to be sent from admin@fingertipplus.com instead of the default."""
+        kwargs['email_from'] = 'admin@fingertipplus.com'
+        return super().message_notify(**kwargs)
 
     def _get_access_token(self):
         """Generate access token for portal sharing."""

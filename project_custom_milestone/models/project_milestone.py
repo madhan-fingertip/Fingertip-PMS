@@ -3,6 +3,7 @@ from odoo import models, fields
 class ProjectCustomMilestone(models.Model):
     _name = 'project.custom.milestone'
     _description = 'Project Custom Milestone'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     # Fields
     project_id = fields.Many2one(
@@ -55,4 +56,15 @@ class ProjectCustomMilestone(models.Model):
 
     paid_amount = fields.Float(
         string='Paid Amount'
+    )
+
+    hours_spent = fields.Float(
+        string='Hours Spent'
+    )
+
+    attachment_ids = fields.Many2many(
+        'ir.attachment',
+        'project_custom_milestone_attachment_rel',
+        'milestone_id', 'attachment_id',
+        string='Attachments'
     )

@@ -9,6 +9,12 @@
             <t t-set="no_breadcrumbs" t-value="True"/>
             <div class="o_portal_wrap ft-support-portal">
                 <div class="container py-4">
+                    <!-- Logout bar -->
+                    <div class="d-flex justify-content-end mb-3">
+                        <a href="/web/session/logout?redirect=/web/login" class="ft-logout-btn">
+                            <i class="fa fa-sign-out me-1"/> Logout
+                        </a>
+                    </div>
                     <!-- Page Header -->
                     <div class="ft-page-header text-center text-white rounded-3 p-4 mb-4">
                         <i class="fa fa-headphones fa-2x mb-2" style="opacity: 0.85;"/>
@@ -74,6 +80,12 @@
             <t t-set="no_breadcrumbs" t-value="True"/>
             <div class="o_portal_wrap ft-support-portal">
                 <div class="container py-4">
+                    <!-- Logout bar -->
+                    <div class="d-flex justify-content-end mb-3">
+                        <a href="/web/session/logout?redirect=/web/login" class="ft-logout-btn">
+                            <i class="fa fa-sign-out me-1"/> Logout
+                        </a>
+                    </div>
                     <!-- Navigation Tabs -->
                     <ul class="nav nav-tabs ft-support-tabs mb-4" role="tablist">
                         <li class="nav-item" role="presentation">
@@ -285,22 +297,6 @@
                             </t>
                         </ul>
                     </div>
-                    <!-- Sort Dropdown -->
-                    <div class="dropdown">
-                        <button class="btn btn-outline-secondary dropdown-toggle px-3 py-2" type="button" data-bs-toggle="dropdown" style="font-size: 0.9rem;">
-                            Sort: <strong><t t-out="sortings[sortby]['label']"/></strong>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <t t-foreach="sortings" t-as="s">
-                                <li>
-                                    <a t-attf-href="/my/support/milestones?sortby=#{s}&amp;filterby=#{filterby}&amp;search=#{search}"
-                                       t-attf-class="dropdown-item #{sortby == s and 'active' or ''}">
-                                        <t t-out="sortings[s]['label']"/>
-                                    </a>
-                                </li>
-                            </t>
-                        </ul>
-                    </div>
                 </div>
                 <!-- Search -->
                 <form method="GET" action="/my/support/milestones" class="input-group" style="max-width: 300px;">
@@ -316,18 +312,61 @@
             </div>
 
             <t t-if="milestones">
+                <t t-set="qs_tail" t-value="'filterby=%s&amp;search=%s' % (filterby, search)"/>
                 <div class="card shadow-sm" style="border: 1px solid #e0e0e0;">
                     <div class="card-body p-0">
                         <table class="table table-hover table-bordered mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th class="px-4">ID</th>
-                                    <th class="px-3">Milestone</th>
-                                    <th class="px-3">Project</th>
-                                    <th class="px-3">Amount</th>
-                                    <th class="px-3">Paid</th>
-                                    <th class="px-3">Due Date</th>
-                                    <th class="px-3">Status</th>
+                                    <th class="px-4 ft-sort-th">
+                                        <t t-call="ft_helpdesk_portal.ft_sort_header">
+                                            <t t-set="field" t-value="'milestone_id'"/>
+                                            <t t-set="label">ID</t>
+                                            <t t-set="base_url" t-value="'/my/support/milestones'"/>
+                                        </t>
+                                    </th>
+                                    <th class="px-3 ft-sort-th">
+                                        <t t-call="ft_helpdesk_portal.ft_sort_header">
+                                            <t t-set="field" t-value="'name'"/>
+                                            <t t-set="label">Milestone</t>
+                                            <t t-set="base_url" t-value="'/my/support/milestones'"/>
+                                        </t>
+                                    </th>
+                                    <th class="px-3 ft-sort-th">
+                                        <t t-call="ft_helpdesk_portal.ft_sort_header">
+                                            <t t-set="field" t-value="'project'"/>
+                                            <t t-set="label">Project</t>
+                                            <t t-set="base_url" t-value="'/my/support/milestones'"/>
+                                        </t>
+                                    </th>
+                                    <th class="px-3 ft-sort-th">
+                                        <t t-call="ft_helpdesk_portal.ft_sort_header">
+                                            <t t-set="field" t-value="'amount'"/>
+                                            <t t-set="label">Amount</t>
+                                            <t t-set="base_url" t-value="'/my/support/milestones'"/>
+                                        </t>
+                                    </th>
+                                    <th class="px-3 ft-sort-th">
+                                        <t t-call="ft_helpdesk_portal.ft_sort_header">
+                                            <t t-set="field" t-value="'paid_amount'"/>
+                                            <t t-set="label">Paid</t>
+                                            <t t-set="base_url" t-value="'/my/support/milestones'"/>
+                                        </t>
+                                    </th>
+                                    <th class="px-3 ft-sort-th">
+                                        <t t-call="ft_helpdesk_portal.ft_sort_header">
+                                            <t t-set="field" t-value="'due_date'"/>
+                                            <t t-set="label">Due Date</t>
+                                            <t t-set="base_url" t-value="'/my/support/milestones'"/>
+                                        </t>
+                                    </th>
+                                    <th class="px-3 ft-sort-th">
+                                        <t t-call="ft_helpdesk_portal.ft_sort_header">
+                                            <t t-set="field" t-value="'status'"/>
+                                            <t t-set="label">Status</t>
+                                            <t t-set="base_url" t-value="'/my/support/milestones'"/>
+                                        </t>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -398,22 +437,6 @@
                             </t>
                         </ul>
                     </div>
-                    <!-- Sort Dropdown -->
-                    <div class="dropdown">
-                        <button class="btn btn-outline-secondary dropdown-toggle px-3 py-2" type="button" data-bs-toggle="dropdown" style="font-size: 0.9rem;">
-                            Sort: <strong><t t-out="sortings[sortby]['label']"/></strong>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <t t-foreach="sortings" t-as="s">
-                                <li>
-                                    <a t-attf-href="/my/support/releases?sortby=#{s}&amp;filterby=#{filterby}&amp;search=#{search}"
-                                       t-attf-class="dropdown-item #{sortby == s and 'active' or ''}">
-                                        <t t-out="sortings[s]['label']"/>
-                                    </a>
-                                </li>
-                            </t>
-                        </ul>
-                    </div>
                 </div>
                 <!-- Search -->
                 <form method="GET" action="/my/support/releases" class="input-group" style="max-width: 300px;">
@@ -429,16 +452,47 @@
             </div>
 
             <t t-if="releases">
+                <t t-set="qs_tail" t-value="'filterby=%s&amp;search=%s' % (filterby, search)"/>
                 <div class="card shadow-sm" style="border: 1px solid #e0e0e0;">
                     <div class="card-body p-0">
                         <table class="table table-hover table-bordered mb-0">
                             <thead class="table-light">
                                 <tr>
-                                    <th class="px-4">Release</th>
-                                    <th class="px-3">Version</th>
-                                    <th class="px-3">Project</th>
-                                    <th class="px-3">Release Date</th>
-                                    <th class="px-3">Status</th>
+                                    <th class="px-4 ft-sort-th">
+                                        <t t-call="ft_helpdesk_portal.ft_sort_header">
+                                            <t t-set="field" t-value="'name'"/>
+                                            <t t-set="label">Release</t>
+                                            <t t-set="base_url" t-value="'/my/support/releases'"/>
+                                        </t>
+                                    </th>
+                                    <th class="px-3 ft-sort-th">
+                                        <t t-call="ft_helpdesk_portal.ft_sort_header">
+                                            <t t-set="field" t-value="'version'"/>
+                                            <t t-set="label">Version</t>
+                                            <t t-set="base_url" t-value="'/my/support/releases'"/>
+                                        </t>
+                                    </th>
+                                    <th class="px-3 ft-sort-th">
+                                        <t t-call="ft_helpdesk_portal.ft_sort_header">
+                                            <t t-set="field" t-value="'project'"/>
+                                            <t t-set="label">Project</t>
+                                            <t t-set="base_url" t-value="'/my/support/releases'"/>
+                                        </t>
+                                    </th>
+                                    <th class="px-3 ft-sort-th">
+                                        <t t-call="ft_helpdesk_portal.ft_sort_header">
+                                            <t t-set="field" t-value="'release_date'"/>
+                                            <t t-set="label">Release Date</t>
+                                            <t t-set="base_url" t-value="'/my/support/releases'"/>
+                                        </t>
+                                    </th>
+                                    <th class="px-3 ft-sort-th">
+                                        <t t-call="ft_helpdesk_portal.ft_sort_header">
+                                            <t t-set="field" t-value="'status'"/>
+                                            <t t-set="label">Status</t>
+                                            <t t-set="base_url" t-value="'/my/support/releases'"/>
+                                        </t>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -500,5 +554,24 @@
         <span t-if="priority == '2'" class="badge rounded-pill text-bg-warning">
             <i class="fa fa-arrow-up"/> High
         </span>
+    </template>
+
+    <!-- ============================= -->
+    <!-- SORTABLE HEADER LINK          -->
+    <!-- ============================= -->
+    <!-- Caller sets: field, label, base_url. Uses outer context: sortby, qs_tail -->
+    <template id="ft_sort_header" name="Sortable Column Header">
+        <t t-set="asc_key" t-value="field + '_asc'"/>
+        <t t-set="desc_key" t-value="field + '_desc'"/>
+        <t t-set="is_asc" t-value="sortby == asc_key"/>
+        <t t-set="is_desc" t-value="sortby == desc_key"/>
+        <t t-set="next_sort" t-value="asc_key if is_desc else desc_key"/>
+        <a t-attf-href="#{base_url}?sortby=#{next_sort}&amp;#{qs_tail or ''}"
+           t-attf-class="ft-sort-link #{(is_asc or is_desc) and 'active' or ''}">
+            <t t-out="label"/>
+            <i t-if="is_desc" class="fa fa-caret-down ms-1"/>
+            <i t-elif="is_asc" class="fa fa-caret-up ms-1"/>
+            <i t-else="" class="fa fa-sort ms-1 ft-sort-idle"/>
+        </a>
     </template>
 </odoo>
