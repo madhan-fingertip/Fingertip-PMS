@@ -5,29 +5,30 @@
         <record id="mt_ticket_new_email_template" model="mail.template">
             <field name="name">Helpdesk Ticket: New Ticket Confirmation</field>
             <field name="model_id" ref="ft_helpdesk_core.model_ft_helpdesk_ticket"/>
+            <field name="email_from">admin@fingertipplus.com</field>
             <field name="subject">Ticket {{ object.ticket_no }} - Confirmation</field>
             <field name="partner_to">{{ object.customer_id.id }}</field>
             <field name="body_html"><![CDATA[
-<p>Dear <t t-out="object.customer_id.name"/>,</p>
-<p>Thank you for contacting us. Your support ticket has been created successfully.</p>
-<table style="border-collapse: collapse; width: 100%; margin: 16px 0;">
-    <tr>
-        <td style="padding: 8px; font-weight: bold; width: 150px;">Ticket Number:</td>
-        <td style="padding: 8px;"><t t-out="object.ticket_no"/></td>
-    </tr>
-    <tr>
-        <td style="padding: 8px; font-weight: bold;">Subject:</td>
-        <td style="padding: 8px;"><t t-out="object.name"/></td>
-    </tr>
-    <t t-if="object.description">
-    <tr>
-        <td style="padding: 8px; font-weight: bold; vertical-align: top;">Description:</td>
-        <td style="padding: 8px;"><t t-out="object.description"/></td>
-    </tr>
-    </t>
-</table>
-<p>Our support team will review your request and get back to you as soon as possible.</p>
-<p>Best regards,<br/><t t-out="object.company_id.name"/> Support Team</p>
+<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+    <p style="font-size: 15px;">Dear <strong>{{ object.customer_id.name }}</strong>,</p>
+    <p style="font-size: 14px; color: #333;">Thank you for contacting us. Your support ticket has been created successfully.</p>
+    <table style="border-collapse: collapse; width: 100%; margin: 16px 0; border: 1px solid #e0e0e0; border-radius: 6px;">
+        <tr style="background-color: #f8f9fa;">
+            <td style="padding: 10px 14px; font-weight: bold; width: 150px; border-bottom: 1px solid #e0e0e0; font-size: 13px; color: #555;">Ticket Number</td>
+            <td style="padding: 10px 14px; border-bottom: 1px solid #e0e0e0; font-size: 14px; font-weight: 600; color: #6f42c1;">{{ object.ticket_no }}</td>
+        </tr>
+        <tr>
+            <td style="padding: 10px 14px; font-weight: bold; width: 150px; border-bottom: 1px solid #e0e0e0; font-size: 13px; color: #555;">Subject</td>
+            <td style="padding: 10px 14px; border-bottom: 1px solid #e0e0e0; font-size: 14px;">{{ object.name }}</td>
+        </tr>
+        <tr style="background-color: #f8f9fa;">
+            <td style="padding: 10px 14px; font-weight: bold; width: 150px; font-size: 13px; color: #555; vertical-align: top;">Description</td>
+            <td style="padding: 10px 14px; font-size: 14px;">{{ object.description or 'N/A' }}</td>
+        </tr>
+    </table>
+    <p style="font-size: 14px; color: #333;">Our support team will review your request and get back to you as soon as possible.</p>
+    <p style="font-size: 14px; color: #333;">Best regards,<br/><strong>{{ object.company_id.name }} Support Team</strong></p>
+</div>
             ]]></field>
             <field name="auto_delete" eval="True"/>
         </record>

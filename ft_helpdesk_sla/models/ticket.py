@@ -60,6 +60,12 @@ class HelpdeskTicketSLA(models.Model):
 
     def write(self, vals):
         result = super().write(vals)
+        # Re-evaluate SLA when matching criteria change and no SLA exists yet
+        sla_trigger_fields = {'team_id', 'category_id', 'type_id', 'priority'}
+        if sla_trigger_fields & set(vals.keys()):
+            for ticket in self:
+                if not ticket.sla_status_ids:
+                    self.env['ft.helpdesk.sla.status']._create_for_ticket(ticket)
         # Mark first response SLA as done
         if 'first_response_at' in vals and vals['first_response_at']:
             for ticket in self:
