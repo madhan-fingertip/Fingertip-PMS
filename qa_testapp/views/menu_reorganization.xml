@@ -24,14 +24,12 @@
         <field name="sequence">20</field>
     </record>
 
-    <!-- ============================= -->
-    <!-- Add Timesheets menu (sequence 30) -->
-    <!-- ============================= -->
+    <!-- Timesheets: sequence 21 (right beside Tasks) -->
     <menuitem id="menu_updates_timesheets"
               name="Timesheets"
               parent="project.menu_main_pm"
               action="hr_timesheet.timesheet_action_all"
-              sequence="30"/>
+              sequence="21"/>
 
     <!-- ============================= -->
     <!-- Add QA TestApp menus           -->

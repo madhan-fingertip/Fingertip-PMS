@@ -78,7 +78,6 @@
                   name="Project Update"
                   parent="project.menu_main_pm"
                   action="action_project_activity_update"
-                  groups="group_project_activity_update_user"
                   sequence="20"/>
 
     </data>
