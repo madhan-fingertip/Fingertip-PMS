@@ -24,12 +24,11 @@
         <field name="sequence">20</field>
     </record>
 
-    <!-- Timesheets: sequence 21 (right beside Tasks) -->
-    <menuitem id="menu_updates_timesheets"
-              name="Timesheets"
-              parent="project.menu_main_pm"
-              action="hr_timesheet.timesheet_action_all"
-              sequence="21"/>
+    <!-- Timesheets: reparent stock hr_timesheet root under PMS (sequence 21, right beside Tasks) -->
+    <record id="hr_timesheet.timesheet_menu_root" model="ir.ui.menu">
+        <field name="parent_id" ref="project.menu_main_pm"/>
+        <field name="sequence">21</field>
+    </record>
 
     <!-- ============================= -->
     <!-- Add QA TestApp menus           -->
