@@ -39,6 +39,7 @@
         'data/portal_rule.xml',
         # Wizard
         'wizard/ticket_close_wizard_views.xml',
+        'wizard/ticket_resolve_wizard_views.xml',
         'wizard/ticket_assign_wizard_views.xml',
         # Views
         'views/ticket_views.xml',

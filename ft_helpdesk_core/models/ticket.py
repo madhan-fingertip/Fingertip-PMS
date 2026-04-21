@@ -397,7 +397,16 @@ class HelpdeskTicket(models.Model):
         self.write({'state': 'pending_internal'})
 
     def action_set_state_resolved(self):
-        self.write({'state': 'resolved'})
+        return {
+            'name': _('Resolve Ticket'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'ft.helpdesk.ticket.resolve.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_ticket_id': self.id,
+            },
+        }
 
     def action_open_close_wizard(self):
         """Open close ticket wizard."""
