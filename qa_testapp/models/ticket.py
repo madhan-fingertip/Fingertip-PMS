@@ -60,7 +60,13 @@ class QATicket(models.Model):
     reporter_id = fields.Many2one('res.users', string='Reporter', default=lambda self: self.env.user, tracking=True)
     reported_date = fields.Datetime(string='Reported Date', default=fields.Datetime.now)
     project_id = fields.Many2one('project.project', string='Project', required=True)
-    module = fields.Char(string='Module', tracking=True)
+    module = fields.Char(string='Module (legacy)', tracking=True)
+    module_id = fields.Many2one(
+        'cus.module',
+        string='Module',
+        tracking=True,
+        help='Module used on a task of the selected project.',
+    )
     test_case_id = fields.Many2one('qa_testapp.test_case', string='Related Test Case')
     assignee_id = fields.Many2one('res.users', string='Assignee', required=True, tracking=True)
 
