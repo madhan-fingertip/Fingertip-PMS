@@ -87,4 +87,23 @@ class QATicket(models.Model):
         for vals in vals_list:
             if vals.get('bug_id', 'New') == 'New':
                 vals['bug_id'] = self.env['ir.sequence'].next_by_code('qa_testapp.ticket') or 'New'
-        return super().create(vals_list)
+        tickets = super().create(vals_list)
+        tickets._link_evidence_attachments()
+        return tickets
+
+    def write(self, vals):
+        res = super().write(vals)
+        if 'evidence_attachment_ids' in vals:
+            self._link_evidence_attachments()
+        return res
+
+    def _link_evidence_attachments(self):
+        for ticket in self:
+            orphans = ticket.evidence_attachment_ids.filtered(
+                lambda a: a.res_model != 'qa_testapp.ticket' or a.res_id != ticket.id
+            )
+            if orphans:
+                orphans.sudo().write({
+                    'res_model': 'qa_testapp.ticket',
+                    'res_id': ticket.id,
+                })
