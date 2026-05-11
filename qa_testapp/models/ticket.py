@@ -60,13 +60,7 @@ class QATicket(models.Model):
     reporter_id = fields.Many2one('res.users', string='Reporter', default=lambda self: self.env.user, tracking=True)
     reported_date = fields.Datetime(string='Reported Date', default=fields.Datetime.now)
     project_id = fields.Many2one('project.project', string='Project', required=True)
-    module = fields.Char(string='Module (legacy)', tracking=True)
-    module_id = fields.Many2one(
-        'cus.module',
-        string='Module',
-        tracking=True,
-        help='Module used on a task of the selected project.',
-    )
+    module = fields.Char(string='Module', tracking=True)
     test_case_id = fields.Many2one('qa_testapp.test_case', string='Related Test Case')
     assignee_id = fields.Many2one('res.users', string='Assignee', required=True, tracking=True)
 
@@ -87,9 +81,9 @@ class QATicket(models.Model):
         for vals in vals_list:
             if vals.get('bug_id', 'New') == 'New':
                 vals['bug_id'] = self.env['ir.sequence'].next_by_code('qa_testapp.ticket') or 'New'
-        tickets = super().create(vals_list)
-        tickets._link_evidence_attachments()
-        return tickets
+        records = super().create(vals_list)
+        records._link_evidence_attachments()
+        return records
 
     def write(self, vals):
         res = super().write(vals)
@@ -98,12 +92,12 @@ class QATicket(models.Model):
         return res
 
     def _link_evidence_attachments(self):
-        for ticket in self:
-            orphans = ticket.evidence_attachment_ids.filtered(
-                lambda a: a.res_model != 'qa_testapp.ticket' or a.res_id != ticket.id
+        # Attachments uploaded into the form before save end up with res_id=0,
+        # which blocks non-creator users from reading them. Pin them to this record.
+        for rec in self:
+            atts = rec.sudo().evidence_attachment_ids
+            orphans = atts.filtered(
+                lambda a: a.res_model != 'qa_testapp.ticket' or a.res_id != rec.id
             )
             if orphans:
-                orphans.sudo().write({
-                    'res_model': 'qa_testapp.ticket',
-                    'res_id': ticket.id,
-                })
+                orphans.write({'res_model': 'qa_testapp.ticket', 'res_id': rec.id})
