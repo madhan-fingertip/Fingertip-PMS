@@ -31,7 +31,9 @@
                         <field name="opportunity_id" readonly="1"/>
                     </group>
                     <group>
-                        <field name="date_proposal" readonly="state == 'confirmed'"/>
+                        <field name="date_proposal" 
+                            readonly="state == 'confirmed'" 
+                            options="{'datepicker': {'minDate': 'today'}}"/>
                     </group>
                 </group>
 
@@ -77,9 +79,9 @@
                     <page string="Commercials" name="commercials">
                         <field name="cost_timeline_ids" readonly="state == 'confirmed'">
                             <list editable="bottom">
-                                <field name="release"/>
-                                <field name="duration"/>
-                                <field name="cost" sum="Total Cost"/>
+                                <field name="release" string="Module"/>
+                                <field name="duration" string="Timeline"/>
+                                <field name="cost" string="Cost (₹)" sum="PROJECT TOTAL"/>
                             </list>
                         </field>
                         <div class="mt-2">
@@ -93,6 +95,10 @@
                                 <!-- Milestone Name: Takes up more space -->
                                 <field name="milestone_text" string="Milestone" 
                                     placeholder="e.g. Project Kickoff"/>
+                    
+                                <!-- Amount: Right-aligned with currency widget -->
+                                <field name="amount" string="Amount (₹)" sum="Total Amount"
+                                    options="{'currency_field': 'currency_id'}"/>
                                 
                                 <!-- Percentage: Centered with a fixed width -->
                                 <field name="percentage" string="Percentage (%)" 
@@ -135,11 +141,11 @@
                             invisible="state == 'confirmed'"/>
                     
                     <!-- Primary button to confirm and redirect -->
-                    <button name="action_confirm" 
+                    <!-- <button name="action_confirm" 
                             string="Confirm" 
                             type="object" 
                             class="btn-primary" 
-                            invisible="state == 'confirmed'"/>
+                            invisible="state == 'confirmed'"/> -->
                     
                     <!-- Secondary button to cancel the creation -->
                     <button string="Discard" 
@@ -160,7 +166,7 @@
         <field name="name">crm.proposal.list</field>
         <field name="model">crm.proposal</field>
         <field name="arch" type="xml">
-            <list string="Proposals" default_order="name desc" class="o_main_table">
+            <list string="Proposals" default_order="name desc" class="o_main_table" create="false">
                 <field name="name" string="Proposal Reference" decoration-bf="1"/>
                 <field name="opportunity_id" string="Opportunity"/>
                 <field name="date_proposal" string="Proposal Date"/>
@@ -173,7 +179,7 @@
         </field>
     </record>
 
-    <record id="action_crm_proposal_all" model="ir.actions.act_window">
+    <!-- <record id="action_crm_proposal_all" model="ir.actions.act_window">
         <field name="name">Proposals</field>
         <field name="res_model">crm.proposal</field>
         <field name="view_mode">list,form</field>
@@ -184,6 +190,19 @@
             <p>
                 Manage all customer commercial quotes, system architectures, and technical scopes in one centralized menu.
             </p>
+        </field>
+    </record> -->
+
+    <record id="action_crm_proposal_all" model="ir.actions.act_window">
+        <field name="name">Proposals</field>
+        <field name="res_model">crm.proposal</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_crm_proposal_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_crm_proposal_form')})
+        ]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first client proposal!</p>
         </field>
     </record>
 
