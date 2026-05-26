@@ -55,7 +55,7 @@
               parent="project.menu_main_pm"
               action="qa_testapp.qa_testapp_action_ticket"
               sequence="40"/>
-
+    
     <!--  My Bugs: sequence 10 -->
     <menuitem id="qa_testapp_menu_my_bugs" 
               name="My Bugs" 
