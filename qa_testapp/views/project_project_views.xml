@@ -22,8 +22,8 @@
                 </page>
 
                 <page name="qa_timesheets" string="Timesheets">
-                    <field name="timesheet_ids" readonly="1">
-                        <list>
+                    <field name="timesheet_ids" context="{'default_project_id': id}">
+                        <list editable="bottom">
                             <field name="date"/>
                             <field name="employee_id"/>
                             <field name="task_id"/>
