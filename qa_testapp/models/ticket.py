@@ -7,8 +7,6 @@ from odoo.exceptions import UserError
 _logger = logging.getLogger(__name__)
 
 
-# Priority -> (human-readable response-time band, deadline offset in minutes).
-# Deadline uses the upper bound of each band (lenient SLA semantics).
 TARGET_TIME_BY_PRIORITY = {
     'p1': ('15-30 mins',     30),
     'p2': ('1-2 hours',     120),
@@ -40,32 +38,13 @@ class QATicket(models.Model):
     expected_result = fields.Text(string='Expected Result')
     actual_result = fields.Text(string='Actual Result')
 
-    # New Checkbox Fields
     is_client = fields.Boolean(string='Client', help="Check if this bug was raised by a client.")
     is_internal = fields.Boolean(string='Internal', help="Check if this bug was found internally.")
 
-    # Modified reporter_id (removed default value so it starts blank when internal is clicked)
-    reporter_id = fields.Many2one('res.users', string='Reporter', tracking=True)
+    reporter_id = fields.Many2one('res.users', string='Reporter', default=lambda self: self.env.user, tracking=True)
 
-    @api.onchange('is_client')
-    def _onchange_is_client(self):
-        """Automatically treats client-raised bugs with higher severity/priority"""
-        if self.is_client:
-            self.is_internal = False
-            self.reporter_id = False  # Clear reporter if it's a client
-            
-            # Upgrade priority to P1 (Urgent) and severity to Critical automatically
-            self.priority = 'p1'
-            if self.severity not in ('blocker', 'critical'):
-                self.severity = 'critical'
+    reporter_display = fields.Char(string='Reporter', compute='_compute_reporter_display')
 
-    @api.onchange('is_internal')
-    def _onchange_is_internal(self):
-        """Toggles off client selection when internal is chosen"""
-        if self.is_internal:
-            self.is_client = False
-            # Default the reporter to the current logged-in user when internal is checked
-            self.reporter_id = self.env.user
     environment = fields.Selection([
         ('sandbox', 'Sandbox'),
         ('qa', 'QA'),
@@ -119,7 +98,6 @@ class QATicket(models.Model):
         'ticket_id', 'attachment_id',
         string='Attachments',
     )
-    reporter_id = fields.Many2one('res.users', string='Reporter', default=lambda self: self.env.user, tracking=True)
     reported_date = fields.Datetime(string='Reported Date', default=fields.Datetime.now)
     project_id = fields.Many2one('project.project', string='Project', required=True)
     module = fields.Char(string='Module (legacy)', tracking=True)
@@ -145,7 +123,7 @@ class QATicket(models.Model):
        readonly=True, copy=False, tracking=True)
 
     # ------------------------------------------------------------------
-    # Approval workflow
+    # Approval workflow fields
     # ------------------------------------------------------------------
     approval_state = fields.Selection([
         ('draft', 'Draft'),
@@ -160,14 +138,16 @@ class QATicket(models.Model):
     rejected_by_id = fields.Many2one('res.users', string='Rejected By', readonly=True, copy=False)
     rejection_reason = fields.Text(string='Rejection Reason', readonly=True, copy=False)
 
-    # Per-record approval permission for the current user. Drives button
-    # visibility — non-stored so it re-evaluates per session.
     can_user_approve = fields.Boolean(
         compute='_compute_can_user_approve',
         help="True if the current user can approve THIS record "
              "(PM of its project, or TL of the helpdesk team linked to its customer).",
     )
 
+    # ------------------------------------------------------------------
+    # Compute methods
+    # ------------------------------------------------------------------
+    @api.depends('project_id')
     def _compute_available_modules(self):
         for rec in self:
             if rec.project_id:
@@ -179,11 +159,6 @@ class QATicket(models.Model):
             else:
                 rec.available_module_ids = self.env['cus.module'].sudo().search([])
 
-    @api.onchange('project_id')
-    def _onchange_project_id(self):
-        self.module_id = False
-    
-    
     @api.depends('priority', 'reported_date')
     def _compute_target_response(self):
         for rec in self:
@@ -199,6 +174,47 @@ class QATicket(models.Model):
                 if rec.reported_date else False
             )
 
+    @api.depends('is_client', 'is_internal', 'reporter_id')
+    def _compute_reporter_display(self):
+        for rec in self:
+            if rec.is_client:
+                rec.reporter_display = "Client"
+            elif rec.is_internal and rec.reporter_id:
+                rec.reporter_display = rec.reporter_id.name
+            else:
+                rec.reporter_display = ""
+
+    @api.depends('project_id', 'project_id.user_id', 'project_id.partner_id')
+    def _compute_can_user_approve(self):
+        user = self.env.user
+        for rec in self:
+            rec.can_user_approve = rec._can_approve_record(user)
+
+    # ------------------------------------------------------------------
+    # Onchange methods
+    # ------------------------------------------------------------------
+    @api.onchange('project_id')
+    def _onchange_project_id(self):
+        self.module_id = False
+
+    @api.onchange('is_client')
+    def _onchange_is_client(self):
+        if self.is_client:
+            self.is_internal = False
+            self.reporter_id = False
+            self.priority = 'p1'
+            if self.severity not in ('blocker', 'critical'):
+                self.severity = 'critical'
+
+    @api.onchange('is_internal')
+    def _onchange_is_internal(self):
+        if self.is_internal:
+            self.is_client = False
+            self.reporter_id = self.env.user
+
+    # ------------------------------------------------------------------
+    # Status actions
+    # ------------------------------------------------------------------
     def action_in_progress(self):
         self.write({'status': 'in_progress'})
 
@@ -217,9 +233,7 @@ class QATicket(models.Model):
     def _escalate_on_reopen(self):
         """Hierarchy-based escalation driven by reopen_count.
         3rd reopen -> project.qa_lead_id (fallback: project.user_id), level='qa_lead'.
-        4th+ reopen -> project.user_id (Project Manager), level='manager'.
-        No-op for the 1st/2nd reopen. Manual assignee changes between reopens
-        are preserved; re-escalation only fires on the next reopen click."""
+        4th+ reopen -> project.user_id (Project Manager), level='manager'."""
         self.ensure_one()
         project = self.project_id
         if not project:
@@ -229,10 +243,6 @@ class QATicket(models.Model):
             return
 
         if count == 3:
-            # QA Lead is derived from the project's customer's Support Team.
-            # Mirrors the auto-assign pattern in ft_helpdesk_core/models/ticket.py:
-            # try the commercial (parent company) partner's team first, then
-            # the contact's own team.
             partner = project.partner_id
             customer_team = (
                 partner.commercial_partner_id.helpdesk_team_id
@@ -285,33 +295,9 @@ class QATicket(models.Model):
             ),
         )
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        for vals in vals_list:
-            if vals.get('bug_id', 'New') == 'New':
-                vals['bug_id'] = self.env['ir.sequence'].next_by_code('qa_testapp.ticket') or 'New'
-        records = super().create(vals_list)
-        records._link_evidence_attachments()
-        return records
-
-    def write(self, vals):
-        res = super().write(vals)
-        if 'evidence_attachment_ids' in vals:
-            self._link_evidence_attachments()
-        return res
-
-    def _link_evidence_attachments(self):
-        # Attachments uploaded into the form before save end up with res_id=0,
-        # which blocks non-creator users from reading them. Pin them to this record.
-        for rec in self:
-            atts = rec.sudo().evidence_attachment_ids
-            orphans = atts.filtered(
-                lambda a: a.res_model != 'qa_testapp.ticket' or a.res_id != rec.id
-            )
-            if orphans:
-                orphans.write({'res_model': 'qa_testapp.ticket', 'res_id': rec.id})
-    
-
+    # ------------------------------------------------------------------
+    # ORM overrides
+    # ------------------------------------------------------------------
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
@@ -331,17 +317,12 @@ class QATicket(models.Model):
                     vals['approval_state'] = 'draft'
         records = super().create(vals_list)
         records._link_evidence_attachments()
-
-        # Send explicit notification on creation
         for record in records:
             if record.assignee_id:
                 record._notify_assignee()
         return records
 
     def write(self, vals):
-        # Approved bugs are locked. Allow only writes that exclusively touch
-        # the approval workflow fields (so action_reopen / action_approve etc.
-        # can still operate).
         is_workflow_write = vals and set(vals.keys()).issubset(APPROVAL_WORKFLOW_FIELDS)
         if not is_workflow_write:
             for rec in self:
@@ -353,66 +334,33 @@ class QATicket(models.Model):
         res = super().write(vals)
         if 'evidence_attachment_ids' in vals:
             self._link_evidence_attachments()
-
-        # Send explicit notification on change
         if 'assignee_id' in vals:
             for rec in self:
                 rec._notify_assignee()
         return res
 
+    def _link_evidence_attachments(self):
+        for rec in self:
+            atts = rec.sudo().evidence_attachment_ids
+            orphans = atts.filtered(
+                lambda a: a.res_model != 'qa_testapp.ticket' or a.res_id != rec.id
+            )
+            if orphans:
+                orphans.write({'res_model': 'qa_testapp.ticket', 'res_id': rec.id})
+
     def _notify_assignee(self):
-        """Finds the assignment email template and sends it to the assignee"""
         self.ensure_one()
         if self.assignee_id and self.assignee_id.email:
-            # Locate the template record using its XML ID
             template = self.env.ref('qa_testapp.email_template_bug_assigned', raise_if_not_found=False)
-            
             if template:
-                # force_send=False queues it in Odoo mail queue; force_send=True sends it instantly
                 template.sudo().send_mail(self.id, force_send=True)
 
-    @api.onchange('is_client')
-    def _onchange_is_client(self):
-        """Automatically treats client-raised bugs with higher severity/priority"""
-        if self.is_client:
-            self.is_internal = False
-            self.reporter_id = False  # Clear reporter if it's a client
-            
-            # Upgrade priority to P1 (Urgent) and severity to Critical automatically
-            self.priority = 'p1'
-            if self.severity not in ('blocker', 'critical'):
-                self.severity = 'critical'
-
-    @api.onchange('is_internal')
-    def _onchange_is_internal(self):
-        """Toggles off client selection when internal is chosen"""
-        if self.is_internal:
-            self.is_client = False
-            # Default the reporter to the current logged-in user when internal is checked
-            self.reporter_id = self.env.user
-    
-    # New computed field for clean list-view display
-    reporter_display = fields.Char(string='Reporter', compute='_compute_reporter_display')
-
-    @api.depends('is_client', 'is_internal', 'reporter_id')
-    def _compute_reporter_display(self):
-        for rec in self:
-            if rec.is_client:
-                rec.reporter_display = "Client"
-            elif rec.is_internal and rec.reporter_id:
-                rec.reporter_display = rec.reporter_id.name
-            else:
-                rec.reporter_display = ""
-
     # ------------------------------------------------------------------
-    # Approval workflow
+    # Approval helpers
     # ------------------------------------------------------------------
     @api.model
     def _user_is_qa_approver(self, user=None):
-        """Global approver check — used only by `create()` to decide if a
-        record should auto-approve (PM/TL are trusted globally for their
-        OWN records). Per-record approval of OTHERS' records uses
-        `_can_approve_record` instead."""
+        """Global approver check — used only by create() to decide auto-approval."""
         user = user or self.env.user
         if user.has_group('project.group_project_manager'):
             return True
@@ -423,10 +371,7 @@ class QATicket(models.Model):
         return False
 
     def _project_approver_users(self):
-        """Return the set of users authorized to approve THIS record:
-          - project.user_id (Project Manager of the record's project)
-          - leader of the helpdesk team linked to the project's customer
-        Mirrors the lookup pattern used by _escalate_on_reopen below."""
+        """Return users authorized to approve THIS record (PM + helpdesk TL)."""
         self.ensure_one()
         approvers = self.env['res.users']
         project = self.project_id
@@ -445,22 +390,17 @@ class QATicket(models.Model):
         return approvers
 
     def _can_approve_record(self, user=None):
-        """Per-record check: is `user` an authorized approver of THIS record?"""
         self.ensure_one()
         user = user or self.env.user
         return user in self._project_approver_users()
 
     def _project_has_approver(self):
-        """True if THIS record's project has at least one PM or TL configured."""
         self.ensure_one()
         return bool(self._project_approver_users())
 
-    @api.depends('project_id', 'project_id.user_id', 'project_id.partner_id')
-    def _compute_can_user_approve(self):
-        user = self.env.user
-        for rec in self:
-            rec.can_user_approve = rec._can_approve_record(user)
-
+    # ------------------------------------------------------------------
+    # Approval workflow actions
+    # ------------------------------------------------------------------
     def action_submit_for_approval(self):
         for rec in self:
             if rec.approval_state not in ('draft', 'rejected'):
@@ -518,9 +458,7 @@ class QATicket(models.Model):
         }
 
     def action_reopen_approval(self):
-        """Re-open an approved bug so it can be edited again. Named with the
-        `_approval` suffix to avoid colliding with `action_reopen` above
-        (which re-opens a *fixed/closed* bug status)."""
+        """Re-open an approved bug so it can be edited again."""
         for rec in self:
             if rec.approval_state != 'approved':
                 raise UserError(_("Only approved bugs can be re-opened."))
@@ -533,9 +471,7 @@ class QATicket(models.Model):
             rec.message_post(body=_("Re-opened for edits by %s.") % self.env.user.name)
 
     def action_bulk_approve(self):
-        """Approve all *scoped* pending bugs the user is authorized for.
-        Bugs belonging to projects the user doesn't lead are silently skipped
-        — a notification reports how many were approved vs. skipped."""
+        """Approve all pending bugs the current user is authorized for."""
         pending = self.filtered(lambda r: r.approval_state == 'pending')
         if not pending:
             raise UserError(_("No pending bugs selected."))

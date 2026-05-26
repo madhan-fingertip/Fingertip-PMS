@@ -17,7 +17,7 @@ class QAApprovalRejectWizard(models.TransientModel):
         record = self.env[self.res_model].browse(self.res_id)
         if not record.exists():
             raise UserError(_("Record not found."))
-        if not record._user_is_qa_approver():
+        if not record._can_approve_record():
             raise UserError(_("Only a Project Manager or Team Lead can reject."))
         if record.approval_state != 'pending':
             raise UserError(_("Only records pending approval can be rejected."))
