@@ -7,7 +7,7 @@
 QA TestApp – Test & Bug Tracker
 ===============================
 A comprehensive Quality Assurance suite for Odoo 18 with:
- * Test Plan management (scope, objectives, approach, schedule, approval)
+ * Test Plan management (scope, objectives, approach, schedule)
  * Test Scenario tracking (steps, coverage, status)
  * Test Case execution (data, preconditions, steps, actual/expected, severity)
  * Bug/Ticket tracking (Bug ID, reporter, description, reproducibility, attachments — full ticket lifecycle)
@@ -18,13 +18,10 @@ A comprehensive Quality Assurance suite for Odoo 18 with:
     'data': [
             'security/ir.model.access.csv',
             'data/ticket_sequence.xml',
-            'data/qa_approval_actions.xml',
-            'wizard/qa_approval_reject_wizard_views.xml',
             'views/test_plan_views.xml',
             'views/test_scenario_views.xml',
             'views/test_case_views.xml',
             'views/ticket_views.xml',
-            'views/res_users_views.xml',
             'views/project_project_views.xml',
             'views/menu.xml',
             'views/menu_reorganization.xml',

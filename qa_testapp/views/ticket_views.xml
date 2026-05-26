@@ -29,10 +29,6 @@
                     <field name="reporter_display" string="Reporter"/>
                 <field name="assignee_id"/>
                 <field name="reported_date"/>
-                <field name="approval_state" widget="badge"
-                       decoration-info="approval_state == 'pending'"
-                       decoration-success="approval_state == 'approved'"
-                       decoration-danger="approval_state == 'rejected'"/>
             </list>
         </field>
     </record>
@@ -43,19 +39,6 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <field name="can_user_approve" invisible="1"/>
-                    <button name="action_submit_for_approval" type="object"
-                            string="Submit for Approval" class="btn-primary"
-                            invisible="approval_state not in ('draft', 'rejected')"/>
-                    <button name="action_approve" type="object"
-                            string="Approve" class="btn-success"
-                            invisible="approval_state != 'pending' or not can_user_approve"/>
-                    <button name="action_reject_open_wizard" type="object"
-                            string="Reject" class="btn-danger"
-                            invisible="approval_state != 'pending' or not can_user_approve"/>
-                    <button name="action_reopen_approval" type="object"
-                            string="Re-Open for Edit" class="btn-warning"
-                            invisible="approval_state != 'approved' or not can_user_approve"/>
                     <button name="action_in_progress" type="object" string="In Progress"
                             class="btn-primary" invisible="status in ('in_progress', 'fixed', 'closed')"/>
                     <button name="action_fixed" type="object" string="Fixed"
@@ -64,22 +47,15 @@
                             class="btn-secondary" invisible="status in ('open', 'closed')"/>
                     <button name="action_reopen" type="object" string="Re-Open"
                             class="btn-warning" invisible="status not in ('fixed', 'closed')"/>
-                    <field name="approval_state" widget="statusbar"
-                           statusbar_visible="draft,pending,approved"/>
                     <field name="status" widget="statusbar" clickable="1" statusbar_visible="open,in_progress,fixed,closed,reopened"/>
                 </header>
                 <sheet>
-                    <div class="alert alert-danger" role="alert"
-                         invisible="approval_state != 'rejected'">
-                        <strong>Rejected:</strong>
-                        <field name="rejection_reason" readonly="1" nolabel="1"/>
-                    </div>
                     <div class="oe_title">
                         <h1>
                             <field name="bug_id" readonly="1" class="text-muted"/>
                         </h1>
                         <h2>
-                            <field name="title" readonly="approval_state == 'approved'"/>
+                            <field name="title"/>
                         </h2>
                     </div>
                     <group>
@@ -134,20 +110,6 @@
                             <field name="evidence_notes"/>
                             <field name="evidence_attachment_ids" widget="many2many_binary" string="Attachments"/>
                         </page>
-                        <page string="Approval Log">
-                            <group>
-                                <group string="Submission">
-                                    <field name="submitted_by_id"/>
-                                    <field name="submitted_date"/>
-                                </group>
-                                <group string="Decision">
-                                    <field name="approved_by_id"/>
-                                    <field name="approved_date"/>
-                                    <field name="rejected_by_id"
-                                           invisible="approval_state != 'rejected'"/>
-                                </group>
-                            </group>
-                        </page>
                     </notebook>
                 </sheet>
                  <chatter />
@@ -196,23 +158,12 @@
 
                 <filter string="My Bugs" name="my_bugs" domain="[('assignee_id', '=', uid)]"/>
                 <filter string="All Bugs" name="all_bugs" domain="[]"/>
-                <separator/>
-                <filter string="Pending Approval" name="pending_approval"
-                        domain="[('approval_state', '=', 'pending')]"/>
-                <filter string="Draft" name="draft"
-                        domain="[('approval_state', '=', 'draft')]"/>
-                <filter string="Approved" name="approved"
-                        domain="[('approval_state', '=', 'approved')]"/>
-                <filter string="Rejected" name="rejected"
-                        domain="[('approval_state', '=', 'rejected')]"/>
 
                 <separator/>
                 <group expand="0" string="Group By">
                     <filter string="Project" name="group_by_project" context="{'group_by': 'project_id'}"/>
                     <filter string="Status" name="group_by_status" context="{'group_by': 'status'}"/>
                     <filter string="Priority" name="group_by_priority" context="{'group_by': 'priority'}"/>
-                    <filter string="Approval State" name="group_by_approval"
-                            context="{'group_by': 'approval_state'}"/>
                 </group>
             </search>
         </field>
