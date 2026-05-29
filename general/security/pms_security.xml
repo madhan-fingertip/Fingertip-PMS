@@ -101,5 +101,82 @@
             <field name="perm_unlink" eval="True"/>
         </record>
 
+        <!-- ============================================================
+             ASSET MANAGEMENT — record rules
+             User: own records only.  Manager: all records.
+             ============================================================ -->
+
+        <!-- company.asset — users see only their own -->
+        <record id="company_asset_user_rule" model="ir.rule">
+            <field name="name">Asset: own records only</field>
+            <field name="model_id" ref="model_company_asset"/>
+            <field name="domain_force">[('create_uid', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_asset_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- company.asset — managers see all -->
+        <record id="company_asset_manager_rule" model="ir.rule">
+            <field name="name">Asset: managers see all</field>
+            <field name="model_id" ref="model_company_asset"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_asset_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- asset.assignment — users see only their own -->
+        <record id="asset_assignment_user_rule" model="ir.rule">
+            <field name="name">Asset Assignment: own records only</field>
+            <field name="model_id" ref="model_asset_assignment"/>
+            <field name="domain_force">[('create_uid', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_asset_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- asset.assignment — managers see all -->
+        <record id="asset_assignment_manager_rule" model="ir.rule">
+            <field name="name">Asset Assignment: managers see all</field>
+            <field name="model_id" ref="model_asset_assignment"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_asset_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- asset.maintenance — users see only their own -->
+        <record id="asset_maintenance_user_rule" model="ir.rule">
+            <field name="name">Asset Maintenance: own records only</field>
+            <field name="model_id" ref="model_asset_maintenance"/>
+            <field name="domain_force">[('create_uid', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_asset_user'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <!-- asset.maintenance — managers see all -->
+        <record id="asset_maintenance_manager_rule" model="ir.rule">
+            <field name="name">Asset Maintenance: managers see all</field>
+            <field name="model_id" ref="model_asset_maintenance"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_asset_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
     </data>
 </odoo>
