@@ -83,6 +83,8 @@ class EmployeeExpenseClaim(models.Model):
          'Claim number must be unique per company.'),
     ]
 
+    bill_available = fields.Boolean(string="Bills Available")
+
     # --------------------------------------------------------------
     @api.model_create_multi
     def create(self, vals_list):

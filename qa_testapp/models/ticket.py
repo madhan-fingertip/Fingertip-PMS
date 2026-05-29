@@ -1,8 +1,7 @@
 import logging
 from datetime import timedelta
 
-from odoo import models, fields, api, _
-from odoo.exceptions import UserError
+from odoo import models, fields, api
 
 _logger = logging.getLogger(__name__)
 
@@ -12,14 +11,6 @@ TARGET_TIME_BY_PRIORITY = {
     'p2': ('1-2 hours',     120),
     'p3': ('4-8 hours',     480),
     'p4': ('1 business day', 24 * 60),
-}
-
-
-APPROVAL_WORKFLOW_FIELDS = {
-    'approval_state',
-    'submitted_by_id', 'submitted_date',
-    'approved_by_id', 'approved_date',
-    'rejected_by_id', 'rejection_reason',
 }
 
 
@@ -42,7 +33,6 @@ class QATicket(models.Model):
     is_internal = fields.Boolean(string='Internal', help="Check if this bug was found internally.")
 
     reporter_id = fields.Many2one('res.users', string='Reporter', default=lambda self: self.env.user, tracking=True)
-
     reporter_display = fields.Char(string='Reporter', compute='_compute_reporter_display')
 
     environment = fields.Selection([
@@ -122,31 +112,6 @@ class QATicket(models.Model):
     ], string='Escalation', default='none',
        readonly=True, copy=False, tracking=True)
 
-    # ------------------------------------------------------------------
-    # Approval workflow fields
-    # ------------------------------------------------------------------
-    approval_state = fields.Selection([
-        ('draft', 'Draft'),
-        ('pending', 'Pending Approval'),
-        ('approved', 'Approved'),
-        ('rejected', 'Rejected'),
-    ], string='Approval', default='draft', tracking=True, copy=False, required=True)
-    submitted_by_id = fields.Many2one('res.users', string='Submitted By', readonly=True, copy=False)
-    submitted_date = fields.Datetime(string='Submitted On', readonly=True, copy=False)
-    approved_by_id = fields.Many2one('res.users', string='Approved By', readonly=True, copy=False)
-    approved_date = fields.Datetime(string='Approved On', readonly=True, copy=False)
-    rejected_by_id = fields.Many2one('res.users', string='Rejected By', readonly=True, copy=False)
-    rejection_reason = fields.Text(string='Rejection Reason', readonly=True, copy=False)
-
-    can_user_approve = fields.Boolean(
-        compute='_compute_can_user_approve',
-        help="True if the current user can approve THIS record "
-             "(PM of its project, or TL of the helpdesk team linked to its customer).",
-    )
-
-    # ------------------------------------------------------------------
-    # Compute methods
-    # ------------------------------------------------------------------
     @api.depends('project_id')
     def _compute_available_modules(self):
         for rec in self:
@@ -184,15 +149,6 @@ class QATicket(models.Model):
             else:
                 rec.reporter_display = ""
 
-    @api.depends('project_id', 'project_id.user_id', 'project_id.partner_id')
-    def _compute_can_user_approve(self):
-        user = self.env.user
-        for rec in self:
-            rec.can_user_approve = rec._can_approve_record(user)
-
-    # ------------------------------------------------------------------
-    # Onchange methods
-    # ------------------------------------------------------------------
     @api.onchange('project_id')
     def _onchange_project_id(self):
         self.module_id = False
@@ -212,9 +168,6 @@ class QATicket(models.Model):
             self.is_client = False
             self.reporter_id = self.env.user
 
-    # ------------------------------------------------------------------
-    # Status actions
-    # ------------------------------------------------------------------
     def action_in_progress(self):
         self.write({'status': 'in_progress'})
 
@@ -295,26 +248,11 @@ class QATicket(models.Model):
             ),
         )
 
-    # ------------------------------------------------------------------
-    # ORM overrides
-    # ------------------------------------------------------------------
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
             if vals.get('bug_id', 'New') == 'New':
                 vals['bug_id'] = self.env['ir.sequence'].next_by_code('qa_testapp.ticket') or 'New'
-            if 'approval_state' not in vals:
-                creator = self.env.user
-                skip = (
-                    self._user_is_qa_approver(creator)
-                    or not creator.qa_requires_approval
-                )
-                if skip:
-                    vals['approval_state'] = 'approved'
-                    vals.setdefault('approved_by_id', creator.id)
-                    vals.setdefault('approved_date', fields.Datetime.now())
-                else:
-                    vals['approval_state'] = 'draft'
         records = super().create(vals_list)
         records._link_evidence_attachments()
         for record in records:
@@ -323,14 +261,6 @@ class QATicket(models.Model):
         return records
 
     def write(self, vals):
-        is_workflow_write = vals and set(vals.keys()).issubset(APPROVAL_WORKFLOW_FIELDS)
-        if not is_workflow_write:
-            for rec in self:
-                if rec.approval_state == 'approved':
-                    raise UserError(_(
-                        "This bug is approved and locked. "
-                        "Ask a Project Manager or Team Lead to re-open it before editing."
-                    ))
         res = super().write(vals)
         if 'evidence_attachment_ids' in vals:
             self._link_evidence_attachments()
@@ -354,153 +284,3 @@ class QATicket(models.Model):
             template = self.env.ref('qa_testapp.email_template_bug_assigned', raise_if_not_found=False)
             if template:
                 template.sudo().send_mail(self.id, force_send=True)
-
-    # ------------------------------------------------------------------
-    # Approval helpers
-    # ------------------------------------------------------------------
-    @api.model
-    def _user_is_qa_approver(self, user=None):
-        """Global approver check — used only by create() to decide auto-approval."""
-        user = user or self.env.user
-        if user.has_group('project.group_project_manager'):
-            return True
-        if self.env['ft.helpdesk.team'].sudo().search_count(
-            [('leader_user_id', '=', user.id)]
-        ):
-            return True
-        return False
-
-    def _project_approver_users(self):
-        """Return users authorized to approve THIS record (PM + helpdesk TL)."""
-        self.ensure_one()
-        approvers = self.env['res.users']
-        project = self.project_id
-        if not project:
-            return approvers
-        if project.user_id:
-            approvers |= project.user_id
-        partner = project.partner_id
-        if partner:
-            customer_team = (
-                partner.commercial_partner_id.helpdesk_team_id
-                or partner.helpdesk_team_id
-            )
-            if customer_team and customer_team.leader_user_id:
-                approvers |= customer_team.leader_user_id
-        return approvers
-
-    def _can_approve_record(self, user=None):
-        self.ensure_one()
-        user = user or self.env.user
-        return user in self._project_approver_users()
-
-    def _project_has_approver(self):
-        self.ensure_one()
-        return bool(self._project_approver_users())
-
-    # ------------------------------------------------------------------
-    # Approval workflow actions
-    # ------------------------------------------------------------------
-    def action_submit_for_approval(self):
-        for rec in self:
-            if rec.approval_state not in ('draft', 'rejected'):
-                raise UserError(_("Only Draft or Rejected bugs can be submitted."))
-            if not rec._project_has_approver():
-                raise UserError(_(
-                    "No approver is configured for project '%s'. "
-                    "Ask Admin to set a Project Manager on the project, "
-                    "or assign a Helpdesk Team Leader to the project's customer."
-                ) % (rec.project_id.name or '?'))
-            rec.write({
-                'approval_state': 'pending',
-                'submitted_by_id': self.env.user.id,
-                'submitted_date': fields.Datetime.now(),
-            })
-            rec.message_post(body=_("Submitted for approval by %s.") % self.env.user.name)
-
-    def action_approve(self):
-        for rec in self:
-            if rec.approval_state != 'pending':
-                raise UserError(_("Only bugs pending approval can be approved."))
-            if not rec._can_approve_record():
-                raise UserError(_(
-                    "You are not authorized to approve this bug. "
-                    "Only the Project Manager of project '%s' or the Team Lead "
-                    "of its customer's Helpdesk Team can approve."
-                ) % (rec.project_id.name or '?'))
-            rec.write({
-                'approval_state': 'approved',
-                'approved_by_id': self.env.user.id,
-                'approved_date': fields.Datetime.now(),
-                'rejection_reason': False,
-            })
-            rec.message_post(body=_("Approved by %s.") % self.env.user.name)
-
-    def action_reject_open_wizard(self):
-        self.ensure_one()
-        if self.approval_state != 'pending':
-            raise UserError(_("Only bugs pending approval can be rejected."))
-        if not self._can_approve_record():
-            raise UserError(_(
-                "You are not authorized to reject this bug. "
-                "Only the Project Manager or Team Lead of its project can reject."
-            ))
-        return {
-            'name': _('Reject Bug'),
-            'type': 'ir.actions.act_window',
-            'res_model': 'qa_testapp.approval.reject.wizard',
-            'view_mode': 'form',
-            'target': 'new',
-            'context': {
-                'default_res_model': self._name,
-                'default_res_id': self.id,
-            },
-        }
-
-    def action_reopen_approval(self):
-        """Re-open an approved bug so it can be edited again."""
-        for rec in self:
-            if rec.approval_state != 'approved':
-                raise UserError(_("Only approved bugs can be re-opened."))
-            if not rec._can_approve_record():
-                raise UserError(_(
-                    "You are not authorized to re-open this bug. "
-                    "Only the Project Manager or Team Lead of its project can re-open."
-                ))
-            rec.write({'approval_state': 'draft'})
-            rec.message_post(body=_("Re-opened for edits by %s.") % self.env.user.name)
-
-    def action_bulk_approve(self):
-        """Approve all pending bugs the current user is authorized for."""
-        pending = self.filtered(lambda r: r.approval_state == 'pending')
-        if not pending:
-            raise UserError(_("No pending bugs selected."))
-        user = self.env.user
-        approvable = pending.filtered(lambda r: r._can_approve_record(user))
-        skipped = pending - approvable
-        if not approvable:
-            raise UserError(_(
-                "You are not authorized to approve any of the selected bugs. "
-                "Only the PM or Team Lead of each record's project can approve."
-            ))
-        approvable.write({
-            'approval_state': 'approved',
-            'approved_by_id': user.id,
-            'approved_date': fields.Datetime.now(),
-            'rejection_reason': False,
-        })
-        for rec in approvable:
-            rec.message_post(body=_("Approved (bulk) by %s.") % user.name)
-        if skipped:
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': _("Bulk Approve"),
-                    'message': _("%(ok)d approved. %(skipped)d skipped (not your project/team).") % {
-                        'ok': len(approvable), 'skipped': len(skipped),
-                    },
-                    'type': 'success',
-                    'sticky': False,
-                },
-            }
