@@ -376,9 +376,35 @@ class QATicket(models.Model):
             if orphans:
                 orphans.write({'res_model': 'qa_testapp.ticket', 'res_id': rec.id})
 
-    def _notify_assignee(self):
+    def _notify_assignee(self, approved=False):
+        """Notify the assignee that they can start working.
+
+        approved=True  -> a junior QA's bug was just approved by the PM
+                          (use the "Approved" wording).
+        approved=False -> the bug was created directly (e.g. by the PM, no
+                          approval step) or reassigned -> use the neutral
+                          "created & assigned" wording, no mention of approval.
+        """
         self.ensure_one()
+        if self.approval_state != 'approved':
+            return
         if self.assignee_id and self.assignee_id.email:
-            template = self.env.ref('qa_testapp.email_template_bug_assigned', raise_if_not_found=False)
+            ref = 'qa_testapp.email_template_bug_approved' if approved \
+                else 'qa_testapp.email_template_bug_assigned'
+            template = self.env.ref(ref, raise_if_not_found=False)
+            if template:
+                template.sudo().send_mail(self.id, force_send=True)
+
+    def _notify_pending_approval(self):
+        self.ensure_one()
+        if self.approver_id and self.approver_id.email:
+            template = self.env.ref('qa_testapp.email_template_bug_pending_approval', raise_if_not_found=False)
+            if template:
+                template.sudo().send_mail(self.id, force_send=True)
+
+    def _notify_rejection(self):
+        self.ensure_one()
+        if self.reporter_id and self.reporter_id.email:
+            template = self.env.ref('qa_testapp.email_template_bug_rejected', raise_if_not_found=False)
             if template:
                 template.sudo().send_mail(self.id, force_send=True)
