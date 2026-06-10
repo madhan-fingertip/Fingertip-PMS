@@ -184,6 +184,18 @@ class InheritResPartner(models.Model):
                         partner.website, other.name,
                     ))
 
+    @api.model
+    def _vals_is_company(self, vals):
+        """Decide whether the values describe a company. The web form sends
+        ``company_type`` (the Individual/Company toggle), not ``is_company``
+        directly, so we must honour both to avoid mis-classifying a company
+        as a contact."""
+        if 'is_company' in vals:
+            return bool(vals['is_company'])
+        if vals.get('company_type'):
+            return vals['company_type'] == 'company'
+        return False
+
     @api.model_create_multi
     def create(self, vals_list):
         # results keeps the original order; entries are either an already
@@ -192,10 +204,12 @@ class InheritResPartner(models.Model):
         to_create = []  # list of (original_index, vals)
 
         for index, vals in enumerate(vals_list):
+            is_company = self._vals_is_company(vals)
+
             # Identify a company by its website (NOT its name): if a company
             # with the same website already exists, reuse it instead of
             # creating a duplicate (e.g. during bulk import).
-            if vals.get('is_company') and vals.get('website'):
+            if is_company and vals.get('website'):
                 existing = self._find_company_by_website(vals['website'])
                 if existing:
                     results[index] = existing
@@ -207,7 +221,7 @@ class InheritResPartner(models.Model):
             # website yet, auto-create it (named from the company-name column,
             # else from the website domain) so the contact is always grouped
             # under the website's company.
-            if not vals.get('is_company') and vals.get('website'):
+            if not is_company and vals.get('website'):
                 company = self._find_company_by_website(vals['website'])
                 if not company:
                     company = self.create({
