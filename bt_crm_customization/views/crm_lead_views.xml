@@ -50,6 +50,11 @@
                 <attribute name="required">type == 'lead'</attribute>
             </xpath>
 
+            <!-- LinkedIn URL field, shown right after Website -->
+            <xpath expr="//group[@name='lead_partner']//field[@name='website']" position="after">
+                <field name="linkedin_url" widget="url" placeholder="e.g. https://www.linkedin.com/company/..."/>
+            </xpath>
+
 <!--            <xpath expr="//sheet/notebook/page[1]" position="before">-->
 <!--                <xpath expr="//sheet/notebook/page[@name='lead']" position="replace"/>-->
 <!--            </xpath>-->

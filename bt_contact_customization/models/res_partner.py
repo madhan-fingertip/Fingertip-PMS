@@ -1,4 +1,6 @@
-from odoo import models, fields,api
+from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
+
 
 class InheritResPartner(models.Model):
     _inherit = 'res.partner'
@@ -116,14 +118,122 @@ class InheritResPartner(models.Model):
     # ------------------------------------------------------------------
     # Salesperson sync: company's salesperson flows down to child contacts
     # ------------------------------------------------------------------
+    @api.model
+    def _normalize_website(self, website):
+        """Normalise a website value for matching: strip scheme, 'www.',
+        trailing slash and surrounding spaces, then lowercase."""
+        if not website:
+            return ''
+        value = website.strip().lower()
+        for prefix in ('https://', 'http://'):
+            if value.startswith(prefix):
+                value = value[len(prefix):]
+                break
+        if value.startswith('www.'):
+            value = value[4:]
+        return value.rstrip('/')
+
+    @api.model
+    def _find_company_by_website(self, website):
+        """Return an existing company (is_company=True) whose website matches
+        the given one, ignoring scheme/www/trailing slash differences."""
+        normalized = self._normalize_website(website)
+        if not normalized:
+            return self.browse()
+        companies = self.search([
+            ('is_company', '=', True),
+            ('website', '!=', False),
+        ])
+        for company in companies:
+            if self._normalize_website(company.website) == normalized:
+                return company
+        return self.browse()
+
+    @api.model
+    def _company_name_from_website(self, website):
+        """Derive a readable company name from a website, used as a fallback
+        when an imported contact has no company-name column. e.g.
+        'https://www.acme-corp.com/about' -> 'Acme Corp'."""
+        domain = self._normalize_website(website)
+        if not domain:
+            return ''
+        label = domain.split('/')[0].split('.')[0]
+        return label.replace('-', ' ').replace('_', ' ').title() or domain
+
+    @api.constrains('website', 'is_company')
+    def _check_unique_company_website(self):
+        """A company's website must be unique across companies. Matching
+        ignores scheme/www/trailing-slash differences. Individuals and child
+        contacts are not checked (they may share the company's website)."""
+        for partner in self:
+            if not partner.is_company:
+                continue
+            normalized = self._normalize_website(partner.website)
+            if not normalized:
+                continue
+            others = self.search([
+                ('id', '!=', partner.id),
+                ('is_company', '=', True),
+                ('website', '!=', False),
+            ])
+            for other in others:
+                if self._normalize_website(other.website) == normalized:
+                    raise ValidationError(_(
+                        "The website '%s' is already used by company '%s'. "
+                        "A company's website must be unique.",
+                        partner.website, other.name,
+                    ))
+
     @api.model_create_multi
     def create(self, vals_list):
-        for vals in vals_list:
+        # results keeps the original order; entries are either an already
+        # existing company (reused) or are filled in after super().create().
+        results = [self.browse()] * len(vals_list)
+        to_create = []  # list of (original_index, vals)
+
+        for index, vals in enumerate(vals_list):
+            # Identify a company by its website (NOT its name): if a company
+            # with the same website already exists, reuse it instead of
+            # creating a duplicate (e.g. during bulk import).
+            if vals.get('is_company') and vals.get('website'):
+                existing = self._find_company_by_website(vals['website'])
+                if existing:
+                    results[index] = existing
+                    continue
+
+            # A contact's company is determined by its WEBSITE only. Even if the
+            # import row maps a company column (parent_id), it is overridden so
+            # placement is based on the website alone. If no company owns that
+            # website yet, auto-create it (named from the company-name column,
+            # else from the website domain) so the contact is always grouped
+            # under the website's company.
+            if not vals.get('is_company') and vals.get('website'):
+                company = self._find_company_by_website(vals['website'])
+                if not company:
+                    company = self.create({
+                        'name': vals.get('company_name') or self._company_name_from_website(vals['website']),
+                        'is_company': True,
+                        'website': vals['website'],
+                    })
+                vals['parent_id'] = company.id
+
             if not vals.get('user_id') and vals.get('parent_id'):
                 parent = self.browse(vals['parent_id'])
                 if parent.user_id:
                     vals['user_id'] = parent.user_id.id
-        return super().create(vals_list)
+
+            to_create.append((index, vals))
+
+        if to_create:
+            created = super().create([vals for _index, vals in to_create])
+            for (index, _vals), record in zip(to_create, created):
+                results[index] = record
+
+        # Return a recordset preserving the original order of vals_list.
+        result = self.browse()
+        for record in results:
+            result += record
+        return result
 
     def write(self, vals):
         res = super().write(vals)

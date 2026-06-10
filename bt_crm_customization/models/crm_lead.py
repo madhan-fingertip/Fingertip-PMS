@@ -51,3 +51,5 @@ class InheritCrmLead(models.Model):
     next_action = fields.Text(string="Next Action")
 
     description_text = fields.Text(string="Description")
+
+    linkedin_url = fields.Char(string="LinkedIn URL")
