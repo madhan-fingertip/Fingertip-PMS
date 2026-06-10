@@ -1,5 +1,12 @@
+import re
+
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
+
+# A website must be a bare domain (optionally with scheme / www.) and end at the
+# TLD with NOTHING after it: no path, no trailing slash, no query string.
+# e.g. https://www.acme.com  -> OK     https://www.acme.com/about -> rejected
+WEBSITE_RE = re.compile(r'^(https?://)?(www\.)?([a-z0-9-]+\.)+[a-z]{2,}$', re.IGNORECASE)
 
 
 class InheritResPartner(models.Model):
@@ -159,6 +166,19 @@ class InheritResPartner(models.Model):
             return ''
         label = domain.split('/')[0].split('.')[0]
         return label.replace('-', ' ').replace('_', ' ').title() or domain
+
+    @api.constrains('website')
+    def _check_website_format(self):
+        """Website must end at the domain (e.g. www.example.com) with nothing
+        after it - no path, trailing slash, or query string."""
+        for partner in self:
+            if partner.website and not WEBSITE_RE.match(partner.website.strip()):
+                raise ValidationError(_(
+                    "Invalid website '%s'. Enter a domain only, like "
+                    "www.example.com, with nothing after it "
+                    "(no '/', path, or extra characters).",
+                    partner.website,
+                ))
 
     @api.constrains('website', 'is_company')
     def _check_unique_company_website(self):
