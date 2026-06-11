@@ -31,6 +31,9 @@
         <field name="arch" type="xml">
             <form>
                 <header>
+                    <button name="action_creator_edit" type="object" string="Edit"
+                            class="btn-primary"
+                            invisible="not is_creator or creator_unlocked"/>
                     <button name="action_approve" type="object" string="Approve"
                             class="btn-success"
                             invisible="approval_state != 'pending_approval' or not is_current_user_approver"/>
@@ -39,7 +42,16 @@
                             invisible="approval_state != 'pending_approval' or not is_current_user_approver"/>
                     <field name="approval_state" widget="statusbar" statusbar_visible="pending_approval,approved"/>
                     <field name="is_current_user_approver" invisible="1"/>
+                    <field name="is_creator" invisible="1"/>
+                    <field name="creator_unlocked" invisible="1"/>
                 </header>
+                <!-- Only the creator can edit (after clicking Edit). Everyone
+                     else - including the PM - is read-only, in every state.
+                     The 'id and' guard keeps a brand-new record editable. -->
+                <!-- Definition fields are creator-only (read-only unless the
+                     creator clicked Edit; per-field, since <sheet readonly>
+                     does not cascade). Execution fields stay editable after
+                     approval so the assignee/executor can record the result. -->
                 <sheet>
                     <div class="alert alert-warning" role="alert"
                          invisible="approval_state != 'pending_approval'">
@@ -53,40 +65,40 @@
                     <group>
                         <group>
                             <field name="test_case_id" readonly="1"/>
-                            <field name="test_case_title" readonly="id and approval_state == 'approved'"/>
-                            <field name="project_id"/>
+                            <field name="test_case_title" readonly="id and not (is_creator and creator_unlocked)"/>
+                            <field name="project_id" readonly="id and not (is_creator and creator_unlocked)"/>
                             <field name="approver_id" readonly="1"/>
                             <field name="available_module_ids" invisible="1"/>
-                            <field name="module_id"/>
+                            <field name="module_id" readonly="id and not (is_creator and creator_unlocked)"/>
                         </group>
                         <group>
                             <field name="status" readonly="approval_state != 'approved'"/>
-                            <field name="severity"/>
-                            <field name="test_type"/>
-                            <field name="environment"/>
+                            <field name="severity" readonly="id and not (is_creator and creator_unlocked)"/>
+                            <field name="test_type" readonly="id and not (is_creator and creator_unlocked)"/>
+                            <field name="environment" readonly="id and not (is_creator and creator_unlocked)"/>
                         </group>
                     </group>
                     <notebook>
                         <page string="Test Details">
-                            <field name="test_objective"/>
-                            <field name="pre_conditions"/>
+                            <field name="test_objective" readonly="id and not (is_creator and creator_unlocked)"/>
+                            <field name="pre_conditions" readonly="id and not (is_creator and creator_unlocked)"/>
                         </page>
                         <page string="Test Data &amp; Steps">
                             <group>
-                                <field name="test_data"/>
-                                <field name="test_steps"/>
+                                <field name="test_data" readonly="id and not (is_creator and creator_unlocked)"/>
+                                <field name="test_steps" readonly="id and not (is_creator and creator_unlocked)"/>
                             </group>
                         </page>
                         <page string="Results">
                             <group>
-                                <field name="expected_result"/>
-                                <field name="actual_result"/>
+                                <field name="expected_result" readonly="id and not (is_creator and creator_unlocked)"/>
+                                <field name="actual_result" readonly="approval_state != 'approved'"/>
                             </group>
                         </page>
                         <page string="Execution">
                             <group>
-                                <field name="executed_date"/>
-                                <field name="executed_by"/>
+                                <field name="executed_date" readonly="approval_state != 'approved'"/>
+                                <field name="executed_by" readonly="approval_state != 'approved'"/>
                             </group>
                         </page>
                     </notebook>

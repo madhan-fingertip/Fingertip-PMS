@@ -129,6 +129,15 @@ class QATicket(models.Model):
         string='Current User Is Approver',
         compute='_compute_is_current_user_approver',
     )
+    is_creator = fields.Boolean(
+        string='Current User Is Creator',
+        compute='_compute_is_creator',
+    )
+    creator_unlocked = fields.Boolean(
+        string='Unlocked by Creator', default=False, copy=False,
+        help="Set when the creator clicks Edit to change a record that is "
+             "still pending approval. Only the creator can unlock it.",
+    )
 
     @api.depends('project_id', 'project_id.user_id')
     def _compute_approver_id(self):
@@ -139,6 +148,11 @@ class QATicket(models.Model):
     def _compute_is_current_user_approver(self):
         for rec in self:
             rec.is_current_user_approver = rec.approver_id == self.env.user
+
+    @api.depends_context('uid')
+    def _compute_is_creator(self):
+        for rec in self:
+            rec.is_creator = bool(rec.create_uid) and rec.create_uid.id == self.env.uid
 
     @api.depends('project_id')
     def _compute_available_modules(self):
@@ -320,6 +334,16 @@ class QATicket(models.Model):
                 if rec.approval_state == 'approved':
                     rec._notify_assignee()
         return res
+
+    def action_creator_edit(self):
+        """Unlock a still-pending bug so its creator can edit it.
+        Only the record's creator may unlock it."""
+        self.ensure_one()
+        if not self.is_creator:
+            raise UserError(
+                "Only the creator can edit bug %s while it is pending approval." % (self.bug_id or '',)
+            )
+        self.creator_unlocked = True
 
     def action_approve(self):
         for rec in self:

@@ -16,12 +16,32 @@
             <field name="comment">Junior QA users. Bugs and test cases they create require PM approval before work can start.</field>
         </record>
 
+        <!-- Senior QA group -->
+        <record id="group_qa_senior" model="res.groups">
+            <field name="name">Senior QA</field>
+            <field name="category_id" ref="module_category_qa_testapp"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="comment">Senior QA users. Bugs and test cases they create do NOT need approval - they are created in an editable-by-creator (read-only for others) state. Only the creator can edit; others are read-only.</field>
+        </record>
+
         <!-- Record rule: Junior QA sees only their own bugs -->
         <record id="rule_qa_ticket_junior_own" model="ir.rule">
             <field name="name">QA Ticket: Junior QA - own records only</field>
             <field name="model_id" ref="model_qa_testapp_ticket"/>
             <field name="domain_force">['|', ('reporter_id', '=', user.id), ('assignee_id', '=', user.id)]</field>
             <field name="groups" eval="[(4, ref('group_qa_junior'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Record rule: Senior QA sees their own / assigned bugs -->
+        <record id="rule_qa_ticket_senior_own" model="ir.rule">
+            <field name="name">QA Ticket: Senior QA - own records only</field>
+            <field name="model_id" ref="model_qa_testapp_ticket"/>
+            <field name="domain_force">['|', ('reporter_id', '=', user.id), ('assignee_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_qa_senior'))]"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
@@ -46,6 +66,18 @@
             <field name="model_id" ref="model_qa_testapp_test_case"/>
             <field name="domain_force">[('create_uid', '=', user.id)]</field>
             <field name="groups" eval="[(4, ref('group_qa_junior'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Record rule: Senior QA sees only their own test cases -->
+        <record id="rule_qa_test_case_senior_own" model="ir.rule">
+            <field name="name">QA Test Case: Senior QA - own records only</field>
+            <field name="model_id" ref="model_qa_testapp_test_case"/>
+            <field name="domain_force">[('create_uid', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_qa_senior'))]"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
