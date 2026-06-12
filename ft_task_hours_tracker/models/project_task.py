@@ -23,29 +23,6 @@ class ProjectTask(models.Model):
         store=False,
     )
 
-    # Department bucket of the LOGGED-IN user. Drives which label is shown for
-    # the "Actual Hours" field on the task form: Dev / QA / PM. Not stored - it
-    # is per-user, recomputed from the current user's employee department.
-    current_user_dept_type = fields.Selection(
-        [('dev', 'Development'), ('qa', 'QA'), ('pm', 'PM')],
-        string='Current User Department Type',
-        compute='_compute_current_user_dept_type',
-    )
-
-    @api.depends_context('uid')
-    def _compute_current_user_dept_type(self):
-        department = self.env.user.employee_id.department_id
-        dept_name = (department.name or '').strip().lower()
-        dept_type = False
-        if 'development' in dept_name:
-            dept_type = 'dev'
-        elif 'testing' in dept_name or dept_name == 'qa':
-            dept_type = 'qa'
-        elif 'project management' in dept_name or dept_name == 'pm':
-            dept_type = 'pm'
-        for task in self:
-            task.current_user_dept_type = dept_type
-
     @api.depends('effective_hours')
     def _compute_ft_total_hours_taken(self):
         time_limit = float(

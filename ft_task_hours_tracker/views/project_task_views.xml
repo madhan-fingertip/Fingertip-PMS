@@ -9,29 +9,10 @@
         <field name="arch" type="xml">
 
             <xpath expr="//field[@name='estimated']" position="after">
-                <!-- Same Actual Hours value, but the LABEL changes with the
-                     logged-in user's department: Dev / QA / PM (else generic). -->
-                <field name="current_user_dept_type" invisible="1"/>
-                <field name="ft_total_hours_taken"
-                       string="Actual Dev. Hours"
-                       widget="float_time"
-                       readonly="1"
-                       invisible="current_user_dept_type != 'dev'"/>
-                <field name="ft_total_hours_taken"
-                       string="Actual QA Hours"
-                       widget="float_time"
-                       readonly="1"
-                       invisible="current_user_dept_type != 'qa'"/>
-                <field name="ft_total_hours_taken"
-                       string="Actual PM Hours"
-                       widget="float_time"
-                       readonly="1"
-                       invisible="current_user_dept_type != 'pm'"/>
                 <field name="ft_total_hours_taken"
                        string="Actual Hours"
                        widget="float_time"
-                       readonly="1"
-                       invisible="current_user_dept_type in ('dev', 'qa', 'pm')"/>
+                       readonly="1"/>
                 <div invisible="not ft_hours_exceeded or not ft_allow_billable">
                     <small class="text-danger">
                         <i class="fa fa-exclamation-triangle me-1"/>
