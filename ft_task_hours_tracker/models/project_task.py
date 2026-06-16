@@ -22,43 +22,46 @@ class ProjectTask(models.Model):
         string='Is Billable Project',
         store=False,
     )
+    # store=False (computed live, like the project-level fields) so historical
+    # tasks always reflect the employee's CURRENT department. Stored values
+    # would freeze at whatever was first computed and never refresh.
     ft_dev_hours = fields.Float(
         string='Dev Hours',
         compute='_compute_ft_department_hours',
-        store=True,
+        store=False,
         readonly=True,
         help='Hours logged on this task by Development-department employees.',
     )
     ft_qa_hours = fields.Float(
         string='QA Hours',
         compute='_compute_ft_department_hours',
-        store=True,
+        store=False,
         readonly=True,
         help='Hours logged on this task by QA / Testing-department employees.',
     )
     ft_pm_hours = fields.Float(
         string='PM Hours',
         compute='_compute_ft_department_hours',
-        store=True,
+        store=False,
         readonly=True,
         help='Hours logged on this task by Project Management-department employees.',
     )
     ft_dev_hours_exceeded = fields.Boolean(
         string='Dev Hours Exceeded',
         compute='_compute_ft_department_hours',
-        store=True,
+        store=False,
         help='True when Dev Hours exceeds the task time limit.',
     )
     ft_qa_hours_exceeded = fields.Boolean(
         string='QA Hours Exceeded',
         compute='_compute_ft_department_hours',
-        store=True,
+        store=False,
         help='True when QA Hours exceeds the task time limit.',
     )
     ft_pm_hours_exceeded = fields.Boolean(
         string='PM Hours Exceeded',
         compute='_compute_ft_department_hours',
-        store=True,
+        store=False,
         help='True when PM Hours exceeds the task time limit.',
     )
 
@@ -75,8 +78,13 @@ class ProjectTask(models.Model):
             return 'pm'
         return False
 
-    @api.depends('timesheet_ids.unit_amount', 'timesheet_ids.department_id')
+    @api.depends('timesheet_ids.unit_amount', 'timesheet_ids.employee_id.department_id')
     def _compute_ft_department_hours(self):
+        # Classify by the EMPLOYEE's current department rather than the line's
+        # stored department_id: that stored value is only set from the employee
+        # at log time and is not refreshed when a department is assigned later,
+        # so historical lines would stay empty. Mirrors the project-level
+        # compute in project_project.py.
         time_limit = float(
             self.env['ir.config_parameter'].sudo().get_param(
                 'ft_task_hours_tracker.default_time_limit', default=0.0
@@ -85,7 +93,7 @@ class ProjectTask(models.Model):
         for task in self:
             dev = qa = pm = 0.0
             for line in task.timesheet_ids:
-                bucket = self._ft_department_bucket(line.department_id)
+                bucket = self._ft_department_bucket(line.employee_id.department_id)
                 if bucket == 'dev':
                     dev += line.unit_amount
                 elif bucket == 'qa':

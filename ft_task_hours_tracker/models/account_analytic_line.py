@@ -39,7 +39,10 @@ class AccountAnalyticLine(models.Model):
         for line in task.timesheet_ids:
             if exclude_line and line.id and line.id == exclude_line.id:
                 continue
-            if ProjectTask._ft_department_bucket(line.department_id) == bucket:
+            # Classify by the employee's current department, consistent with
+            # the task/project hour computes (the line's stored department_id
+            # is stale for historical lines).
+            if ProjectTask._ft_department_bucket(line.employee_id.department_id) == bucket:
                 total += line.unit_amount
         return total
 
