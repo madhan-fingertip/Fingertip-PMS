@@ -143,7 +143,16 @@ class ContactUploadWizard(models.TransientModel):
     def action_process(self):
         self.ensure_one()
         # Disable mail tracking / auto-subscribe noise while bulk importing.
-        Partner = self.env['res.partner'].with_context(
+        #
+        # Use sudo() for the partner operations so de-duplication works the same
+        # for every uploader. Sales Users have a record rule (see
+        # activity_dashboard_mngmnt) that only lets them see contacts they own,
+        # so without sudo their search() can't find accounts/contacts created by
+        # someone else and the import would wrongly recreate them as duplicates.
+        # Matching must be global; ownership is still controlled explicitly
+        # (new account -> current user via _company_vals; existing account is
+        # never written to, so its Salesperson stays intact).
+        Partner = self.env['res.partner'].sudo().with_context(
             tracking_disable=True,
             mail_create_nolog=True,
             mail_create_nosubscribe=True,
@@ -328,12 +337,18 @@ class ContactUploadWizard(models.TransientModel):
     # Value builders
     # ------------------------------------------------------------------
     def _company_vals(self, Partner, website, company_name, row, cell):
+        # A brand new account is owned by whoever uploads it: set the
+        # Salesperson (user_id) to the current user. Existing accounts are
+        # never passed through here (see _resolve_company), so their ownership
+        # is left untouched even when another user re-uploads them. The account
+        # status (account_status_id) is deliberately not set here.
         vals = {
             'is_company': True,
             'name': (company_name
                      or Partner._company_name_from_website(website)
                      or website
                      or _('Unknown Account')),
+            'user_id': self.env.uid,
         }
         if website:
             vals['website'] = website

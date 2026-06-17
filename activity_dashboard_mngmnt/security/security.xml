@@ -43,12 +43,27 @@
         <field name="perm_unlink" eval="True"/>
     </record>
 
+    <!-- Sales Users can VIEW every contact (read-only rule, domain = all). -->
+    <record id="partner_rule_sales_user_read_all" model="ir.rule">
+        <field name="name">Sales User: View All Contacts</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_sales_user_custom'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Sales Users can only EDIT/CREATE contacts they own. Reads are governed
+         by the rule above (rules of the same group are OR-ed per operation, and
+         this one no longer grants read), so this restricts writes/creates only. -->
     <record id="partner_rule_sales_user" model="ir.rule">
-        <field name="name">Sales User: Own Contacts Only</field>
+        <field name="name">Sales User: Edit Own Contacts Only</field>
         <field name="model_id" ref="base.model_res_partner"/>
         <field name="domain_force">['|', '|', ('user_id', '=', user.id), ('opportunity_ids.user_id', '=', user.id), ('id', '=', user.partner_id.id)]</field>
         <field name="groups" eval="[(4, ref('group_sales_user_custom'))]"/>
-        <field name="perm_read" eval="True"/>
+        <field name="perm_read" eval="False"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="True"/>
         <field name="perm_unlink" eval="False"/>
