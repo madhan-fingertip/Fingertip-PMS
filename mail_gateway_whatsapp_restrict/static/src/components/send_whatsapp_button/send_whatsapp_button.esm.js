@@ -22,6 +22,12 @@ patch(SendWhatsappButton.prototype, {
         });
     },
     get canSendWhatsapp() {
-        return this.whatsappAccess.canSend;
+        // WhatsApp is only offered on Contacts / CRM customer contacts, which are
+        // the res.partner model. Hide the phone-field WhatsApp link everywhere
+        // else (e.g. CRM leads), even for users in the allowed groups.
+        return (
+            this.whatsappAccess.canSend &&
+            this.props.record.resModel === "res.partner"
+        );
     },
 });

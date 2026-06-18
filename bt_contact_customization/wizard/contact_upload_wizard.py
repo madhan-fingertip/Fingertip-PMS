@@ -25,6 +25,7 @@ INPUT_KEYS = [
     ('phone', 'Phone'),
     ('person_linkedin', 'LinkedinURL'),
     ('designation', 'Designation'),
+    ('description', 'Description'),
     ('company_name', 'Company Name'),
     ('website', 'Website'),
     ('company_linkedin', 'Linkedin'),
@@ -364,6 +365,11 @@ class ContactUploadWizard(models.TransientModel):
         status = self._untouched_status()
         if status:
             vals['account_status_id'] = status.id
+        # Description is a company-level field (shown as its own tab on the
+        # company form), so the row's Description is stored on the account.
+        description = cell(row, 'description')
+        if description:
+            vals['description'] = description
         if website:
             vals['website'] = website
         industry = cell(row, 'industry')
@@ -505,7 +511,7 @@ class ContactUploadWizard(models.TransientModel):
                 for cell_obj in sheet[sheet.max_row]:
                     cell_obj.fill = fill
 
-        widths = [14, 12, 26, 14, 22, 18, 20, 22, 18, 16, 14, 12, 14, 14, 14, 18, 26, 12, 50]
+        widths = [14, 12, 26, 14, 22, 18, 40, 20, 22, 18, 16, 14, 12, 14, 14, 14, 18, 26, 12, 50]
         for idx, width in enumerate(widths, start=1):
             sheet.column_dimensions[openpyxl.utils.get_column_letter(idx)].width = width
         sheet.freeze_panes = 'A2'

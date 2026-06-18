@@ -7,4 +7,14 @@
     &:not(.o-aside):not(.o-full-width) .o-mail-Chatter {
         max-width: $o-form-view-sheet-max-width;
     }
+
+    // When the chatter is docked to the side (sided position), default it to
+    // 35% of the screen so the form sheet keeps the remaining 65%.
+    // Percentage based, so it stays 35% of the viewport at any browser zoom
+    // (Ctrl+ / Ctrl-). Adjust this single value to change the default width.
+    &.o-aside {
+        flex: 0 0 35%;
+        width: 35%;
+        max-width: 35%;
+    }
 }
