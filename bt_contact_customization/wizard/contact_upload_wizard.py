@@ -365,11 +365,13 @@ class ContactUploadWizard(models.TransientModel):
         status = self._untouched_status()
         if status:
             vals['account_status_id'] = status.id
-        # Description is a company-level field (shown as its own tab on the
-        # company form), so the row's Description is stored on the account.
+        # Description is stored on the company in the standard 'comment'
+        # (Internal Notes) field, displayed as "Description" below Connected
+        # Contacts. Reusing an existing column means no module upgrade is
+        # needed to deploy this.
         description = cell(row, 'description')
         if description:
-            vals['description'] = description
+            vals['comment'] = description
         if website:
             vals['website'] = website
         industry = cell(row, 'industry')

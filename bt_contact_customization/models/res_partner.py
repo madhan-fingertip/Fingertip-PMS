@@ -61,7 +61,9 @@ class InheritResPartner(models.Model):
     annual_revenue_range = fields.Char(string="Annual Revenue Range")
     company_linkedin = fields.Char(string="Company LinkedIn")
     contact_date = fields.Date(string="Contact Date")
-    description = fields.Text(string="Description")
+    # No custom 'description' field: the upload's Description column is stored
+    # in Odoo's standard 'comment' (Internal Notes) field, which already
+    # exists, so deploying needs no module upgrade / DB migration.
     duplicate_check = fields.Boolean(string="Duplicate")
     company_eid = fields.Char(string="EID")
     employees = fields.Many2one('res.users',string="Employee")
