@@ -336,12 +336,23 @@ class ContactUploadWizard(models.TransientModel):
     # ------------------------------------------------------------------
     # Value builders
     # ------------------------------------------------------------------
+    def _untouched_status(self):
+        """Return the 'Un touched' account status record, matched case- and
+        space-insensitively (so 'Un touched', 'Untouched', etc. all resolve),
+        or an empty recordset when no such status exists."""
+        Status = self.env['res.partner.account.status'].sudo()
+        for status in Status.search([]):
+            if (status.name or '').replace(' ', '').lower() == 'untouched':
+                return status
+        return Status.browse()
+
     def _company_vals(self, Partner, website, company_name, row, cell):
         # A brand new account is owned by whoever uploads it: set the
         # Salesperson (user_id) to the current user. Existing accounts are
         # never passed through here (see _resolve_company), so their ownership
-        # is left untouched even when another user re-uploads them. The account
-        # status (account_status_id) is deliberately not set here.
+        # is left untouched even when another user re-uploads them. A brand new
+        # account is tagged with the 'Un touched' account status; existing
+        # accounts are never written to, so their status is preserved.
         vals = {
             'is_company': True,
             'name': (company_name
@@ -350,6 +361,9 @@ class ContactUploadWizard(models.TransientModel):
                      or _('Unknown Account')),
             'user_id': self.env.uid,
         }
+        status = self._untouched_status()
+        if status:
+            vals['account_status_id'] = status.id
         if website:
             vals['website'] = website
         industry = cell(row, 'industry')
