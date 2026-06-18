@@ -1,0 +1,11 @@
+/*
+ * Hide the chatter "Send message" and "Activities" buttons on every record
+ * (all models, all users). "Log note" and the WhatsApp button stay visible.
+ *
+ * This is a pure CSS asset change - no new column / no module upgrade needed
+ * to deploy (the assets bundle just has to rebuild).
+ */
+.o-mail-Chatter-sendMessage,
+.o-mail-Chatter-activity {
+    display: none !important;
+}
