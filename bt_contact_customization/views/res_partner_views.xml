@@ -80,4 +80,83 @@
 
         </field>
     </record>
+
+    <!-- Contacts list view: enforce column order
+         Name, Email, Phone, Annual Revenue, Activities, Employees, Website,
+         Industry, State, Salesperson, Account Status, Company LinkedIn. -->
+    <record id="view_partner_tree_inherit_custom_order" model="ir.ui.view">
+        <field name="name">res.partner.list.custom.order</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+
+            <!-- Email, then Phone, right after Name -->
+            <xpath expr="//field[@name='complete_name']" position="after">
+                <field name="email" position="move"/>
+            </xpath>
+            <xpath expr="//field[@name='email']" position="after">
+                <field name="phone" position="move"/>
+            </xpath>
+
+            <!-- Mobile: keep as a default column, right after Phone -->
+            <xpath expr="//field[@name='phone']" position="after">
+                <field name="mobile" position="move"/>
+            </xpath>
+            <xpath expr="//field[@name='mobile']" position="attributes">
+                <attribute name="optional">show</attribute>
+            </xpath>
+
+            <!-- Annual Revenue (monetary needs its currency field available) -->
+            <xpath expr="//field[@name='mobile']" position="after">
+                <field name="annual_revenue_currency_id" column_invisible="1"/>
+                <field name="annual_revenue_amount" optional="show"/>
+            </xpath>
+
+            <!-- Employees. The Activities column is shown automatically at the
+                 far right for activity-enabled models, so we don't add our own
+                 (it would appear twice). -->
+            <xpath expr="//field[@name='annual_revenue_amount']" position="after">
+                <field name="employees" optional="show"/>
+            </xpath>
+
+            <!-- Website -->
+            <xpath expr="//field[@name='employees']" position="after">
+                <field name="website" optional="show"/>
+            </xpath>
+
+            <!-- Industry -->
+            <xpath expr="//field[@name='website']" position="after">
+                <field name="industry_id" optional="show"/>
+            </xpath>
+
+            <!-- State, then Salesperson -->
+            <xpath expr="//field[@name='industry_id']" position="after">
+                <field name="state_id" position="move"/>
+            </xpath>
+            <xpath expr="//field[@name='state_id']" position="attributes">
+                <attribute name="optional">show</attribute>
+            </xpath>
+            <xpath expr="//field[@name='state_id']" position="after">
+                <field name="user_id" position="move"/>
+            </xpath>
+
+            <!-- Account Status, then Company LinkedIn -->
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="account_status_id" optional="show"/>
+            </xpath>
+            <xpath expr="//field[@name='account_status_id']" position="after">
+                <field name="company_linkedin" optional="show"/>
+            </xpath>
+
+            <!-- Keep the remaining base columns out of the default set -->
+            <xpath expr="//field[@name='city']" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </xpath>
+            <xpath expr="//field[@name='country_id']" position="attributes">
+                <attribute name="optional">hide</attribute>
+            </xpath>
+
+        </field>
+    </record>
 </odoo>
