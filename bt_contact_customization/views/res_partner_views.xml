@@ -26,6 +26,15 @@
                     <field name="connected_contacts"
                         widget="many2many_tags"
                         invisible="is_company == False"/>
+
+                <!-- Audit datetimes, shown at the end below Connected Contacts -->
+                <field name="create_date" string="Created On" readonly="1"/>
+                <field name="write_date" string="Last Modified On" readonly="1"/>
+            </xpath>
+
+            <!-- Salesperson moved above the Phone field -->
+            <xpath expr="//field[@name='phone']" position="before">
+                <field name="user_id" position="move"/>
             </xpath>
 
             <!-- Dedicated rich-text Description tab, beside Internal Notes,
