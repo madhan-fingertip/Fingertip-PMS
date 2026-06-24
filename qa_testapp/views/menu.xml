@@ -34,5 +34,7 @@
               parent="qa_testapp_menu_root"
               action="qa_testapp_action_ticket"
               sequence="40"/>
-              
+
+    <!-- Sprints live under the PMS (Project) app, see menu_reorganization.xml -->
+
 </odoo>

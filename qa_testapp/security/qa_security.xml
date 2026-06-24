@@ -24,37 +24,62 @@
             <field name="comment">Senior QA users. Bugs and test cases they create do NOT need approval - they are created in an editable-by-creator (read-only for others) state. Only the creator can edit; others are read-only.</field>
         </record>
 
-        <!-- Record rule: Junior QA sees only their own bugs -->
+        <!-- Record rule: everyone can READ all bugs (visibility open to all users).
+             Global rule (no groups) so it applies to every user. The per-group
+             rules below now only restrict WRITE / CREATE / UNLINK. -->
+        <record id="rule_qa_ticket_read_all" model="ir.rule">
+            <field name="name">QA Ticket: read all bugs</field>
+            <field name="model_id" ref="model_qa_testapp_ticket"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Record rule: Junior QA can edit only their own bugs (created, reported or assigned) -->
         <record id="rule_qa_ticket_junior_own" model="ir.rule">
             <field name="name">QA Ticket: Junior QA - own records only</field>
             <field name="model_id" ref="model_qa_testapp_ticket"/>
-            <field name="domain_force">['|', ('reporter_id', '=', user.id), ('assignee_id', '=', user.id)]</field>
+            <field name="domain_force">['|', '|', ('create_uid', '=', user.id), ('reporter_id', '=', user.id), ('assignee_id', '=', user.id)]</field>
             <field name="groups" eval="[(4, ref('group_qa_junior'))]"/>
-            <field name="perm_read" eval="True"/>
+            <field name="perm_read" eval="False"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
             <field name="perm_unlink" eval="False"/>
         </record>
 
-        <!-- Record rule: Senior QA sees their own / assigned bugs -->
+        <!-- Record rule: Senior QA can edit their own / assigned bugs (created, reported or assigned) -->
         <record id="rule_qa_ticket_senior_own" model="ir.rule">
             <field name="name">QA Ticket: Senior QA - own records only</field>
             <field name="model_id" ref="model_qa_testapp_ticket"/>
-            <field name="domain_force">['|', ('reporter_id', '=', user.id), ('assignee_id', '=', user.id)]</field>
+            <field name="domain_force">['|', '|', ('create_uid', '=', user.id), ('reporter_id', '=', user.id), ('assignee_id', '=', user.id)]</field>
             <field name="groups" eval="[(4, ref('group_qa_senior'))]"/>
-            <field name="perm_read" eval="True"/>
+            <field name="perm_read" eval="False"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
             <field name="perm_unlink" eval="False"/>
         </record>
 
-        <!-- Record rule: PM sees only bugs in their projects -->
+        <!-- Record rule: Senior QA can approve/edit bugs pending approval (junior QA submissions) -->
+        <record id="rule_qa_ticket_senior_pending" model="ir.rule">
+            <field name="name">QA Ticket: Senior QA - pending approval bugs</field>
+            <field name="model_id" ref="model_qa_testapp_ticket"/>
+            <field name="domain_force">[('approval_state', '=', 'pending_approval')]</field>
+            <field name="groups" eval="[(4, ref('group_qa_senior'))]"/>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Record rule: PM can edit only bugs in their projects -->
         <record id="rule_qa_ticket_pm_own_projects" model="ir.rule">
             <field name="name">QA Ticket: PM - own projects only</field>
             <field name="model_id" ref="model_qa_testapp_ticket"/>
             <field name="domain_force">[('project_id.user_id', '=', user.id)]</field>
             <field name="groups" eval="[(4, ref('project.group_project_manager'))]"/>
-            <field name="perm_read" eval="True"/>
+            <field name="perm_read" eval="False"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
             <field name="perm_unlink" eval="True"/>

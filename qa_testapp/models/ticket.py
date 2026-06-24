@@ -146,8 +146,9 @@ class QATicket(models.Model):
 
     @api.depends('approver_id')
     def _compute_is_current_user_approver(self):
+        senior = self._is_senior_qa()
         for rec in self:
-            rec.is_current_user_approver = rec.approver_id == self.env.user
+            rec.is_current_user_approver = (rec.approver_id == self.env.user) or senior
 
     @api.depends_context('uid')
     def _compute_is_creator(self):
@@ -295,6 +296,22 @@ class QATicket(models.Model):
         user = user or self.env.user
         return user.has_group('qa_testapp.group_qa_junior')
 
+    @api.model
+    def _is_senior_qa(self, user=None):
+        user = user or self.env.user
+        return user.has_group('qa_testapp.group_qa_senior')
+
+    def _user_can_approve(self, user=None):
+        """A pending bug may be approved/rejected by the project's PM
+        (approver_id), any Senior QA, or a system admin."""
+        self.ensure_one()
+        user = user or self.env.user
+        return (
+            (self.approver_id and self.approver_id == user)
+            or self._is_senior_qa(user)
+            or user.has_group('base.group_system')
+        )
+
     @api.model_create_multi
     def create(self, vals_list):
         junior = self._is_junior_qa()
@@ -349,10 +366,10 @@ class QATicket(models.Model):
         for rec in self:
             if rec.approval_state != 'pending_approval':
                 continue
-            if rec.approver_id and rec.approver_id != self.env.user and not self.env.user.has_group('base.group_system'):
+            if not rec._user_can_approve():
                 raise UserError(
-                    "Only %s (PM of project '%s') can approve bug %s." % (
-                        rec.approver_id.name, rec.project_id.name, rec.bug_id,
+                    "Only %s (PM of project '%s') or a Senior QA can approve bug %s." % (
+                        rec.approver_id.name or 'the PM', rec.project_id.name, rec.bug_id,
                     )
                 )
             rec.approval_state = 'approved'
@@ -364,10 +381,10 @@ class QATicket(models.Model):
         for rec in self:
             if rec.approval_state != 'pending_approval':
                 continue
-            if rec.approver_id and rec.approver_id != self.env.user and not self.env.user.has_group('base.group_system'):
+            if not rec._user_can_approve():
                 raise UserError(
-                    "Only %s (PM of project '%s') can reject bug %s." % (
-                        rec.approver_id.name, rec.project_id.name, rec.bug_id,
+                    "Only %s (PM of project '%s') or a Senior QA can reject bug %s." % (
+                        rec.approver_id.name or 'the PM', rec.project_id.name, rec.bug_id,
                     )
                 )
             rec.approval_state = 'rejected'

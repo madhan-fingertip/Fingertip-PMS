@@ -28,7 +28,10 @@ class QABulkApproveWizard(models.TransientModel):
             raise UserError("This wizard can only be launched from the Bug or Test Case list.")
         records = self.env[active_model].browse(active_ids)
         pending = records.filtered(lambda r: r.approval_state == 'pending_approval')
-        own = pending.filtered(lambda r: r.approver_id == self.env.user)
+        own = pending.filtered(
+            lambda r: r._user_can_approve() if hasattr(r, '_user_can_approve')
+            else r.approver_id == self.env.user
+        )
         res.update({
             'target_model': active_model,
             'record_ids': ','.join(str(i) for i in own.ids),
