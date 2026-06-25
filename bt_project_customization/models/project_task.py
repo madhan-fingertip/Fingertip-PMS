@@ -1,4 +1,9 @@
-from odoo import models, fields
+from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
+
+# Minimum number of characters required in a task title.
+TASK_TITLE_MIN_LEN = 20
+
 
 class ProjectTask(models.Model):
     _inherit = 'project.task'
@@ -7,3 +12,12 @@ class ProjectTask(models.Model):
     actual = fields.Float(string='Actual')
     module_id = fields.Many2one('cus.module',string="Module",required=True)
     wc_id = fields.Char(string='Wc Id')
+
+    @api.constrains('name')
+    def _check_task_title_length(self):
+        # #2 - Task title must be at least TASK_TITLE_MIN_LEN characters.
+        for task in self:
+            if task.name and len(task.name.strip()) < TASK_TITLE_MIN_LEN:
+                raise ValidationError(_(
+                    "Task title must be at least %s characters long."
+                ) % TASK_TITLE_MIN_LEN)

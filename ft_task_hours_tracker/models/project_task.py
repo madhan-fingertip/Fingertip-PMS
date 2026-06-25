@@ -150,12 +150,9 @@ class ProjectTask(models.Model):
 
     @api.depends('effective_hours')
     def _compute_ft_total_hours_taken(self):
-        time_limit = float(
-            self.env['ir.config_parameter'].sudo().get_param(
-                'ft_task_hours_tracker.default_time_limit', default=0.0
-            )
-        )
         for task in self:
-            total = task.effective_hours
-            task.ft_total_hours_taken = total
-            task.ft_hours_exceeded = time_limit > 0 and total > time_limit
+            task.ft_total_hours_taken = task.effective_hours
+            # Whole-task total is no longer treated as over-limit. Only the
+            # per-role (Dev / QA / PM / BA / Trainee) 16h limits apply, so the
+            # task's combined total across roles is never flagged as exceeded.
+            task.ft_hours_exceeded = False

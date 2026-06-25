@@ -1,4 +1,8 @@
-from odoo import models, fields,api
+from odoo import models, fields, api, _
+from odoo.exceptions import UserError, ValidationError
+
+# Job positions (hr.job names, lower-cased) allowed to change the project status.
+PM_JOB_NAMES = ('project manager', 'project coordinator', 'project cordinator')
 
 
 class InheritProjectProject(models.Model):
@@ -64,7 +68,21 @@ class InheritProjectProject(models.Model):
             lines = self.env['account.analytic.line'].search([('project_id', '=', project.id)])
             project.timesheet_count = sum(lines.mapped('unit_amount'))
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        # #3 - Only Administrators may create projects.
+        if not self.env.su and not self.env.user.has_group('base.group_system'):
+            raise UserError(_("Only an Administrator can create projects."))
+        return super().create(vals_list)
+
     def write(self, vals):
+        # #4 - Only a Project Manager (by job position) or an Administrator
+        # may change the project status/stage (the status bar = stage_id).
+        if ('status' in vals or 'stage_id' in vals) and not self.env.su:
+            user = self.env.user
+            job = (user.employee_id.job_id.name or '').strip().lower() if user.employee_id else ''
+            if job not in PM_JOB_NAMES and not user.has_group('base.group_system'):
+                raise UserError(_("Only a Project Manager can change the project status."))
         if 'timesheet_ids' in vals:
             deduped = []
             for cmd in vals['timesheet_ids']:
@@ -165,6 +183,25 @@ class AccountAnalyticLine(models.Model):
             project = self.env['project.project'].browse(vals['project_id']) if vals['project_id'] else False
             vals['project_status'] = project.stage_id.id if project and project.stage_id else False
         return super().write(vals)
+
+    @api.constrains('project_id', 'unit_amount')
+    def _check_project_status_open(self):
+        # #1 - No time entries when the project is Closed or On Hold. The PMS
+        # tracks this via the project STAGE (stage_id, the status bar) and also
+        # the custom `status` selection, so block on either.
+        blocked_stage_names = ('closed', 'hold', 'on hold')
+        for line in self:
+            project = line.project_id
+            if not project:
+                continue
+            stage_name = (project.stage_id.name or '').strip().lower()
+            status_blocked = project.status in ('closed', 'hold')
+            if stage_name in blocked_stage_names or status_blocked:
+                label = project.stage_id.name if stage_name in blocked_stage_names \
+                    else dict(project._fields['status'].selection).get(project.status, project.status)
+                raise ValidationError(_(
+                    "You cannot log time on project '%s' because it is %s."
+                ) % (project.name, label))
     used_ai = fields.Boolean(string='Used AI')
     chat_link = fields.Char(string='Chat Link')
     reason = fields.Char(string='Reason')
