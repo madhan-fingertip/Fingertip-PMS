@@ -44,7 +44,11 @@ class QASprint(models.Model):
             'type': 'ir.actions.act_window',
             'name': 'Sprint Tasks',
             'res_model': 'project.task',
-            'view_mode': 'list,form',
+            'view_mode': 'kanban,list,form',
             'domain': [('sprint_id', '=', self.id)],
-            'context': {'default_sprint_id': self.id, 'default_project_id': self.project_id.id},
+            'context': {
+                'default_sprint_id': self.id,
+                'default_project_id': self.project_id.id,
+                'group_by': 'stage_id',
+            },
         }
