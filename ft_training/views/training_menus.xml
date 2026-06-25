@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- App root (top bar) -->
+    <menuitem id="menu_training_root"
+              name="Training"
+              sequence="50"/>
+
+    <!-- Tab 1: Learning Trails (the curriculum of topics) -->
+    <menuitem id="menu_training_trails"
+              name="Learning Trails"
+              parent="menu_training_root"
+              action="action_learning_topic"
+              sequence="10"/>
+
+    <!-- Tab 2: Today's Learning (daily trainee entries) -->
+    <menuitem id="menu_training_today"
+              name="Today's Learning"
+              parent="menu_training_root"
+              action="action_today_learning"
+              sequence="20"/>
+
+</odoo>
